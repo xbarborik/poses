@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { getSelectedTool, selectTool } from "./toolbarSlice";
 
 const StyledToolButton = styled.button`
+  border: "3px groove #4e4c4c44";
   :hover {
     border-color: #f9f9f9;
   }

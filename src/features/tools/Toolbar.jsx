@@ -1,4 +1,4 @@
-import { FaPaintBrush, FaEraser } from "react-icons/fa";
+import { FaPaintBrush, FaEraser, FaHandPaper } from "react-icons/fa";
 import { HiOutlineMinus } from "react-icons/hi";
 import { BsCircle, BsArrowUp } from "react-icons/bs";
 import ToolButton from "./ToolButton";
@@ -13,6 +13,9 @@ const StyledToolBar = styled.div`
 function Toolbar() {
   return (
     <StyledToolBar>
+      <ToolButton type={"grab"}>
+        <FaHandPaper />
+      </ToolButton>
       <ToolButton type={"brush"}>
         <FaPaintBrush />
       </ToolButton>

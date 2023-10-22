@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Stage, Layer, Line } from "react-konva";
 import { useSelector } from "react-redux";
 import { getColor } from "./canvasSlice";
+import { getSelectedTool } from "../tools/toolbarSlice";
 import { useRef, useState } from "react";
 import Palette from "../colors/palette";
 
@@ -19,8 +20,12 @@ function Canvas() {
   const [lines, setLines] = useState([]);
   const canvasRef = useRef(null);
   const color = useSelector(getColor);
+  const tool = useSelector(getSelectedTool);
+  const isDraggable = tool === "grab";
 
-  function handlePenStart(e) {
+  function handleBrushStart(e) {
+    if (tool !== "brush") return;
+
     setIsDrawing(true);
 
     const position = e.target.getStage().getPointerPosition();
@@ -35,8 +40,8 @@ function Canvas() {
     setLines([...lines, { points: [position.x, position.y] }]);
   }
 
-  function handlePenMove(e) {
-    if (!isDrawing) return;
+  function handleBrushMove(e) {
+    if (!isDrawing || tool !== "brush") return;
 
     const position = e.target.getStage().getPointerPosition();
     if (
@@ -49,7 +54,6 @@ function Canvas() {
     }
 
     let currentLine = lines.at(-1);
-
     currentLine.points = currentLine.points.concat([position.x, position.y]);
     currentLine.color = color;
 
@@ -58,7 +62,7 @@ function Canvas() {
     setLines(lines.concat());
   }
 
-  function handlePenEnd() {
+  function handleBrushEnd() {
     setIsDrawing(false);
   }
 
@@ -69,9 +73,9 @@ function Canvas() {
         <Stage
           width={dimensions.width}
           height={dimensions.height}
-          onMouseDown={handlePenStart}
-          onMousemove={handlePenMove}
-          onMouseup={handlePenEnd}
+          onMouseDown={handleBrushStart}
+          onMousemove={handleBrushMove}
+          onMouseup={handleBrushEnd}
         >
           <Layer>
             {lines.map((line, i) => (
@@ -84,6 +88,7 @@ function Canvas() {
                 lineCap="round"
                 lineJoin="round"
                 globalCompositeOperation={"source-over"}
+                draggable={isDraggable}
               />
             ))}
           </Layer>
