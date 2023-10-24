@@ -1,5 +1,5 @@
-import { FaPaintBrush, FaEraser, FaHandPaper } from "react-icons/fa";
-import { HiOutlineMinus } from "react-icons/hi";
+import { FaPencilAlt, FaEraser, FaHandPaper } from "react-icons/fa";
+import { GoHorizontalRule } from "react-icons/go";
 import { BsCircle, BsArrowUp } from "react-icons/bs";
 import ToolButton from "./ToolButton";
 import styled from "styled-components";
@@ -16,16 +16,16 @@ function Toolbar() {
       <ToolButton type={"grab"}>
         <FaHandPaper />
       </ToolButton>
-      <ToolButton type={"brush"}>
-        <FaPaintBrush />
+      <ToolButton type={"freeHand"}>
+        <FaPencilAlt />
       </ToolButton>
       <ToolButton type={"line"}>
-        <HiOutlineMinus />
+        <GoHorizontalRule style={{ transform: "rotate(90deg)" }} />
       </ToolButton>
       <ToolButton type={"arrow"}>
         <BsArrowUp />
       </ToolButton>
-      <ToolButton type={"Circle"}>
+      <ToolButton type={"circle"}>
         <BsCircle />
       </ToolButton>
       <ToolButton type={"eraser"}>

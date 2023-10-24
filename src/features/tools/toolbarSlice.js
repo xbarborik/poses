@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  selectedTool: "grab",
+  selectedTool: "freeHand",
+  clearObjects: false,
 };
 
 const toolbarSlice = createSlice({
