@@ -2,6 +2,7 @@ import styled from "styled-components";
 import ColorButton from "./ColorButton";
 
 const StyledPalette = styled.div`
+  grid-area: colors;
   display: flex;
   gap: 1rem;
   padding: 0.8rem;
