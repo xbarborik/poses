@@ -9,7 +9,7 @@ const StyledColorButton = styled.button`
   border-radius: 50%;
   background-color: ${(props) => props.color};
   border: ${(props) =>
-    props.$isActive ? "3px solid white" : "3px groove #4e4c4c44"};
+    props.$isActive ? "3px solid #fff" : "3px groove #4e4c4c44"};
 `;
 
 function ColorButton({ color }) {

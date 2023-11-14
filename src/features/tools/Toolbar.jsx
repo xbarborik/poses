@@ -7,9 +7,14 @@ import styled from "styled-components";
 const StyledToolBar = styled.div`
   grid-area: tools;
   display: flex;
-  /* flex-direction: column; */
-  gap: 1rem;
+  flex-direction: column;
+  width: fit-content;
+  gap: 2rem;
   margin: 0.8rem;
+  position: relative;
+
+  position: relative;
+  z-index: 1;
 `;
 
 function Toolbar() {

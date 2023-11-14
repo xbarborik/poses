@@ -4,21 +4,30 @@ import { getSelectedTool, selectTool } from "./toolbarSlice";
 
 const StyledToolButton = styled.button`
   font-size: 1.5rem;
-  border: "3px groove #4e4c4c44";
+
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
+
+  background-color: ${(props) => (props.$isActive ? "#fff" : "#bbbbbb")};
+
+  border: ${(props) =>
+    props.$isActive ? "4px solid #02a6ff" : "1px solid #fff"};
+
   :hover {
-    border-color: #f9f9f9;
+    color: #00aaff;
   }
 `;
 
 function ToolButton({ children, type }) {
   const dispatch = useDispatch();
-  const selectedTool = useSelector(getSelectedTool);
-  const isActive = selectedTool === type;
+  const selectedToolType = useSelector(getSelectedTool);
+  const isActive = selectedToolType === type;
 
   return (
     <StyledToolButton
       onClick={() => dispatch(selectTool(type))}
-      disabled={isActive}
+      $isActive={isActive}
     >
       {children}
     </StyledToolButton>

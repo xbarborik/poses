@@ -1,38 +1,64 @@
 import styled from "styled-components";
 import { Stage, Layer } from "react-konva";
-import { useSelector } from "react-redux";
-import { getColor } from "./canvasSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deselectObject,
+  getColor,
+  getSelectedObject,
+  selectObject,
+} from "./canvasSlice";
 import { getSelectedTool } from "../tools/toolbarSlice";
 import { useRef, useState } from "react";
-import { filterLastLine, outOfBounds } from "../../helpers";
+import { smoothLine, outOfBounds } from "../../helpers";
 import FreeHand from "../tools/FreeHand";
 import { updateFreeHand } from "../tools/freeHandUtils";
 import Arrow from "../tools/Arrow";
 import Line from "../tools/line";
+import Circle from "../tools/Circle";
 import { updateLine } from "../tools/lineUtils";
 import PoseImage from "./PoseImage";
 import CircleRotator from "../customShapes/circleRotator";
+import { updateCircle } from "../tools/circleUtils";
 
-const dimensions = { width: 1000, height: 720 };
+/* TODO
+ondragend update coords
+
+
+*/
+const dimensions = { width: 700, height: 720 };
 
 const StyledCanvas = styled.div`
   grid-area: canvas;
   border: 5px solid black;
-  width: 1000px;
+  width: 700px;
   height: 720px;
   background-color: white;
+
+  flex-grow: 1;
+  position: relative;
 `;
 
 function Canvas() {
   const [isDrawing, setIsDrawing] = useState(false);
-  const [objects, setObjects] = useState([]);
+  const [objects, setObjects] = useState({});
+  const [newObjectId, setNewObjectId] = useState("");
   const canvasRef = useRef(null);
-  const color = useSelector(getColor);
-  const tool = useSelector(getSelectedTool);
-  const isDraggable = tool === "grab";
+  const dispatch = useDispatch();
+  const selectedColor = useSelector(getColor);
+  const selectedTool = useSelector(getSelectedTool);
+  const selectedObject = useSelector(getSelectedObject);
+  const isDraggable = selectedTool === "grab";
+
+  //https://konvajs.org/docs/react/Transformer.html
+  function checkDeselect(e, selectedObjectId) {
+    // Deselect when clicked on empty area.
+    // if (e.target.id !== selectedObjectId) { triggers even on transformer
+    //   dispatch(deselectObject());
+    // }
+  }
 
   function handleStart(e) {
-    if (tool === "grab") return;
+    if (selectedTool === "grab") return;
 
     const position = e.target.getStage().getPointerPosition();
     if (
@@ -46,16 +72,40 @@ function Canvas() {
     }
 
     setIsDrawing(true);
-    const id = new Date().valueOf();
-
-    setObjects([
-      ...objects,
-      { id, color, type: tool, points: [position.x, position.y] },
-    ]);
+    const id = String(new Date().valueOf());
+    setNewObjectId(id);
+    switch (selectedTool) {
+      case "freeHand":
+      case "line":
+      case "arrow":
+        setObjects({
+          ...objects,
+          [id]: {
+            id,
+            color: selectedColor,
+            type: selectedTool,
+            points: [position.x, position.y],
+          },
+        });
+        break;
+      case "circle":
+        setObjects({
+          ...objects,
+          [id]: {
+            id,
+            color: selectedColor,
+            type: selectedTool,
+            points: [position.x, position.y],
+            width: 0,
+            height: 0,
+            radius: 0,
+          },
+        });
+    }
   }
 
   function handleMove(e) {
-    if (!isDrawing || tool === "grab") return;
+    if (!isDrawing || selectedTool === "grab") return;
 
     const position = e.target.getStage().getPointerPosition();
     if (
@@ -68,29 +118,44 @@ function Canvas() {
       return;
     }
 
-    if (tool === "freeHand")
-      updateFreeHand({
-        objects,
-        setObjects,
-        freeHand: objects.at(-1),
-        position,
-        color,
-      });
-    else if (tool === "line" || tool === "arrow")
-      updateLine({
-        objects,
-        setObjects,
-        line: objects.at(-1),
-        position,
-        color,
-      });
+    switch (selectedTool) {
+      case "freeHand":
+        updateFreeHand({
+          objects,
+          setObjects,
+          freeHand: objects[newObjectId],
+          position,
+          selectedColor,
+        });
+        break;
+      case "line":
+      case "arrow":
+        updateLine({
+          objects,
+          setObjects,
+          line: objects[newObjectId],
+          position,
+          selectedColor,
+        });
+        break;
+      case "circle":
+        updateCircle({
+          objects,
+          setObjects,
+          circle: objects[newObjectId],
+          position,
+          selectedColor,
+        });
+        break;
+    }
   }
 
   function handleEnd() {
     setIsDrawing(false);
     if (objects.length === 0) return;
 
-    if (tool === "freeHand") filterLastLine({ objects, setObjects, step: 4 });
+    if (selectedTool === "freeHand")
+      smoothLine({ objects, setObjects, id: newObjectId, step: 4 });
     console.log(objects);
   }
 
@@ -99,7 +164,10 @@ function Canvas() {
       <Stage
         width={dimensions.width}
         height={dimensions.height}
-        onMouseDown={handleStart}
+        onMouseDown={(e) => {
+          checkDeselect(e, objects[selectedObject.id]);
+          handleStart(e);
+        }}
         onMousemove={handleMove}
         onMouseup={handleEnd}
         onTouchStart={handleStart}
@@ -108,7 +176,7 @@ function Canvas() {
       >
         <Layer>
           <PoseImage />
-          {objects.map((object) => {
+          {Object.values(objects).map((object) => {
             if (object.type === "freeHand") {
               return (
                 <FreeHand
@@ -129,10 +197,23 @@ function Canvas() {
                   isDraggable={isDraggable}
                 />
               );
+            } else if (object.type === "circle") {
+              return (
+                <Circle
+                  key={object.id}
+                  circle={object}
+                  isDraggable={isDraggable}
+                  isSelected={selectedObject.id === object.id}
+                  onSelect={() => dispatch(selectObject(object))}
+                  onChange={(newCircle) => {
+                    setObjects({ ...objects, [object.id]: newCircle });
+                  }}
+                />
+              );
             }
             return null; // return null for objects with unsupported types
           })}
-          <CircleRotator x={800} y={600} arrowLength={40} />
+          <CircleRotator x={500} y={600} arrowLength={40} />
         </Layer>
       </Stage>
     </StyledCanvas>
