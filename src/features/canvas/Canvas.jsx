@@ -213,7 +213,7 @@ function Canvas() {
             }
             return null; // return null for objects with unsupported types
           })}
-          <CircleRotator x={500} y={600} arrowLength={40} />
+          {/* <CircleRotator x={500} y={600} arrowLength={40} /> */}
         </Layer>
       </Stage>
     </StyledCanvas>

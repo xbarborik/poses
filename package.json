@@ -1,8 +1,8 @@
 {
-  "homepage": "https://xbarborik.github.io/poses",
   "name": "poses",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://xbarborik.github.io/poses",
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",
