@@ -6,6 +6,8 @@ import AppLayout from "./ui/AppLayout";
 import TopBar from "./ui/TopBar";
 import Main from "./ui/Main";
 
+import warrior from "/images/warrior.png";
+
 function App() {
   return (
     <AppLayout>
@@ -13,6 +15,7 @@ function App() {
         <Palette />
       </TopBar>
       <Main>
+        <img src={warrior} />
         <Canvas />
         <Toolbar />
       </Main>
