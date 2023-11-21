@@ -15,8 +15,6 @@ function App() {
         <Palette />
       </TopBar>
       <Main>
-        <img src={warrior} />
-        <img src={"/images/warrior.png"} />
         <Canvas />
         <Toolbar />
       </Main>

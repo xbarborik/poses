@@ -1,10 +1,10 @@
 import { Image } from "react-konva";
 import useImage from "use-image";
 
-import warrior from "/images/warrior.png";
+// import warrior from ;
 
 function PoseImage() {
-  const [image] = useImage(warrior);
+  const [image] = useImage("/poses/images/warrior.png");
   return <Image image={image} />;
 }
 
