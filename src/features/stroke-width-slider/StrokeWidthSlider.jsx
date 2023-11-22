@@ -1,17 +1,18 @@
 import styled from "styled-components";
 import CustomSlider from "../../ui/Slider";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setStrokeWidth } from "./sliderSlice";
+import { getColor } from "../canvas/canvasSlice";
 
 const StyledStrokeWidthSlider = styled.div`
   flex-grow: 1;
-
   max-width: 200px;
 `;
 
 function StrokeWidthSlider({ defaultValue, ...props }) {
   const [value, setValue] = useState(defaultValue);
+  const color = useSelector(getColor);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -20,7 +21,7 @@ function StrokeWidthSlider({ defaultValue, ...props }) {
     }
 
     initialStrokeWidth();
-  }, []);
+  }, [dispatch, defaultValue]);
 
   function onChange(newValue) {
     setValue(newValue);
@@ -29,7 +30,12 @@ function StrokeWidthSlider({ defaultValue, ...props }) {
 
   return (
     <StyledStrokeWidthSlider>
-      <CustomSlider onChange={onChange} value={value} {...props} />
+      <CustomSlider
+        onChange={onChange}
+        value={value}
+        color={color}
+        {...props}
+      />
     </StyledStrokeWidthSlider>
   );
 }

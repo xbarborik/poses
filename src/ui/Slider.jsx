@@ -5,6 +5,13 @@ import { useState } from "react";
 // https://deadsimplechat.com/blog/react-slider-rc-slider-step-by-step-tutorial-with-examples/
 const trackHeightScale = 0.5;
 
+function calcOutline(value, minValue, maxValue) {
+  const range = maxValue - minValue;
+  const outlineWidth = Math.max(0, range - value);
+
+  return outlineWidth;
+}
+
 function CustomSlider({
   value,
   onChange,
@@ -12,25 +19,28 @@ function CustomSlider({
   maxValue = 0,
   color = "blue",
 }) {
+  const scale = 1.2;
+
   const styles = {
     handle: {
       backgroundColor: color,
       opacity: 1,
-      outline: `2px solid rgba(255,255,255,0.3)`,
-      border: "none",
+      outline: `${calcOutline(
+        value,
+        minValue,
+        maxValue,
+        scale
+      )}px solid rgba(255,255,255,0.3)`,
       cursor: "pointer",
-      height: value * 1.5,
-      width: value * 1.5,
+      border: "none",
+      boxShadow: "none",
+      boxSizing: "border-box",
+      height: value,
+      width: value,
       top: minValue * trackHeightScale ** 2,
       bottom: 0,
       margin: "auto 0",
       zIndex: 1,
-      boxShadow: "none !important",
-      touchAction: "none",
-      "::focus": {
-        outline: "none",
-        boxShadow: "none !important",
-      },
     },
 
     track: {
