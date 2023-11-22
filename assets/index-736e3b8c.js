@@ -197,7 +197,7 @@ For more info see: https://github.com/konvajs/react-konva/issues/194
   flex-direction: column;
   align-items: stretch;
   box-sizing: border-box;
-  height: 100dvh;
+  height: 95vh;
   overflow: hidden;
   width: 100vw;
   padding: 0.2rem;
