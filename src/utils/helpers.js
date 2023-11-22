@@ -21,3 +21,7 @@ export function outOfBounds({ position, startX = 1, endX, startY = 1, endY }) {
     return;
   }
 }
+
+export function mapPoints(x, y, width, height) {
+  return { x: x * width, y: y * height };
+}

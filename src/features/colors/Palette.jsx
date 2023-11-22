@@ -6,14 +6,16 @@ import { getSelectedTool } from "../tools/toolbarSlice";
 const StyledPalette = styled.div`
   grid-area: colors;
   display: flex;
+  flex-grow: 1;
   gap: 1rem;
-  padding: 0.8rem;
-  justify-content: end;
+  /* justify-content: space-evenly; */
+  justify-content: flex-end;
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
 `;
 
 function Palette() {
-  const tool = useSelector(getSelectedTool);
-
   return (
     <StyledPalette>
       <ColorButton color={"#FF0000"} />

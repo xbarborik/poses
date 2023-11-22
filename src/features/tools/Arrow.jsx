@@ -5,7 +5,7 @@ function Arrow({ arrow, isDraggable }) {
     <ArrowKonva
       points={arrow.points}
       stroke={arrow.color}
-      strokeWidth={5}
+      strokeWidth={arrow.strokeWidth}
       fill={arrow.color}
       tension={0.7}
       globalCompositeOperation={"source-over"}

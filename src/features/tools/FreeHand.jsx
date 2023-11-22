@@ -5,7 +5,7 @@ function FreeHand({ line, isDraggable }) {
     <Line
       points={line.points}
       stroke={line.color}
-      strokeWidth={5}
+      strokeWidth={line.strokeWidth}
       tension={0.7}
       lineCap="round"
       lineJoin="round"

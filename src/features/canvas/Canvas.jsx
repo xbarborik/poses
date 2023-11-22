@@ -4,12 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   deselectObject,
   getColor,
+  getIsDrawing,
   getSelectedObject,
   selectObject,
+  setIsDrawing,
 } from "./canvasSlice";
+import { getStrokeWidth } from "../stroke-width-slider/sliderSlice";
 import { getSelectedTool } from "../tools/toolbarSlice";
-import { useRef, useState } from "react";
-import { smoothLine, outOfBounds } from "../../helpers";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { smoothLine, outOfBounds } from "../../utils/helpers";
 import FreeHand from "../tools/FreeHand";
 import { updateFreeHand } from "../tools/freeHandUtils";
 import Arrow from "../tools/Arrow";
@@ -19,35 +22,38 @@ import { updateLine } from "../tools/lineUtils";
 import PoseImage from "./PoseImage";
 import CircleRotator from "../customShapes/circleRotator";
 import { updateCircle } from "../tools/circleUtils";
+import { useDimensions } from "./useDimensions";
 
 /* TODO
 ondragend update coords
 
 
 */
-const dimensions = { width: 700, height: 720 };
 
 const StyledCanvas = styled.div`
-  grid-area: canvas;
-  border: 5px solid black;
-  width: 700px;
-  height: 720px;
-  background-color: white;
+  display: block;
 
+  outline: 2px solid orange;
+  outline-offset: -1px;
   flex-grow: 1;
   position: relative;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
 `;
 
 function Canvas() {
-  const [isDrawing, setIsDrawing] = useState(false);
   const [objects, setObjects] = useState({});
   const [newObjectId, setNewObjectId] = useState("");
   const canvasRef = useRef(null);
   const dispatch = useDispatch();
+  const isDrawing = useSelector(getIsDrawing);
+  const strokeWidth = useSelector(getStrokeWidth);
   const selectedColor = useSelector(getColor);
   const selectedTool = useSelector(getSelectedTool);
   const selectedObject = useSelector(getSelectedObject);
-  const isDraggable = selectedTool === "grab";
+  const isDraggable = selectedTool == "none";
+  const dimensions = useDimensions(canvasRef);
 
   //https://konvajs.org/docs/react/Transformer.html
   function checkDeselect(e, selectedObjectId) {
@@ -58,9 +64,10 @@ function Canvas() {
   }
 
   function handleStart(e) {
-    if (selectedTool === "grab") return;
+    if (selectedTool === "none") return;
 
     const position = e.target.getStage().getPointerPosition();
+
     if (
       outOfBounds({
         position,
@@ -71,7 +78,8 @@ function Canvas() {
       return;
     }
 
-    setIsDrawing(true);
+    dispatch(setIsDrawing(true));
+
     const id = String(new Date().valueOf());
     setNewObjectId(id);
     switch (selectedTool) {
@@ -85,6 +93,7 @@ function Canvas() {
             color: selectedColor,
             type: selectedTool,
             points: [position.x, position.y],
+            strokeWidth: strokeWidth,
           },
         });
         break;
@@ -105,7 +114,7 @@ function Canvas() {
   }
 
   function handleMove(e) {
-    if (!isDrawing || selectedTool === "grab") return;
+    if (!isDrawing || selectedTool === "none") return;
 
     const position = e.target.getStage().getPointerPosition();
     if (
@@ -151,7 +160,7 @@ function Canvas() {
   }
 
   function handleEnd() {
-    setIsDrawing(false);
+    dispatch(setIsDrawing(false));
     if (objects.length === 0) return;
 
     if (selectedTool === "freeHand")
@@ -160,7 +169,7 @@ function Canvas() {
   }
 
   return (
-    <StyledCanvas ref={canvasRef}>
+    <StyledCanvas ref={canvasRef} id="canvas">
       <Stage
         width={dimensions.width}
         height={dimensions.height}
@@ -175,7 +184,7 @@ function Canvas() {
         onTouchEnd={handleEnd}
       >
         <Layer>
-          <PoseImage />
+          <PoseImage dimensions={dimensions} />
           {Object.values(objects).map((object) => {
             if (object.type === "freeHand") {
               return (

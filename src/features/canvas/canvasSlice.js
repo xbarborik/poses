@@ -5,6 +5,7 @@ const initialState = {
   color: "#FF0000",
   stageSize: { width: 0, height: 0 },
   selectedObject: { id: 0 },
+  isDrawing: false,
 };
 
 const canvasSlice = createSlice({
@@ -29,23 +30,29 @@ const canvasSlice = createSlice({
     deselectObject(state) {
       state.selectedObject = { id: 0 };
     },
+    setIsDrawing(state, action) {
+      state.isDrawing = action.payload;
+    },
   },
 });
 
 export const {
   // addObject,
   // removeObject,
-  // clearObjects,
+  clearObjects,
   setStageSize,
   selectColor,
   selectObject,
   deselectObject,
+  setIsDrawing,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
 
 export const getObjects = (state) => state.canvas.objects;
 
 export const getColor = (state) => state.canvas.color;
+
+export const getIsDrawing = (state) => state.canvas.isDrawing;
 
 export const getSelectedObject = (state) => state.canvas.selectedObject;
 
