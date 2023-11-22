@@ -53,7 +53,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
         draggable={isDraggable}
         onTransformEnd={onTransformEnd}
       />
-      {isSelected && <CustomTransformer trRef={trRef} />}
+      {isSelected && <CustomTransformer trRef={trRef} id={circle.id} />}
     </>
   );
 }

@@ -2,12 +2,16 @@ import { Transformer } from "react-konva";
 import { IoCloseOutline } from "react-icons/io5";
 import Button from "./Button";
 import { Html } from "react-konva-utils";
+import { useDispatch } from "react-redux";
+import { removeObject } from "../features/canvas/canvasSlice";
 
-function CustomTransformer({ trRef }) {
+function CustomTransformer({ trRef, id }) {
+  const dispatch = useDispatch();
+
   return (
     <>
       <Html>
-        <Button>
+        <Button onCLick={() => dispatch(removeObject(id))}>
           <IoCloseOutline />
         </Button>
       </Html>

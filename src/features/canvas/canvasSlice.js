@@ -17,7 +17,8 @@ const canvasSlice = createSlice({
       state.objects[action.payload.id] = action.payload;
     },
     removeObject(state, action) {
-      state.objects.filter((object) => object.id !== action.payload);
+      const id = action.payload;
+      delete state.objects[id];
     },
     clearObjects(state) {
       state.objects = [];

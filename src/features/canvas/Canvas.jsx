@@ -27,9 +27,10 @@ import { updateCircle } from "../tools/circleUtils";
 import { useDimensions } from "./useDimensions";
 
 /* TODO
-ondragend update coords
-
-
+ update coords based on resolution
+ transformator for line shapes
+ deselect transformator
+ navigation for images
 */
 
 const StyledCanvas = styled.div`
@@ -42,6 +43,7 @@ const StyledCanvas = styled.div`
   box-sizing: border-box;
   height: 100%;
   width: 100%;
+  overscroll-behavior: none;
 `;
 
 function Canvas() {
