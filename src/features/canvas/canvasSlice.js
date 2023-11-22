@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  objects: [{ type: "text", x: 100, y: 100, text: "Hello World" }],
+  objects: {},
   color: "#FF0000",
   stageSize: { width: 0, height: 0 },
   selectedObject: { id: 0 },
@@ -12,15 +12,16 @@ const canvasSlice = createSlice({
   name: "canvas",
   initialState,
   reducers: {
-    // addObject(state, action) {
-    //   state.objects.push(action.payload);
-    // },
-    // removeObject(state, action) {
-    //   state.objects.filter((object) => object.id !== action.payload);
-    // },
-    // clearObjects(state) {
-    //   state.objects = [];
-    // },
+    updateWithObject(state, action) {
+      console.log(action.payload.id);
+      state.objects[action.payload.id] = action.payload;
+    },
+    removeObject(state, action) {
+      state.objects.filter((object) => object.id !== action.payload);
+    },
+    clearObjects(state) {
+      state.objects = [];
+    },
     selectColor(state, action) {
       state.color = action.payload;
     },
@@ -37,8 +38,8 @@ const canvasSlice = createSlice({
 });
 
 export const {
-  // addObject,
-  // removeObject,
+  updateWithObject,
+  removeObject,
   clearObjects,
   setStageSize,
   selectColor,

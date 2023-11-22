@@ -6,8 +6,9 @@ const StyledNavigation = styled.div`
   display: flex;
   justify-content: space-between;
   width: 80%;
-  padding: 1rem;
+  padding: 0.5rem;
   margin: auto;
+  box-sizing: border-box;
 `;
 
 function Navigation() {

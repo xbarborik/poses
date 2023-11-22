@@ -14,8 +14,8 @@ const StyledColorButton = styled.button`
     props.$isActive ? "3px solid #fff" : "3px groove #4e4c4c44"};
 
   @media (max-width: 768px) {
-    width: 2rem;
-    height: 2rem;
+    width: 1.8rem;
+    height: 1.8rem;
   }
 `;
 

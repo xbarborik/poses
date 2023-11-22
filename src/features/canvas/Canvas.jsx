@@ -5,9 +5,11 @@ import {
   deselectObject,
   getColor,
   getIsDrawing,
+  getObjects,
   getSelectedObject,
   selectObject,
   setIsDrawing,
+  updateWithObject,
 } from "./canvasSlice";
 import { getStrokeWidth } from "../stroke-width-slider/sliderSlice";
 import { getSelectedTool } from "../tools/toolbarSlice";
@@ -43,10 +45,10 @@ const StyledCanvas = styled.div`
 `;
 
 function Canvas() {
-  const [objects, setObjects] = useState({});
   const [newObjectId, setNewObjectId] = useState("");
   const canvasRef = useRef(null);
   const dispatch = useDispatch();
+  const objects = useSelector(getObjects);
   const isDrawing = useSelector(getIsDrawing);
   const strokeWidth = useSelector(getStrokeWidth);
   const selectedColor = useSelector(getColor);
@@ -86,21 +88,19 @@ function Canvas() {
       case "freeHand":
       case "line":
       case "arrow":
-        setObjects({
-          ...objects,
-          [id]: {
+        dispatch(
+          updateWithObject({
             id,
             color: selectedColor,
             type: selectedTool,
             points: [position.x, position.y],
             strokeWidth: strokeWidth,
-          },
-        });
+          })
+        );
         break;
       case "circle":
-        setObjects({
-          ...objects,
-          [id]: {
+        dispatch(
+          updateWithObject({
             id,
             color: selectedColor,
             type: selectedTool,
@@ -108,8 +108,8 @@ function Canvas() {
             width: 0,
             height: 0,
             radius: 0,
-          },
-        });
+          })
+        );
     }
   }
 
@@ -130,18 +130,16 @@ function Canvas() {
     switch (selectedTool) {
       case "freeHand":
         updateFreeHand({
-          objects,
-          setObjects,
+          updateWithObject: (object) => dispatch(updateWithObject(object)),
           freeHand: objects[newObjectId],
           position,
-          selectedColor,
         });
         break;
       case "line":
       case "arrow":
         updateLine({
           objects,
-          setObjects,
+          updateWithObject: (object) => dispatch(updateWithObject(object)),
           line: objects[newObjectId],
           position,
           selectedColor,
@@ -150,7 +148,7 @@ function Canvas() {
       case "circle":
         updateCircle({
           objects,
-          setObjects,
+          updateWithObject: (object) => dispatch(updateWithObject(object)),
           circle: objects[newObjectId],
           position,
           selectedColor,
@@ -164,7 +162,12 @@ function Canvas() {
     if (objects.length === 0) return;
 
     if (selectedTool === "freeHand")
-      smoothLine({ objects, setObjects, id: newObjectId, step: 4 });
+      smoothLine({
+        objects,
+        updateWithObject: (object) => dispatch(updateWithObject(object)),
+        id: newObjectId,
+        step: 4,
+      });
     console.log(objects);
   }
 
@@ -215,7 +218,7 @@ function Canvas() {
                   isSelected={selectedObject.id === object.id}
                   onSelect={() => dispatch(selectObject(object))}
                   onChange={(newCircle) => {
-                    setObjects({ ...objects, [object.id]: newCircle });
+                    updateWithObject({ [object.id]: newCircle });
                   }}
                 />
               );

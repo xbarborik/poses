@@ -1,4 +1,6 @@
-export function updateFreeHand({ objects, setObjects, freeHand, position }) {
-  freeHand.points = freeHand.points.concat([position.x, position.y]);
-  setObjects({ ...objects, [freeHand.id]: { ...freeHand } });
+export function updateFreeHand({ updateWithObject, freeHand, position }) {
+  updateWithObject({
+    ...freeHand,
+    points: [...freeHand.points, position.x, position.y],
+  });
 }

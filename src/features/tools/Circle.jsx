@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 import { Circle as CircleKonva } from "react-konva";
 import CustomTransformer from "../../ui/CustomTransformer";
+import { useDispatch } from "react-redux";
 
 function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
   const shapeRef = useRef();
   const trRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isSelected) {
@@ -30,11 +32,16 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
     onChange(newCircle);
   }
 
+  // function onDelete() {
+  //   dispatch(dele);
+  // }
+
   return (
     <>
       <CircleKonva
         id={circle.id}
         onClick={onSelect}
+        onTouchStart={onSelect}
         ref={shapeRef}
         x={circle.points[0] + circle.width}
         y={circle.points[1] - circle.height}

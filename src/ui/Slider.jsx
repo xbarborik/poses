@@ -3,11 +3,11 @@ import "rc-slider/assets/index.css";
 import { useState } from "react";
 
 // https://deadsimplechat.com/blog/react-slider-rc-slider-step-by-step-tutorial-with-examples/
-const trackHeightScale = 0.5;
+const trackHeightScale = 0.9;
 
 function calcOutline(value, minValue, maxValue) {
-  const range = maxValue - minValue;
-  const outlineWidth = Math.max(0, range - value);
+  const ratio = (maxValue - value) / maxValue;
+  const outlineWidth = maxValue * ratio;
 
   return outlineWidth;
 }
@@ -35,9 +35,9 @@ function CustomSlider({
       border: "none",
       boxShadow: "none",
       boxSizing: "border-box",
-      height: value,
-      width: value,
-      top: minValue * trackHeightScale ** 2,
+      height: value * scale,
+      width: value * scale,
+      top: (minValue / 2) * trackHeightScale ** 2,
       bottom: 0,
       margin: "auto 0",
       zIndex: 1,

@@ -1,4 +1,4 @@
-export function updateCircle({ objects, setObjects, circle, position }) {
+export function updateCircle({ updateWithObject, circle, position }) {
   const [startX, startY] = circle.points;
   circle.points = [startX, startY, position.x, position.y];
 
@@ -6,5 +6,5 @@ export function updateCircle({ objects, setObjects, circle, position }) {
   let ydif = position.y - startY;
   circle.radius = Math.sqrt(xdif ** 2 + ydif ** 2);
 
-  setObjects({ ...objects, [circle.id]: { ...circle } });
+  updateWithObject(circle);
 }

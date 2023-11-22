@@ -15,7 +15,7 @@ function PoseImage({ dimensions }) {
       if (!image) return;
 
       const aspectRatio = image.width / image.height;
-      console.log(dimensions);
+
       let scaledWidth = dimensions.width;
       let scaledHeight = dimensions.width / aspectRatio;
 

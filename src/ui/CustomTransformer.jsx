@@ -1,8 +1,16 @@
 import { Transformer } from "react-konva";
+import { IoCloseOutline } from "react-icons/io5";
+import Button from "./Button";
+import { Html } from "react-konva-utils";
 
 function CustomTransformer({ trRef }) {
   return (
     <>
+      <Html>
+        <Button>
+          <IoCloseOutline />
+        </Button>
+      </Html>
       <Transformer
         ref={trRef}
         flipEnabled={false}

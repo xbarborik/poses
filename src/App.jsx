@@ -13,12 +13,7 @@ function App() {
   return (
     <AppLayout>
       <TopBar>
-        <StrokeWidthSlider
-          defaultValue={10}
-          minValue={4}
-          maxValue={16}
-          width="12rem"
-        />
+        <StrokeWidthSlider defaultValue={8} minValue={4} maxValue={16} />
         <Palette />
       </TopBar>
       <Main>

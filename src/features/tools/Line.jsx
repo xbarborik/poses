@@ -5,7 +5,7 @@ function Line({ line, isDraggable }) {
     <LineKonva
       points={line.points}
       stroke={line.color}
-      strokeWidth={5}
+      strokeWidth={line.strokeWidth}
       tension={0.7}
       globalCompositeOperation={"source-over"}
       draggable={isDraggable}
