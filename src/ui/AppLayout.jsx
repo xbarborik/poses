@@ -5,7 +5,7 @@ const StyledAppLayout = styled.div`
   flex-direction: column;
   align-items: stretch;
   box-sizing: border-box;
-  height: 100dvh;
+  height: 95vh;
   overflow: hidden;
   width: 100vw;
   padding: 0.2rem;
