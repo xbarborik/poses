@@ -7,6 +7,7 @@ function Line({ line, isDraggable, onDragEnd }) {
       stroke={line.color}
       strokeWidth={line.strokeWidth}
       tension={0.7}
+      lineCap="round"
       globalCompositeOperation={"source-over"}
       draggable={isDraggable}
       onDragEnd={onDragEnd}

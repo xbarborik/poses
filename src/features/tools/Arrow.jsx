@@ -8,6 +8,7 @@ function Arrow({ arrow, isDraggable, onDragEnd }) {
       strokeWidth={arrow.strokeWidth}
       fill={arrow.color}
       tension={0.7}
+      lineCap="round"
       globalCompositeOperation={"source-over"}
       draggable={isDraggable}
       pointerLength={20}
