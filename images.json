@@ -1,4 +1,5 @@
 [
-  { "id": 1, "path": "warrior.png" },
-  { "id": 2, "path": "locust.png" }
+  { "id": 1, "path": "warrior1.png" },
+  { "id": 2, "path": "warrior2.png" },
+  { "id": 3, "path": "locust.png" }
 ]
