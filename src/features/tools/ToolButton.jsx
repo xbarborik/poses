@@ -32,12 +32,12 @@ const StyledToolButton = styled.button`
     outline-width: 2px;
   }
 
-  @media only screen and (orientation: landscape) {
+  /* @media only screen and (orientation: landscape) {
     width: 2rem;
     height: 2rem;
     font-size: 1.5rem;
     outline-width: 2px;
-  }
+  } */
 `;
 
 function ToolButton({ children, type }) {
