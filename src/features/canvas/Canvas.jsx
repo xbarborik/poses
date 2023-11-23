@@ -38,6 +38,7 @@ const StyledCanvas = styled.div`
   height: 100%;
   width: 100%;
   overscroll-behavior: none;
+  background-color: #ffffffca;
 `;
 
 function Canvas() {
