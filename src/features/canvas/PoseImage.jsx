@@ -4,13 +4,13 @@ import useImage from "use-image";
 
 // import warrior from ;
 
-function PoseImage({ dimensions }) {
-  const [image] = useImage("/poses/images/" + "warrior.png");
+function PoseImage({ dimensions, imagePath }) {
+  const [image] = useImage("/poses/images/" + imagePath);
   const [scaledDimensions, setScaledDimensions] = useState({
     dimensions,
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     function calcSize() {
       if (!image) return;
 
@@ -23,12 +23,13 @@ function PoseImage({ dimensions }) {
         scaledHeight = dimensions.height;
         scaledWidth = dimensions.height * aspectRatio;
       }
-
+      console.log(imagePath);
       setScaledDimensions({ width: scaledWidth, height: scaledHeight });
     }
 
+    console.log(imagePath);
     calcSize();
-  }, [image, dimensions]);
+  }, [image, dimensions, imagePath]);
 
   return (
     <Image

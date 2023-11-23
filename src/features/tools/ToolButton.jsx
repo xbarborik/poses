@@ -9,8 +9,8 @@ const StyledToolButton = styled.button`
   justify-content: center;
   font-size: 2rem;
   border-radius: 50%;
-  width: 4rem;
-  height: 4rem;
+  width: 5rem;
+  height: 5rem;
   border: none;
   pointer-events: auto;
   background-color: ${(props) =>

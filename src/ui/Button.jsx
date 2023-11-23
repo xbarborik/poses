@@ -12,12 +12,12 @@ const StyledButton = styled.button`
   border-radius: 10px;
 
   &:hover {
-    background-color: "#fff";
+    background-color: #fff;
   }
 `;
 
-function Button({ children, onCLick }) {
-  return <StyledButton onClick={onCLick}>{children}</StyledButton>;
+function Button({ children, onClick }) {
+  return <StyledButton onClick={onClick}>{children}</StyledButton>;
 }
 
 export default Button;

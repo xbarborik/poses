@@ -46,7 +46,7 @@ const StyledCanvas = styled.div`
   overscroll-behavior: none;
 `;
 
-function Canvas() {
+function Canvas({ image }) {
   const [newObjectId, setNewObjectId] = useState("");
   const canvasRef = useRef(null);
   const dispatch = useDispatch();
@@ -189,7 +189,9 @@ function Canvas() {
         onTouchEnd={handleEnd}
       >
         <Layer>
-          <PoseImage dimensions={dimensions} />
+          {image && (
+            <PoseImage dimensions={dimensions} imagePath={image.path} />
+          )}
           {Object.values(objects).map((object) => {
             if (object.type === "freeHand") {
               return (

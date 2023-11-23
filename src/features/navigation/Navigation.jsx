@@ -11,13 +11,21 @@ const StyledNavigation = styled.div`
   box-sizing: border-box;
 `;
 
-function Navigation() {
+function Navigation({ index, setIndex, maxIndex }) {
+  function handleNext() {
+    if (index < maxIndex) setIndex((curIndex) => curIndex + 1);
+  }
+
+  function handlePrevious() {
+    if (index > 0) setIndex((curIndex) => curIndex - 1);
+  }
+
   return (
     <StyledNavigation>
-      <Button>
+      <Button onClick={handlePrevious}>
         <SlArrowLeft />
       </Button>
-      <Button>
+      <Button onClick={handleNext}>
         <SlArrowRight />
       </Button>
     </StyledNavigation>
