@@ -144,7 +144,7 @@ For more info see: https://github.com/konvajs/react-konva/issues/194
   background-color: ${t=>t.color};
   border: ${t=>t.$isActive?"3px solid #fff":"3px groove #4e4c4c44"};
 
-  @media (max-width: 768px) {
+  @media only screen and (max-width: 768px) {
     width: 1.8rem;
     height: 1.8rem;
   }
@@ -155,7 +155,7 @@ For more info see: https://github.com/konvajs/react-konva/issues/194
   gap: 1rem;
   /* justify-content: space-evenly; */
   justify-content: flex-end;
-  @media (max-width: 768px) {
+  @media only screen and (max-width: 768px) {
     gap: 0.5rem;
   }
 `;function aR(){return ie.jsxs(iR,{children:[ie.jsx(Fo,{color:"#FF0000"}),ie.jsx(Fo,{color:"#000000"}),ie.jsx(Fo,{color:"#ffffff"}),ie.jsx(Fo,{color:"#1133e0"}),ie.jsx(Fo,{color:"#f8f400"}),ie.jsx(Fo,{color:"#2fe900"})]})}function oR(t){return _i({tag:"svg",attr:{viewBox:"0 0 24 24",strokeWidth:"2",stroke:"currentColor",fill:"none",strokeLinecap:"round",strokeLinejoin:"round"},child:[{tag:"path",attr:{stroke:"none",d:"M0 0h24v24H0z",fill:"none"}},{tag:"path",attr:{d:"M3 15c2 3 4 4 7 4s7 -3 7 -7s-3 -7 -6 -7s-5 1.5 -5 4s2 5 6 5s8.408 -2.453 10 -5"}}]})(t)}function sR(t){return _i({tag:"svg",attr:{viewBox:"0 0 24 24"},child:[{tag:"path",attr:{d:"M2 12.75a.75.75 0 0 1 .75-.75h18.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z"}}]})(t)}function lR(t){return _i({tag:"svg",attr:{fill:"currentColor",viewBox:"0 0 16 16"},child:[{tag:"path",attr:{fillRule:"evenodd",d:"M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"}}]})(t)}function uR(t){return _i({tag:"svg",attr:{fill:"currentColor",viewBox:"0 0 16 16"},child:[{tag:"path",attr:{d:"M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"}}]})(t)}const cR=dn.button`
@@ -174,14 +174,21 @@ For more info see: https://github.com/konvajs/react-konva/issues/194
   margin-right: 0.5rem;
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     background-color: "#fff";
   }
 
-  @media (max-width: 768px) or (orientation: landscape) {
-    width: 2.5rem;
-    height: 2.5rem;
+  @media only screen and (max-width: 768px) {
+    width: 3.5rem;
+    height: 3.5rem;
     font-size: 2rem;
+    outline-width: 2px;
+  }
+
+  @media only screen and (orientation: landscape) {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
     outline-width: 2px;
   }
 `;function $c({children:t,type:e}){const n=lo(),r=tn(c9),i=tn(Rh),s=r===e;function l(){n(e4(s?"none":e))}return ie.jsx(cR,{onClick:l,$isActive:s,$color:i,children:t})}const dR=dn.div`
@@ -253,8 +260,9 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     justify-content: center;
     font-size: 2rem;
     border-radius: 50%;
-    width: 5rem;
-    height: 5rem;
+    width: 4rem;
+    height: 4rem;
+
     border: none;
     pointer-events: auto;
 
