@@ -26,8 +26,8 @@ const StyledToolButton = styled.button`
   }
 
   @media (max-width: 768px) or (orientation: landscape) {
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
     font-size: 2rem;
     outline-width: 2px;
   }
