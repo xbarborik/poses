@@ -5,7 +5,8 @@ const StyledTopBar = styled.div`
   width: 99%;
   display: flex;
   margin: 0 auto;
-  padding: 0.5rem 0;
+  padding: 0.2rem 0;
+  box-sizing: border-box;
   align-items: center;
   justify-content: flex-end;
   gap: 0.1rem;

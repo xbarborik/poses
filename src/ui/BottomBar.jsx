@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const StyledBottomBar = styled.div`
-  flex-grow: 2;
+  flex-grow: 1;
   width: 100%;
 `;
 
