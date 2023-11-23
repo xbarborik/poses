@@ -7,8 +7,10 @@ import { getColor } from "../canvas/canvasSlice";
 
 const StyledStrokeWidthSlider = styled.div`
   flex-grow: 2;
-  max-width: 200px;
+  max-width: 250px;
+  min-width: 150px;
   padding: 0 1rem;
+  margin-left: auto;
 `;
 
 function StrokeWidthSlider({ defaultValue, ...props }) {

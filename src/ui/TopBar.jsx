@@ -7,9 +7,12 @@ const StyledTopBar = styled.div`
   margin: 0 auto;
   padding: 0.5rem 0;
   align-items: center;
-  /* flex-direction: column; */
   justify-content: flex-end;
   gap: 0.1rem;
+
+  @media only screen and (max-width: 768px) {
+    /* flex-direction: column; */
+  }
 `;
 
 function TopBar({ children }) {
