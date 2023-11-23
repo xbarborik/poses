@@ -21,14 +21,21 @@ const StyledToolButton = styled.button`
   margin-right: 0.5rem;
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     background-color: "#fff";
   }
 
-  @media (max-width: 768px) or (orientation: landscape) {
-    width: 2.5rem;
-    height: 2.5rem;
+  @media only screen and (max-width: 768px) {
+    width: 3.5rem;
+    height: 3.5rem;
     font-size: 2rem;
+    outline-width: 2px;
+  }
+
+  @media only screen and (orientation: landscape) {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.5rem;
     outline-width: 2px;
   }
 `;
