@@ -1,12 +1,10 @@
 import { useEffect, useRef } from "react";
 import { Circle as CircleKonva } from "react-konva";
 import CustomTransformer from "../../ui/CustomTransformer";
-import { useDispatch } from "react-redux";
 
 function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
   const shapeRef = useRef();
   const trRef = useRef();
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isSelected) {
@@ -19,7 +17,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
   function onTransformEnd() {
     const node = shapeRef.current;
     const scaleX = node.scaleX();
-    const scaleY = node.scaleY();
+    // const scaleY = node.scaleY();
 
     node.scaleX(1);
     node.scaleY(1);
@@ -30,6 +28,12 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
     };
 
     onChange(newCircle);
+  }
+
+  function handleDragEnd(e) {
+    const pos = e.target.position(); // topLeft
+
+    onChange({ ...circle, points: [pos.x, pos.y] });
   }
 
   // function onDelete() {
@@ -51,7 +55,9 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
         radius={circle.radius}
         stroke={circle.color}
         draggable={isDraggable}
+        strokeScaleEnabled={false}
         onTransformEnd={onTransformEnd}
+        onDragEnd={(e) => handleDragEnd(e)}
       />
       {isSelected && <CustomTransformer trRef={trRef} id={circle.id} />}
     </>

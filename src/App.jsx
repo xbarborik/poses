@@ -9,43 +9,45 @@ import BottomBar from "./ui/BottomBar";
 import Navigation from "./features/navigation/Navigation";
 import StrokeWidthSlider from "./features/stroke-width-slider/StrokeWidthSlider";
 import UndoRedo from "./features/history/UndoRedo";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getIsLoading,
+  setImages,
+  setIsLoading,
+} from "./features/canvas/canvasSlice";
 
 function App() {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [images, setImages] = useState([]);
+  const dispatch = useDispatch();
+  const isLoading = useSelector(getIsLoading);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch("/poses/images.json");
         const data = await response.json();
-        setImages(data);
+        dispatch(setImages(data));
       } catch (error) {
         console.error("Error fetching or parsing JSON:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [dispatch]);
 
   return (
     <AppLayout>
       <TopBar>
         <UndoRedo />
-        <StrokeWidthSlider defaultValue={8} minValue={4} maxValue={16} />
         <Palette />
       </TopBar>
+      <StrokeWidthSlider defaultValue={8} minValue={4} maxValue={16} />
       <Main>
-        <Canvas image={images[currentImageIndex]} />
+        {!isLoading && <Canvas />}
         <Toolbar />
       </Main>
       <BottomBar>
-        <Navigation
-          index={currentImageIndex}
-          setIndex={setCurrentImageIndex}
-          maxIndex={1}
-        />
+        <Navigation />
       </BottomBar>
     </AppLayout>
   );

@@ -4,7 +4,7 @@ const StyledButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #bbbbbb;
+  background-color: ${(props) => props.color || "#bbbbbb"};
   width: 4rem;
   height: 3rem;
   border: none;
@@ -13,6 +13,10 @@ const StyledButton = styled.button`
 
   &:hover {
     background-color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.6;
   }
 `;
 

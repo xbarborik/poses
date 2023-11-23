@@ -1,6 +1,6 @@
 import { Line } from "react-konva";
 
-function FreeHand({ line, isDraggable }) {
+function FreeHand({ line, isDraggable, onDragEnd }) {
   return (
     <Line
       points={line.points}
@@ -11,6 +11,7 @@ function FreeHand({ line, isDraggable }) {
       lineJoin="round"
       globalCompositeOperation={"source-over"}
       draggable={isDraggable}
+      onDragEnd={onDragEnd}
     />
   );
 }

@@ -1,6 +1,6 @@
 import { Arrow as ArrowKonva } from "react-konva";
 
-function Arrow({ arrow, isDraggable }) {
+function Arrow({ arrow, isDraggable, onDragEnd }) {
   return (
     <ArrowKonva
       points={arrow.points}
@@ -12,6 +12,7 @@ function Arrow({ arrow, isDraggable }) {
       draggable={isDraggable}
       pointerLength={20}
       pointerWidth={20}
+      onDragEnd={onDragEnd}
     />
   );
 }

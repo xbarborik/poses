@@ -5,6 +5,7 @@ import {
   deselectObject,
   getColor,
   getIsDrawing,
+  getIsLoading,
   getObjects,
   getSelectedObject,
   selectObject,
@@ -26,13 +27,6 @@ import CircleRotator from "../customShapes/circleRotator";
 import { updateCircle } from "../tools/circleUtils";
 import { useDimensions } from "./useDimensions";
 
-/* TODO
- update coords based on resolution
- transformator for line shapes
- deselect transformator
- navigation for images
-*/
-
 const StyledCanvas = styled.div`
   display: block;
 
@@ -46,10 +40,11 @@ const StyledCanvas = styled.div`
   overscroll-behavior: none;
 `;
 
-function Canvas({ image }) {
+function Canvas() {
   const [newObjectId, setNewObjectId] = useState("");
   const canvasRef = useRef(null);
   const dispatch = useDispatch();
+  const isLoading = useSelector(getIsLoading);
   const objects = useSelector(getObjects);
   const isDrawing = useSelector(getIsDrawing);
   const strokeWidth = useSelector(getStrokeWidth);
@@ -161,7 +156,7 @@ function Canvas({ image }) {
 
   function handleEnd() {
     dispatch(setIsDrawing(false));
-    if (objects.length === 0) return;
+    if (!objects) return;
 
     if (selectedTool === "freeHand")
       smoothLine({
@@ -170,68 +165,72 @@ function Canvas({ image }) {
         id: newObjectId,
         step: 4,
       });
-    console.log(objects);
+    // console.log(objects);
   }
 
   return (
     <StyledCanvas ref={canvasRef} id="canvas">
-      <Stage
-        width={dimensions.width}
-        height={dimensions.height}
-        onMouseDown={(e) => {
-          checkDeselect(e, objects[selectedObject.id]);
-          handleStart(e);
-        }}
-        onMousemove={handleMove}
-        onMouseup={handleEnd}
-        onTouchStart={handleStart}
-        onTouchMove={handleMove}
-        onTouchEnd={handleEnd}
-      >
-        <Layer>
-          {image && (
-            <PoseImage dimensions={dimensions} imagePath={image.path} />
-          )}
-          {Object.values(objects).map((object) => {
-            if (object.type === "freeHand") {
-              return (
-                <FreeHand
-                  key={object.id}
-                  line={object}
-                  isDraggable={isDraggable}
-                />
-              );
-            } else if (object.type === "line") {
-              return (
-                <Line key={object.id} line={object} isDraggable={isDraggable} />
-              );
-            } else if (object.type === "arrow") {
-              return (
-                <Arrow
-                  key={object.id}
-                  arrow={object}
-                  isDraggable={isDraggable}
-                />
-              );
-            } else if (object.type === "circle") {
-              return (
-                <Circle
-                  key={object.id}
-                  circle={object}
-                  isDraggable={isDraggable}
-                  isSelected={selectedObject.id === object.id}
-                  onSelect={() => dispatch(selectObject(object))}
-                  onChange={(newCircle) => {
-                    updateWithObject({ [object.id]: newCircle });
-                  }}
-                />
-              );
-            }
-            return null; // return null for objects with unsupported types
-          })}
-          {/* <CircleRotator x={500} y={600} arrowLength={40} /> */}
-        </Layer>
-      </Stage>
+      {!isLoading && objects && (
+        <Stage
+          width={dimensions.width}
+          height={dimensions.height}
+          onMouseDown={(e) => {
+            checkDeselect(e, objects[selectedObject.id]);
+            handleStart(e);
+          }}
+          onMousemove={handleMove}
+          onMouseup={handleEnd}
+          onTouchStart={handleStart}
+          onTouchMove={handleMove}
+          onTouchEnd={handleEnd}
+        >
+          <Layer>
+            <PoseImage dimensions={dimensions} />
+            {Object.values(objects).map((object) => {
+              if (object.type === "freeHand") {
+                return (
+                  <FreeHand
+                    key={object.id}
+                    line={object}
+                    isDraggable={isDraggable}
+                  />
+                );
+              } else if (object.type === "line") {
+                return (
+                  <Line
+                    key={object.id}
+                    line={object}
+                    isDraggable={isDraggable}
+                  />
+                );
+              } else if (object.type === "arrow") {
+                return (
+                  <Arrow
+                    key={object.id}
+                    arrow={object}
+                    isDraggable={isDraggable}
+                  />
+                );
+              } else if (object.type === "circle") {
+                return (
+                  <Circle
+                    key={object.id}
+                    circle={object}
+                    isDraggable={isDraggable}
+                    isSelected={selectedObject.id === object.id}
+                    onSelect={() => dispatch(selectObject(object))}
+                    onChange={(newCircle) => {
+                      dispatch(updateWithObject(newCircle));
+                    }}
+                  />
+                );
+              }
+              return null; // return null for objects with unsupported types
+            })}
+            {/* <CircleRotator x={500} y={600} arrowLength={40} /> */}
+          </Layer>
+        </Stage>
+      )}
     </StyledCanvas>
   );
 }

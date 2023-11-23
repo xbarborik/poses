@@ -1,6 +1,12 @@
 import styled from "styled-components";
 import Button from "../../ui/Button";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getCurrentImageIndx,
+  getImagesCount,
+  setCurrentImageIndx,
+} from "../canvas/canvasSlice";
 
 const StyledNavigation = styled.div`
   display: flex;
@@ -11,21 +17,27 @@ const StyledNavigation = styled.div`
   box-sizing: border-box;
 `;
 
-function Navigation({ index, setIndex, maxIndex }) {
+function Navigation() {
+  const index = useSelector(getCurrentImageIndx);
+  const maxIndex = useSelector(getImagesCount) - 1;
+  const dispatch = useDispatch();
+  const setIndex = (index) => dispatch(setCurrentImageIndx(index));
+
   function handleNext() {
-    if (index < maxIndex) setIndex((curIndex) => curIndex + 1);
+    if (index < maxIndex) setIndex(index + 1);
   }
 
   function handlePrevious() {
-    if (index > 0) setIndex((curIndex) => curIndex - 1);
+    if (index > 0) setIndex(index - 1);
   }
 
   return (
     <StyledNavigation>
-      <Button onClick={handlePrevious}>
+      <Button onClick={handlePrevious} disabled={index === 0}>
         <SlArrowLeft />
       </Button>
-      <Button onClick={handleNext}>
+
+      <Button onClick={handleNext} disabled={index === maxIndex}>
         <SlArrowRight />
       </Button>
     </StyledNavigation>

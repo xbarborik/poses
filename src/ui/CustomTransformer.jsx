@@ -1,4 +1,4 @@
-import { Transformer } from "react-konva";
+import { Group, Transformer } from "react-konva";
 import { IoCloseOutline } from "react-icons/io5";
 import Button from "./Button";
 import { Html } from "react-konva-utils";
@@ -9,9 +9,9 @@ function CustomTransformer({ trRef, id }) {
   const dispatch = useDispatch();
 
   return (
-    <>
+    <Group>
       <Html>
-        <Button onCLick={() => dispatch(removeObject(id))}>
+        <Button onClick={() => dispatch(removeObject(id))} $color={"red"}>
           <IoCloseOutline />
         </Button>
       </Html>
@@ -21,15 +21,8 @@ function CustomTransformer({ trRef, id }) {
         centeredScaling={true}
         enabledAnchors={["bottom-right"]}
         rotateEnabled={false}
-        boundBoxFunc={(oldBox, newBox) => {
-          // limit resize
-          if (Math.abs(newBox.width) < 5 || Math.abs(newBox.height) < 5) {
-            return oldBox;
-          }
-          return newBox;
-        }}
       />
-    </>
+    </Group>
   );
 }
 

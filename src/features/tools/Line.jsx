@@ -1,6 +1,6 @@
 import { Line as LineKonva } from "react-konva";
 
-function Line({ line, isDraggable }) {
+function Line({ line, isDraggable, onDragEnd }) {
   return (
     <LineKonva
       points={line.points}
@@ -9,6 +9,7 @@ function Line({ line, isDraggable }) {
       tension={0.7}
       globalCompositeOperation={"source-over"}
       draggable={isDraggable}
+      onDragEnd={onDragEnd}
     />
   );
 }

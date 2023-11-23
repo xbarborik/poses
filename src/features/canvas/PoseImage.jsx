@@ -1,11 +1,14 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Image } from "react-konva";
+import { useSelector } from "react-redux";
 import useImage from "use-image";
+import { getCurrentImage } from "./canvasSlice";
 
 // import warrior from ;
 
-function PoseImage({ dimensions, imagePath }) {
-  const [image] = useImage("/poses/images/" + imagePath);
+function PoseImage({ dimensions }) {
+  const imageData = useSelector(getCurrentImage);
+  const [image] = useImage("/poses/images/" + imageData?.path);
   const [scaledDimensions, setScaledDimensions] = useState({
     dimensions,
   });
@@ -23,13 +26,12 @@ function PoseImage({ dimensions, imagePath }) {
         scaledHeight = dimensions.height;
         scaledWidth = dimensions.height * aspectRatio;
       }
-      console.log(imagePath);
+
       setScaledDimensions({ width: scaledWidth, height: scaledHeight });
     }
 
-    console.log(imagePath);
     calcSize();
-  }, [image, dimensions, imagePath]);
+  }, [image, dimensions]);
 
   return (
     <Image

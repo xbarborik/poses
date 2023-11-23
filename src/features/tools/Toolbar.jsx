@@ -1,4 +1,3 @@
-import { FaEraser } from "react-icons/fa";
 import { TbScribble } from "react-icons/tb";
 import { GoHorizontalRule } from "react-icons/go";
 import { BsCircle, BsArrowUp } from "react-icons/bs";
@@ -22,10 +21,10 @@ const StyledToolBar = styled.div`
 `;
 
 function Toolbar() {
-  const show = !useSelector(getIsDrawing);
+  const isDrawing = useSelector(getIsDrawing);
 
   return (
-    show && (
+    !isDrawing && (
       <StyledToolBar>
         <ToolButton type={"freeHand"}>
           <TbScribble />

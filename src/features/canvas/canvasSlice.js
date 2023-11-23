@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  objects: {},
+  isLoading: false,
+  images: [], // {id: null, path: , objects: {}}
+  currentImageIndx: 0,
   color: "#FF0000",
   stageSize: { width: 0, height: 0 },
   selectedObject: { id: 0 },
@@ -12,16 +14,25 @@ const canvasSlice = createSlice({
   name: "canvas",
   initialState,
   reducers: {
+    setIsLoading(state) {
+      state.isLoading = true;
+    },
+    setCurrentImageIndx(state, action) {
+      state.currentImageIndx = action.payload;
+    },
+    setImages(state, action) {
+      state.images = action.payload.map((image) => ({ ...image, objects: {} }));
+      state.isLoading = false;
+    },
     updateWithObject(state, action) {
-      console.log(action.payload.id);
-      state.objects[action.payload.id] = action.payload;
+      state.images[state.currentImageIndx].objects[action.payload.id] =
+        action.payload;
     },
     removeObject(state, action) {
-      const id = action.payload;
-      delete state.objects[id];
+      delete state.images[state.currentImageIndx].objects[action.payload];
     },
     clearObjects(state) {
-      state.objects = [];
+      state.images[state.currentImageIndx].objects = {};
     },
     selectColor(state, action) {
       state.color = action.payload;
@@ -39,6 +50,9 @@ const canvasSlice = createSlice({
 });
 
 export const {
+  setIsLoading,
+  setImages,
+  setCurrentImageIndx,
   updateWithObject,
   removeObject,
   clearObjects,
@@ -50,7 +64,17 @@ export const {
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
 
-export const getObjects = (state) => state.canvas.objects;
+export const getIsLoading = (state) => state.canvas.isLoading;
+
+export const getImagesCount = (state) => state.canvas.images.length;
+
+export const getCurrentImage = (state) =>
+  state.canvas.images.at(state.canvas.currentImageIndx);
+
+export const getCurrentImageIndx = (state) => state.canvas.currentImageIndx;
+
+export const getObjects = (state) =>
+  state.canvas.images[state.canvas.currentImageIndx]?.objects;
 
 export const getColor = (state) => state.canvas.color;
 
