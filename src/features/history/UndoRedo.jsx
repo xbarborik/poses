@@ -14,8 +14,9 @@ const HistoryControlButton = styled(Button)`
     justify-content: center;
     font-size: 2rem;
     border-radius: 50%;
-    width: 5rem;
-    height: 5rem;
+    width: 4rem;
+    height: 4rem;
+
     border: none;
     pointer-events: auto;
 

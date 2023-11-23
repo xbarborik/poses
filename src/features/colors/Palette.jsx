@@ -10,7 +10,7 @@ const StyledPalette = styled.div`
   gap: 1rem;
   /* justify-content: space-evenly; */
   justify-content: flex-end;
-  @media (max-width: 768px) {
+  @media only screen and (max-width: 768px) {
     gap: 0.5rem;
   }
 `;
