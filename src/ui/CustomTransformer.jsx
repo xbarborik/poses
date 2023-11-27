@@ -5,13 +5,13 @@ import { Html } from "react-konva-utils";
 import { useDispatch } from "react-redux";
 import { removeObject } from "../features/canvas/canvasSlice";
 
-function CustomTransformer({ trRef, id }) {
+function CustomTransformer({ trRef, objectId }) {
   const dispatch = useDispatch();
 
   return (
     <Group>
       <Html>
-        <Button onClick={() => dispatch(removeObject(id))} $color={"red"}>
+        <Button onClick={() => dispatch(removeObject(objectId))} $color={"red"}>
           <IoCloseOutline />
         </Button>
       </Html>

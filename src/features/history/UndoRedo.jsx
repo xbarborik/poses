@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import Button from "../../ui/Button";
 import { LiaUndoSolid, LiaRedoSolid } from "react-icons/lia";
+import { useDispatch } from "react-redux";
+import { redo, undo } from "../canvas/canvasSlice";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -35,12 +37,14 @@ const HistoryControlButton = styled.button`
 `;
 
 function UndoRedo() {
+  const dispatch = useDispatch();
+
   return (
     <StyledContainer>
-      <HistoryControlButton>
+      <HistoryControlButton onClick={() => dispatch(undo())}>
         <LiaUndoSolid />
       </HistoryControlButton>
-      <HistoryControlButton>
+      <HistoryControlButton onClick={() => dispatch(redo())}>
         <LiaRedoSolid />
       </HistoryControlButton>
     </StyledContainer>

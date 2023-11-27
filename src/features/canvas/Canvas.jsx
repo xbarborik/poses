@@ -10,6 +10,7 @@ import {
   getSelectedObject,
   selectObject,
   setIsDrawing,
+  updateHistory,
   updateWithObject,
 } from "./canvasSlice";
 import { getStrokeWidth } from "../stroke-width-slider/sliderSlice";
@@ -56,16 +57,16 @@ function Canvas() {
   const dimensions = useDimensions(canvasRef);
 
   //https://konvajs.org/docs/react/Transformer.html
-  function checkDeselect(e, selectedObjectId) {
-    // Deselect when clicked on empty area.
-    // if (e.target.id !== selectedObjectId) { triggers even on transformer
-    //   dispatch(deselectObject());
-    // }
+  function checkDeselect(e) {
+    const clickedOnEmpty =
+      e.target === e.target.getStage() || e.target.id() !== selectObject?.id;
+    if (clickedOnEmpty) {
+      dispatch(deselectObject());
+    }
   }
 
   function handleStart(e) {
     if (selectedTool === "none") return;
-
     const position = e.target.getStage().getPointerPosition();
 
     if (
@@ -78,6 +79,7 @@ function Canvas() {
       return;
     }
 
+    dispatch(updateHistory());
     dispatch(setIsDrawing(true));
 
     const id = String(new Date().valueOf());
@@ -103,6 +105,7 @@ function Canvas() {
             color: selectedColor,
             type: selectedTool,
             points: [position.x, position.y],
+            strokeWidth: strokeWidth,
             width: 0,
             height: 0,
             radius: 0,
@@ -176,7 +179,6 @@ function Canvas() {
           width={dimensions.width}
           height={dimensions.height}
           onMouseDown={(e) => {
-            checkDeselect(e, objects[selectedObject.id]);
             handleStart(e);
           }}
           onMousemove={handleMove}
@@ -184,6 +186,7 @@ function Canvas() {
           onTouchStart={handleStart}
           onTouchMove={handleMove}
           onTouchEnd={handleEnd}
+          onClick={checkDeselect}
         >
           <Layer>
             <PoseImage dimensions={dimensions} />
@@ -202,6 +205,8 @@ function Canvas() {
                     key={object.id}
                     line={object}
                     isDraggable={isDraggable}
+                    isSelected={selectedObject?.id === object.id}
+                    onSelect={() => dispatch(selectObject(object))}
                   />
                 );
               } else if (object.type === "arrow") {
@@ -210,6 +215,8 @@ function Canvas() {
                     key={object.id}
                     arrow={object}
                     isDraggable={isDraggable}
+                    isSelected={selectedObject?.id === object.id}
+                    onSelect={() => dispatch(selectObject(object))}
                   />
                 );
               } else if (object.type === "circle") {
@@ -218,7 +225,7 @@ function Canvas() {
                     key={object.id}
                     circle={object}
                     isDraggable={isDraggable}
-                    isSelected={selectedObject.id === object.id}
+                    isSelected={selectedObject?.id === object.id}
                     onSelect={() => dispatch(selectObject(object))}
                     onChange={(newCircle) => {
                       dispatch(updateWithObject(newCircle));

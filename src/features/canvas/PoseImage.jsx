@@ -40,6 +40,7 @@ function PoseImage({ dimensions }) {
       y={dimensions.height / 2 - scaledDimensions.height / 2 || 0}
       width={scaledDimensions.width}
       height={scaledDimensions.height}
+      listening={false}
       // preventDefault={false} set false to allow scroll/zoom
     />
   );

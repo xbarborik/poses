@@ -1,10 +1,13 @@
 import { useEffect, useRef } from "react";
 import { Circle as CircleKonva } from "react-konva";
 import CustomTransformer from "../../ui/CustomTransformer";
+import { useDispatch } from "react-redux";
+import { updateHistory } from "../canvas/canvasSlice";
 
 function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
   const shapeRef = useRef();
   const trRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isSelected) {
@@ -36,30 +39,28 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
     onChange({ ...circle, points: [pos.x, pos.y] });
   }
 
-  // function onDelete() {
-  //   dispatch(dele);
-  // }
-
   return (
     <>
       <CircleKonva
         id={circle.id}
-        onClick={onSelect}
-        onTouchStart={onSelect}
         ref={shapeRef}
         x={circle.points[0] + circle.width}
         y={circle.points[1] - circle.height}
-        // width={circle.width}
-        // height={circle.height}
-        strokeWidth={5}
         radius={circle.radius}
         stroke={circle.color}
-        draggable={isDraggable}
+        strokeWidth={circle.strokeWidth}
+        // width={circle.width}
+        // height={circle.height}
         strokeScaleEnabled={false}
+        onTouchStart={onSelect}
+        onClick={onSelect}
+        draggable={isDraggable}
+        onTransformStart={() => dispatch(updateHistory())}
         onTransformEnd={onTransformEnd}
+        onDragStart={() => dispatch(updateHistory())}
         onDragEnd={(e) => handleDragEnd(e)}
       />
-      {isSelected && <CustomTransformer trRef={trRef} id={circle.id} />}
+      {isSelected && <CustomTransformer trRef={trRef} objectId={circle.id} />}
     </>
   );
 }

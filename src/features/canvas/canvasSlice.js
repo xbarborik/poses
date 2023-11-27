@@ -3,10 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isLoading: false,
   images: [], // {id: null, path: , objects: {}}
+  currentImage: {},
   currentImageIndx: 0,
   color: "#FF0000",
   stageSize: { width: 0, height: 0 },
-  selectedObject: { id: 0 },
+  selectedObject: { id: null },
   isDrawing: false,
 };
 
@@ -21,15 +22,46 @@ const canvasSlice = createSlice({
       state.currentImageIndx = action.payload;
     },
     setImages(state, action) {
-      state.images = action.payload.map((image) => ({ ...image, objects: {} }));
+      state.images = action.payload.map((image) => ({
+        ...image,
+        pastObjects: [],
+        objects: {},
+        futureObjects: [],
+      }));
       state.isLoading = false;
     },
     updateWithObject(state, action) {
+      // state.images[state.currentImageIndx].futureObjects = [];
+
       state.images[state.currentImageIndx].objects[action.payload.id] =
         action.payload;
     },
+    updateHistory(state) {
+      const objects = state.images[state.currentImageIndx].objects;
+      state.images[state.currentImageIndx].pastObjects.push(objects);
+    },
     removeObject(state, action) {
+      const objects = { ...state.images[state.currentImageIndx].objects };
+      state.images[state.currentImageIndx].pastObjects.push(objects);
       delete state.images[state.currentImageIndx].objects[action.payload];
+      state.images[state.currentImageIndx].futureObjects = [];
+    },
+    undo(state) {
+      const previous = state.images[state.currentImageIndx].pastObjects.pop();
+      if (previous) {
+        const objects = state.images[state.currentImageIndx].objects;
+        state.images[state.currentImageIndx].futureObjects.push(objects);
+        state.images[state.currentImageIndx].objects = previous;
+      }
+    },
+    redo(state) {
+      const next = state.images[state.currentImageIndx].futureObjects.pop();
+      if (next) {
+        const objects = state.images[state.currentImageIndx].objects;
+        state.images[state.currentImageIndx].pastObjects.push(objects);
+
+        state.images[state.currentImageIndx].objects = next;
+      }
     },
     clearObjects(state) {
       state.images[state.currentImageIndx].objects = {};
@@ -41,7 +73,7 @@ const canvasSlice = createSlice({
       state.selectedObject = action.payload;
     },
     deselectObject(state) {
-      state.selectedObject = { id: 0 };
+      state.selectedObject = { id: null };
     },
     setIsDrawing(state, action) {
       state.isDrawing = action.payload;
@@ -54,7 +86,10 @@ export const {
   setImages,
   setCurrentImageIndx,
   updateWithObject,
+  updateHistory,
   removeObject,
+  undo,
+  redo,
   clearObjects,
   setStageSize,
   selectColor,
@@ -84,3 +119,13 @@ export const getSelectedObject = (state) => state.canvas.selectedObject;
 
 export const isSelectedObject = (state, payload) =>
   state.canvas.selectedObject === payload;
+
+function getLastKey(obj) {
+  const keys = Object.keys(obj);
+  return keys.length > 0 ? keys[keys.length - 1] : undefined;
+}
+
+function getFirstKey(obj) {
+  const keys = Object.keys(obj);
+  return keys.length > 0 ? keys[0] : undefined;
+}
