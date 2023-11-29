@@ -19,7 +19,7 @@ function Arrow({ arrow, isDraggable, onDragEnd, isSelected, onSelect }) {
       // we need to attach transformer manually
       trRef.current.nodes([shapeRef.current]);
       trRef.current.getLayer().batchDraw();
-      trRef.current.rotation(angleInDegrees);
+      // trRef.current.rotation(angleInDegrees);
     }
   }, [isSelected, arrow.points]);
 
@@ -57,7 +57,9 @@ function Arrow({ arrow, isDraggable, onDragEnd, isSelected, onSelect }) {
         onDragEnd={onDragEnd}
         ref={shapeRef}
       />
-      {isSelected && <CustomTransformer trRef={trRef} objectId={arrow.id} />}
+      {isSelected && (
+        <CustomTransformer trRef={trRef} objectId={arrow.id} rotation={200} />
+      )}
     </>
   );
 }

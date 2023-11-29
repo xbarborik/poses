@@ -19,15 +19,14 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
   function onTransformEnd() {
     const node = shapeRef.current;
     const scaleX = node.scaleX();
-    const scaleY = node.scaleY();
+    // const scaleY = node.scaleY();
 
     node.scaleX(1);
     node.scaleY(1);
 
     const newCircle = {
       ...circle,
-      width: node.radius() * scaleX,
-      height: node.radius() * scaleY,
+      radius: node.radius() * scaleX * 2,
     };
 
     onChange(newCircle);
@@ -36,7 +35,10 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
   function handleDragEnd(e) {
     const pos = e.target.position(); // center
 
-    onChange({ ...circle, points: [pos.x, pos.y] });
+    onChange({
+      ...circle,
+      points: [pos.x, pos.y, pos.x, pos.y], // dragging is centered for circles in Konva
+    });
   }
 
   return (
@@ -44,13 +46,11 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
       <CircleKonva
         id={circle.id}
         ref={shapeRef}
-        x={circle.points[0]}
-        y={circle.points[1]}
-        radius={circle.radius}
+        x={(circle.points[0] + circle.points[2]) / 2 || 0}
+        y={(circle.points[1] + circle.points[3]) / 2 || 0}
+        radius={circle.radius / 2}
         stroke={circle.color}
         strokeWidth={circle.strokeWidth}
-        // width={circle.width}
-        // height={circle.height}
         strokeScaleEnabled={false}
         onTap={onSelect}
         onClick={onSelect}
@@ -60,7 +60,14 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
         onDragStart={() => dispatch(updateHistory())}
         onDragEnd={(e) => handleDragEnd(e)}
       />
-      {isSelected && <CustomTransformer trRef={trRef} objectId={circle.id} />}
+      {isSelected && (
+        <CustomTransformer
+          trRef={trRef}
+          objectId={circle.id}
+          centeredScaling={false}
+          isVisible={isSelected}
+        />
+      )}
     </>
   );
 }

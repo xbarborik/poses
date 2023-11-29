@@ -26,3 +26,11 @@ export function outOfBounds({ position, startX = 1, endX, startY = 1, endY }) {
 export function mapPoints(x, y, width, height) {
   return { x: x * width, y: y * height };
 }
+
+export function calcAngle(x1, y1, x2, y2) {
+  const angleRadians = Math.atan2(y2 - y1, x2 - x1);
+  const angleDegrees = (angleRadians * 180) / Math.PI;
+
+  // Ensure the angle is between 0 and 360 degrees
+  return (angleDegrees + 360) % 360;
+}
