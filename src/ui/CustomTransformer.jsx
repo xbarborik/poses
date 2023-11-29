@@ -1,22 +1,17 @@
-import { Circle, Group, Transformer } from "react-konva";
+import { Arrow, Circle, Group, Image, Line, Transformer } from "react-konva";
 import { IoCloseOutline } from "react-icons/io5";
 import Button from "./Button";
-import { Html } from "react-konva-utils";
+import { Html, useImage } from "react-konva-utils";
 import { useDispatch } from "react-redux";
 import { removeObject } from "../features/canvas/canvasSlice";
 import { useEffect, useLayoutEffect, useState } from "react";
 
-function CustomTransformer({
-  trRef,
-  objectId,
-  centeredScaling = true,
-  isVisible,
-}) {
+function CustomTransformer({ trRef, objectId, centeredScaling = true }) {
   const dispatch = useDispatch();
-  const [tr, setTr] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [tr, setTr] = useState({ x: -10, y: -10, width: 0, height: 0 });
+  const [image] = useImage("src/assets/double-arrow.svg");
 
   useEffect(() => {
-    console.log(isVisible);
     const trRect = trRef.current.getClientRect();
 
     setTr({
@@ -25,7 +20,10 @@ function CustomTransformer({
       width: trRect.width,
       height: trRect.height,
     });
-  }, [trRef, isVisible]);
+
+    // I need trRef.current for getting buttons on render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trRef, trRef.current]);
 
   function updateTr() {
     const trRect = trRef.current.getClientRect();
@@ -48,12 +46,6 @@ function CustomTransformer({
 
   return (
     <Group>
-      {/* <Html style={{ position: "absolute", left: pos.x, top: pos.y }}>
-        <Button onClick={() => dispatch(removeObject(objectId))} $color={"red"}>
-          <IoCloseOutline />
-        </Button>
-      </Html> */}
-
       <Transformer
         ref={trRef}
         flipEnabled={false}
@@ -71,6 +63,21 @@ function CustomTransformer({
         radius={16}
         fill="red"
         onClick={() => dispatch(removeObject(objectId))}
+        onTap={() => dispatch(removeObject(objectId))}
+      />
+
+      <Line
+        points={[tr.x - 8, tr.y - 8, tr.x + 8, tr.y + 8]}
+        stroke="white"
+        strokeWidth={3}
+        listening={false}
+      />
+
+      <Line
+        points={[tr.x - 8, tr.y + 8, tr.x + 8, tr.y - 8]}
+        stroke="white"
+        strokeWidth={3}
+        listening={false}
       />
 
       <Circle
@@ -78,7 +85,26 @@ function CustomTransformer({
         y={tr.y + tr.height - 8}
         radius={16}
         fill="white"
-        onClick={() => dispatch(removeObject(objectId))}
+        listening={false}
+      />
+
+      {/* <Arrow
+        points={[
+          tr.x + tr.width - 8 - 6,
+          tr.y + tr.height - 8 - 8,
+          tr.x + tr.width - 8 + 6,
+          tr.y + tr.height - 8 + 8,
+        ]}
+        stroke="black"
+        strokeWidth={3}
+        listening={false}
+      /> */}
+      <Image
+        image={image}
+        x={tr.x + tr.width - 18}
+        y={tr.y + tr.height - 18}
+        width={20}
+        height={20}
         listening={false}
       />
     </Group>

@@ -65,7 +65,6 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
           trRef={trRef}
           objectId={circle.id}
           centeredScaling={false}
-          isVisible={isSelected}
         />
       )}
     </>
