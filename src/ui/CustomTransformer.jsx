@@ -1,15 +1,14 @@
-import { Arrow, Circle, Group, Image, Line, Transformer } from "react-konva";
-import { IoCloseOutline } from "react-icons/io5";
-import Button from "./Button";
-import { Html, useImage } from "react-konva-utils";
+import { Circle, Group, Image, Line, Transformer } from "react-konva";
+
+import { useImage } from "react-konva-utils";
 import { useDispatch } from "react-redux";
 import { removeObject } from "../features/canvas/canvasSlice";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function CustomTransformer({ trRef, objectId, centeredScaling = true }) {
   const dispatch = useDispatch();
   const [tr, setTr] = useState({ x: -10, y: -10, width: 0, height: 0 });
-  const [image] = useImage("src/assets/double-arrow.svg");
+  const [image] = useImage("/poses/icons/double-arrow.svg");
 
   useEffect(() => {
     const trRect = trRef.current.getClientRect();
@@ -39,10 +38,6 @@ function CustomTransformer({ trRef, objectId, centeredScaling = true }) {
   function handleMove() {
     updateTr();
   }
-
-  useEffect(() => {
-    console.log(tr);
-  }, [tr]);
 
   return (
     <Group>

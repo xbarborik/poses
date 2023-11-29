@@ -3,12 +3,12 @@ export function smoothLine({ updateWithObject, objects, id, step }) {
   const lastLine = objects[id];
   const points = lastLine.points;
 
-  console.log("original", lastLine);
+  // console.log("original", lastLine);
   const filteredLastLine = {
     ...lastLine,
     points: points.filter((_, i) => i % step === 0 || i % step === 1),
   };
-  console.log("filtered", filteredLastLine);
+  // console.log("filtered", filteredLastLine);
   updateWithObject(filteredLastLine);
 }
 
