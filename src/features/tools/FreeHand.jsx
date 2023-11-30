@@ -1,4 +1,5 @@
 import { Line } from "react-konva";
+import { hitDetectionMultiplier } from "../../utils/constants";
 
 function FreeHand({ line, isDraggable, onDragEnd }) {
   return (
@@ -12,6 +13,7 @@ function FreeHand({ line, isDraggable, onDragEnd }) {
       globalCompositeOperation={"source-over"}
       draggable={isDraggable}
       onDragEnd={onDragEnd}
+      hitStrokeWidth={line.strokeWidth * hitDetectionMultiplier}
     />
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Arrow as ArrowKonva } from "react-konva";
 import { useDispatch } from "react-redux";
 import CustomTransformer from "../../ui/CustomTransformer";
+import { hitDetectionMultiplier } from "../../utils/constants";
 
 function Arrow({ arrow, isDraggable, onDragEnd, isSelected, onSelect }) {
   const shapeRef = useRef();
@@ -55,6 +56,7 @@ function Arrow({ arrow, isDraggable, onDragEnd, isSelected, onSelect }) {
         pointerLength={20}
         pointerWidth={20}
         onDragEnd={onDragEnd}
+        hitStrokeWidth={arrow.strokeWidth * hitDetectionMultiplier}
         ref={shapeRef}
       />
       {isSelected && (

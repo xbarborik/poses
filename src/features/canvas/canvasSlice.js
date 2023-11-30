@@ -119,13 +119,3 @@ export const getSelectedObjectId = (state) => state.canvas.selectedObjectId;
 
 export const isSelectedObject = (state, payload) =>
   state.canvas.selectedObject === payload;
-
-function getLastKey(obj) {
-  const keys = Object.keys(obj);
-  return keys.length > 0 ? keys[keys.length - 1] : undefined;
-}
-
-function getFirstKey(obj) {
-  const keys = Object.keys(obj);
-  return keys.length > 0 ? keys[0] : undefined;
-}

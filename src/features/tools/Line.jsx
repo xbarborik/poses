@@ -1,11 +1,25 @@
-import { useEffect, useRef } from "react";
-import { Line as LineKonva, Stage, Layer, Circle, Group } from "react-konva";
+import { Line as LineKonva } from "react-konva";
 import LineTransformer from "../../ui/LineTransformer";
+import { hitDetectionMultiplier } from "../../utils/constants";
 
 // https://jsbin.com/wahetunepa/edit?html,js,output
-function Line({ line, isDraggable, onDragEnd, isSelected, onSelect }) {
+function Line({ line, isDraggable, isSelected, onSelect, onChange }) {
+  function handleTransformEnd(newPoints) {
+    onChange({ ...line, points: newPoints });
+  }
+
+  function handleDragEnd(newPoints) {
+    onChange({ ...line, points: newPoints });
+  }
+
   return (
-    <LineTransformer show={isSelected} line={line} isDraggable={isDraggable}>
+    <LineTransformer
+      show={isSelected}
+      line={line}
+      isDraggable={isDraggable}
+      onTransformEnd={handleTransformEnd}
+      onDragEnd={handleDragEnd}
+    >
       <LineKonva
         id={line.id}
         onClick={onSelect}
@@ -16,7 +30,7 @@ function Line({ line, isDraggable, onDragEnd, isSelected, onSelect }) {
         tension={0.7}
         lineCap="round"
         globalCompositeOperation={"source-over"}
-        onDragEnd={onDragEnd}
+        hitStrokeWidth={line.strokeWidth * hitDetectionMultiplier}
       />
     </LineTransformer>
   );

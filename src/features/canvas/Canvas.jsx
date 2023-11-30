@@ -113,6 +113,8 @@ function Canvas() {
             points: [position.x, position.y, position.x, position.y],
             strokeWidth: strokeWidth,
             radius: 0,
+            width: 0,
+            height: 0,
           })
         );
     }

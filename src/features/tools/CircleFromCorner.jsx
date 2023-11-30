@@ -3,6 +3,7 @@ import { Circle as CircleKonva } from "react-konva";
 import CustomTransformer from "../../ui/CustomTransformer";
 import { useDispatch } from "react-redux";
 import { updateHistory } from "../canvas/canvasSlice";
+import { getNewPoints } from "./circleUtils";
 
 function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
   const shapeRef = useRef();
@@ -16,28 +17,29 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
     }
   }, [isSelected]);
 
-  function onTransformEnd() {
+  function onTransformEnd(e) {
     const node = shapeRef.current;
     const scaleX = node.scaleX();
-    // const scaleY = node.scaleY();
 
     node.scaleX(1);
     node.scaleY(1);
 
+    const newPoints = getNewPoints(e, circle.points);
+
     const newCircle = {
       ...circle,
       radius: node.radius() * scaleX * 2,
+      points: newPoints,
     };
 
     onChange(newCircle);
   }
 
   function handleDragEnd(e) {
-    const pos = e.target.position(); // center
-
+    const newPoints = getNewPoints(e, circle.points);
     onChange({
       ...circle,
-      points: [pos.x, pos.y, pos.x, pos.y], // dragging is centered for circles in Konva
+      points: newPoints,
     });
   }
 
@@ -46,8 +48,8 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
       <CircleKonva
         id={circle.id}
         ref={shapeRef}
-        x={(circle.points[0] + circle.points[2]) / 2 || 0}
-        y={(circle.points[1] + circle.points[3]) / 2 || 0}
+        x={(circle.points[0] + circle.points[2]) / 2}
+        y={(circle.points[1] + circle.points[3]) / 2}
         radius={circle.radius / 2}
         stroke={circle.color}
         strokeWidth={circle.strokeWidth}
@@ -56,7 +58,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
         onClick={onSelect}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
-        onTransformEnd={onTransformEnd}
+        onTransformEnd={(e) => onTransformEnd(e)}
         onDragStart={() => dispatch(updateHistory())}
         onDragEnd={(e) => handleDragEnd(e)}
       />

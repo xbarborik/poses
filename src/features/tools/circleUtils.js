@@ -14,3 +14,14 @@ export function updateCircle({ updateWithObject, circle, position }) {
     height: Math.abs(ydif),
   });
 }
+
+export function getNewPoints(e, previousPoints) {
+  const pos = e.target.position();
+  const [x1, y1, x2, y2] = previousPoints;
+  return [
+    pos.x - (x2 - x1) / 2,
+    pos.y - (y2 - y1) / 2,
+    pos.x + (x2 - x1) / 2,
+    pos.y + (y2 - y1) / 2,
+  ];
+}

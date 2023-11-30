@@ -19,15 +19,14 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
   function onTransformEnd() {
     const node = shapeRef.current;
     const scaleX = node.scaleX();
-    const scaleY = node.scaleY();
+    //const scaleY = node.scaleY();
 
     node.scaleX(1);
     node.scaleY(1);
 
     const newCircle = {
       ...circle,
-      width: node.radius() * scaleX,
-      height: node.radius() * scaleY,
+      radius: node.radius() * scaleX,
     };
 
     onChange(newCircle);
@@ -49,8 +48,6 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
         radius={circle.radius}
         stroke={circle.color}
         strokeWidth={circle.strokeWidth}
-        // width={circle.width}
-        // height={circle.height}
         strokeScaleEnabled={false}
         onTap={onSelect}
         onClick={onSelect}
