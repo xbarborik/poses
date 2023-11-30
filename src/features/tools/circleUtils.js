@@ -17,6 +17,7 @@ export function updateCircle({ updateWithObject, circle, position }) {
 
 export function getNewPoints(e, previousPoints) {
   const pos = e.target.position();
+
   const [x1, y1, x2, y2] = previousPoints;
   return [
     pos.x - (x2 - x1) / 2,

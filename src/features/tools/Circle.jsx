@@ -16,7 +16,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
     }
   }, [isSelected]);
 
-  function onTransformEnd() {
+  function handleTransformEnd() {
     const node = shapeRef.current;
     const scaleX = node.scaleX();
     //const scaleY = node.scaleY();
@@ -53,7 +53,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
         onClick={onSelect}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
-        onTransformEnd={onTransformEnd}
+        onTransformEnd={handleTransformEnd}
         onDragStart={() => dispatch(updateHistory())}
         onDragEnd={(e) => handleDragEnd(e)}
       />

@@ -31,8 +31,6 @@ const canvasSlice = createSlice({
       state.isLoading = false;
     },
     updateWithObject(state, action) {
-      // state.images[state.currentImageIndx].futureObjects = [];
-
       state.images[state.currentImageIndx].objects[action.payload.id] =
         action.payload;
     },

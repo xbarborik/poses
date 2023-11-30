@@ -3,7 +3,7 @@ import "rc-slider/assets/index.css";
 import { useState } from "react";
 
 // https://deadsimplechat.com/blog/react-slider-rc-slider-step-by-step-tutorial-with-examples/
-const trackHeightScale = 0.9;
+const trackHeightScale = 1.5;
 
 function calcOutline(value, minValue, maxValue) {
   const ratio = (maxValue - value) / maxValue;
@@ -19,7 +19,7 @@ function CustomSlider({
   maxValue = 0,
   color = "blue",
 }) {
-  const scale = 1.2;
+  const scale = 1.4;
 
   const styles = {
     handle: {

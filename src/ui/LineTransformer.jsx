@@ -45,8 +45,7 @@ function LineTransformer({
     setPoints(newPoints);
 
     // Reset group origin position
-    groupRef.current.x(0);
-    groupRef.current.y(0);
+    groupRef.current.position({ x: 0, y: 0 });
   }
 
   return (

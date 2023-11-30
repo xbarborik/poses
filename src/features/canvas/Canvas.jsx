@@ -201,6 +201,11 @@ function Canvas() {
                     key={object.id}
                     line={object}
                     isDraggable={isDraggable}
+                    isSelected={selectedObjectId === object.id}
+                    onSelect={() => dispatch(selectObject(object.id))}
+                    onChange={(newLine) => {
+                      dispatch(updateWithObject(newLine));
+                    }}
                   />
                 );
               } else if (object.type === "line") {

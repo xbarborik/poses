@@ -83,17 +83,6 @@ function CustomTransformer({ trRef, objectId, centeredScaling = true }) {
         listening={false}
       />
 
-      {/* <Arrow
-        points={[
-          tr.x + tr.width - 8 - 6,
-          tr.y + tr.height - 8 - 8,
-          tr.x + tr.width - 8 + 6,
-          tr.y + tr.height - 8 + 8,
-        ]}
-        stroke="black"
-        strokeWidth={3}
-        listening={false}
-      /> */}
       <Image
         image={image}
         x={tr.x + tr.width - 18}

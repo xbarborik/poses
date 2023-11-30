@@ -4,3 +4,13 @@ export function updateFreeHand({ updateWithObject, freeHand, position }) {
     points: [...freeHand.points, position.x, position.y],
   });
 }
+
+export function getNewPoints(e, previousPoints) {
+  const offset = e.target.absolutePosition();
+
+  const newPoints = previousPoints.map((value, i) =>
+    i % 2 == 0 ? value + offset.x : value + offset.y
+  );
+
+  return newPoints;
+}
