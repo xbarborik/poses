@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Button from "../../ui/Button";
 import { LiaUndoSolid, LiaRedoSolid } from "react-icons/lia";
 import { useDispatch, useSelector } from "react-redux";
 import { isFutureEmpty, isPastEmpty, redo, undo } from "../canvas/canvasSlice";
@@ -7,7 +6,7 @@ import { useEffect } from "react";
 
 const StyledContainer = styled.div`
   display: flex;
-  gap: 0.22rem;
+  gap: 0.8rem;
   padding: 0 0.2rem;
 `;
 
@@ -23,9 +22,9 @@ const HistoryControlButton = styled.button`
   border: none;
   pointer-events: auto;
 
-  opacity: ${(props) => (props.$disabled ? "30%" : "60%")};
+  opacity: ${(props) => (props.disabled ? 0.4 : 0.6)};
 
-  &:hover {
+  &:active {
     transform: scale(1.05);
   }
 
@@ -42,6 +41,9 @@ function UndoRedo() {
   const isUndoDisabled = useSelector(isPastEmpty);
   const isRedoDisabled = useSelector(isFutureEmpty);
 
+  useEffect(() => {
+    console.log(isUndoDisabled);
+  }, [isUndoDisabled]);
   return (
     <StyledContainer>
       <HistoryControlButton

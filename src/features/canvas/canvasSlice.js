@@ -32,6 +32,7 @@ const canvasSlice = createSlice({
     updateWithObject(state, action) {
       state.images[state.currentImageIndx].objects[action.payload.id] =
         action.payload;
+      state.images[state.currentImageIndx].futureObjects = [];
     },
     updateHistory(state) {
       const objects = state.images[state.currentImageIndx].objects;
@@ -92,6 +93,7 @@ export const {
   updateWithObject,
   updateHistory,
   removeObject,
+  removeInvalidObject,
   undo,
   redo,
   clearObjects,
@@ -121,8 +123,14 @@ export const getSelectedObjectId = (state) => state.canvas.selectedObjectId;
 export const isSelectedObject = (state, payload) =>
   state.canvas.selectedObject === payload;
 
-export const isPastEmpty = (state) =>
-  state.canvas.images[state.currentImageIndx]?.pastObjects.length === 0;
+export const isPastEmpty = (state) => {
+  const pastObjects =
+    state.canvas.images[state.canvas.currentImageIndx]?.pastObjects;
+  return !pastObjects || pastObjects.length === 0;
+};
 
-export const isFutureEmpty = (state) =>
-  state.canvas.images[state.currentImageIndx]?.futureObjects.length === 0;
+export const isFutureEmpty = (state) => {
+  const futureObjects =
+    state.canvas.images[state.canvas.currentImageIndx]?.futureObjects;
+  return !futureObjects || futureObjects.length === 0;
+};

@@ -8,6 +8,7 @@ import {
   getObjects,
   getSelectedObjectId,
   redo,
+  removeInvalidObject,
   selectObject,
   setIsDrawing,
   undo,
@@ -199,7 +200,7 @@ function Canvas() {
     if (!objects) return;
 
     if (notLongEnoughToDraw(objects[newObjectId])) {
-      dispatch(undo()); // todo make custom action for deleting object and restoring previous history state
+      dispatch(removeInvalidObject(newObjectId)); // todo make custom action for deleting object and restoring previous history state
       return;
     }
 
