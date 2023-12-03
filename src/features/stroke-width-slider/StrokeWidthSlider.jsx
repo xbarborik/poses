@@ -3,7 +3,7 @@ import CustomSlider from "../../ui/Slider";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setStrokeWidth } from "./sliderSlice";
-import { getColor } from "../canvas/canvasSlice";
+import { getColor } from "../colors/colorSlice";
 
 const StyledStrokeWidthSlider = styled.div`
   flex-grow: 2;
@@ -34,6 +34,7 @@ function StrokeWidthSlider({ defaultValue, ...props }) {
   return (
     <StyledStrokeWidthSlider>
       <CustomSlider
+        name="adjust-width"
         onChange={onChange}
         value={value}
         color={color}

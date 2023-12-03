@@ -1,6 +1,5 @@
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import { useState } from "react";
 
 // https://deadsimplechat.com/blog/react-slider-rc-slider-step-by-step-tutorial-with-examples/
 const trackHeightScale = 1.5;
@@ -18,6 +17,7 @@ function CustomSlider({
   minValue = 0,
   maxValue = 0,
   color = "blue",
+  name,
 }) {
   const scale = 1.4;
 
@@ -57,6 +57,7 @@ function CustomSlider({
 
   return (
     <Slider
+      name={name}
       onChange={onChange}
       defaultValue={value || minValue}
       min={minValue}

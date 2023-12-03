@@ -3,7 +3,12 @@ import { Circle, Group, Image, Line, Transformer } from "react-konva";
 import { useImage } from "react-konva-utils";
 import { useEffect, useRef, useState } from "react";
 
-function CustomTransformer({ trRef, centeredScaling = true, onRemove }) {
+function CustomTransformer({
+  trRef,
+  centeredScaling = true,
+  onRemove,
+  keepRatio = true,
+}) {
   const [tr, setTr] = useState({ x: -10, y: -10, width: 0, height: 0 });
   const [image] = useImage("/poses/icons/double-arrow.svg");
   const groupRef = useRef();
@@ -50,6 +55,14 @@ function CustomTransformer({ trRef, centeredScaling = true, onRemove }) {
         onDragMove={updateTransformer}
         onTransform={updateTransformer}
         anchorSize={18}
+        keepRatio={keepRatio}
+        boundBoxFunc={(oldBox, newBox) => {
+          // Constrain scaling to positive values
+          if (newBox.width < 0 || newBox.height < 0) {
+            return oldBox;
+          }
+          return newBox;
+        }}
       />
 
       {/* Scale Button */}

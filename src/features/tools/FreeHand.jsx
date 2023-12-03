@@ -9,12 +9,15 @@ import {
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
+import useAdjustColorAndWidth from "./useAdjustColorandWidth";
 
 function FreeHand({ line, isDraggable, isSelected, onSelect }) {
   const shapeRef = useRef();
   const trRef = useRef();
   const dispatch = useDispatch();
   const [points, setPoints] = useState([0, 0, 0, 0]);
+
+  useAdjustColorAndWidth(line, isSelected);
 
   useEffect(() => {
     setPoints(line.points);
@@ -30,14 +33,22 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
   // https://stackoverflow.com/questions/61048076/how-to-get-new-points-of-line-after-transformation-in-konvajs
   function handleTransform(e) {
     const node = shapeRef.current;
+
     const scaleX = node.scaleX();
+    const scaleY = node.scaleY();
 
     node.scaleX(1);
     node.scaleY(1);
 
-    const scaledPoints = points.map((value) => value * scaleX);
+    const scaledPoints = points.map((value, index) => {
+      return index % 2 === 0 ? value * scaleX : value * scaleY;
+    });
 
-    setPoints(getNewPoints(e, scaledPoints));
+    const newPoints = getNewPoints(e, scaledPoints);
+
+    setPoints(newPoints);
+    // shapeRef.current.points(newPoints);
+    // shapeRef.current.getLayer().batchDraw();
 
     shapeRef.current.position({ x: 0, y: 0 });
   }
@@ -52,15 +63,13 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
   }
 
   function handleDragMove(e) {
-    const offset = e.target.position();
-
-    const newPoints = line.points.map((value, i) =>
-      i % 2 == 0 ? value + offset.x : value + offset.y
-    );
+    const newPoints = getNewPoints(e, line.points);
 
     setPoints(newPoints);
+
     shapeRef.current.position({ x: 0, y: 0 });
   }
+
   function handleDragEnd() {
     dispatch(
       updateWithObject({
@@ -88,7 +97,7 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
         onTransformEnd={handleTransformEnd}
         onDragStart={() => dispatch(updateHistory())}
         onDragMove={(e) => handleDragMove(e)}
-        onDragEnd={handleDragEnd}
+        onDragEnd={(e) => handleDragEnd(e)}
         strokeScaleEnabled={false}
         hitStrokeWidth={line.strokeWidth * hitDetectionMultiplier}
         onTap={(e) => onSelect(e)}
@@ -100,6 +109,7 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
           objectId={line.id}
           centeredScaling={false}
           onRemove={() => dispatch(removeObject(line.id))}
+          keepRatio={false}
         />
       )}
     </>

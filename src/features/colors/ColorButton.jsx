@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { getColor, selectColor } from "../canvas/canvasSlice";
 import styled from "styled-components";
+import { getColor, selectColor } from "./colorSlice";
 
 const StyledColorButton = styled.button`
   display: block;
@@ -26,6 +26,7 @@ function ColorButton({ color }) {
 
   return (
     <StyledColorButton
+      name="adjust-color"
       onClick={() => dispatch(selectColor(color))}
       color={color}
       $isActive={color === activeColor}

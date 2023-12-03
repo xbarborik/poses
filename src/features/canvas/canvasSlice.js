@@ -4,7 +4,7 @@ const initialState = {
   isLoading: false,
   images: [], // {id: null, path: , objects: {}}
   currentImageIndx: 0,
-  color: "#FF0000",
+
   stageSize: { width: 0, height: 0 },
   selectedObjectId: null,
   isDrawing: false,
@@ -49,6 +49,10 @@ const canvasSlice = createSlice({
       delete objects[action.payload];
       state.images[state.currentImageIndx].futureObjects = [];
     },
+    removeInvalidObject(state, action) {
+      delete state.images[state.currentImageIndx].objects[action.payload];
+      state.images[state.currentImageIndx].pastObjects.pop();
+    },
     undo(state) {
       const previous = state.images[state.currentImageIndx].pastObjects.pop();
       if (previous) {
@@ -68,9 +72,6 @@ const canvasSlice = createSlice({
     },
     clearObjects(state) {
       state.images[state.currentImageIndx].objects = {};
-    },
-    selectColor(state, action) {
-      state.color = action.payload;
     },
     selectObject(state, action) {
       state.selectedObjectId = action.payload;
@@ -95,7 +96,6 @@ export const {
   redo,
   clearObjects,
   setStageSize,
-  selectColor,
   selectObject,
   deselectObject,
   setIsDrawing,
@@ -113,8 +113,6 @@ export const getCurrentImageIndx = (state) => state.canvas.currentImageIndx;
 
 export const getObjects = (state) =>
   state.canvas.images[state.canvas.currentImageIndx]?.objects;
-
-export const getColor = (state) => state.canvas.color;
 
 export const getIsDrawing = (state) => state.canvas.isDrawing;
 

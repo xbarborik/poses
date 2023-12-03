@@ -1,35 +1,41 @@
 import styled from "styled-components";
-import { Stage, Layer, Transformer } from "react-konva";
+import { Stage, Layer } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deselectObject,
-  getColor,
   getIsDrawing,
   getIsLoading,
   getObjects,
   getSelectedObjectId,
-  removeObject,
+  redo,
   selectObject,
   setIsDrawing,
+  undo,
   updateHistory,
   updateWithObject,
 } from "./canvasSlice";
 import { getStrokeWidth } from "../stroke-width-slider/sliderSlice";
 import { getSelectedTool } from "../tools/toolbarSlice";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { smoothLine, outOfBounds } from "../../utils/helpers";
+import { useRef, useState } from "react";
+import {
+  smoothLine,
+  outOfBounds,
+  notLongEnoughToDraw,
+} from "../../utils/helpers";
 import FreeHand from "../tools/FreeHand";
 import { updateFreeHand } from "../tools/freeHandUtils";
 import Arrow from "../tools/Arrow";
 import Line from "../tools/line";
 import { updateLine } from "../tools/lineUtils";
 import PoseImage from "./PoseImage";
-import CircleRotator from "../customShapes/circleRotator";
+// import CircleRotator from "../customShapes/circleRotator";
 import { updateCircle } from "../tools/circleUtils";
 import { useDimensions } from "./useDimensions";
 import useClickOutsideContainer from "./useClickOutsideContainer";
 
 import Circle from "../tools/CircleFromCorner";
+import { getColor } from "../colors/colorSlice";
+import useCtrlAndKeyDown from "../../hooks/useCtrlAndKeyDown";
 
 const StyledCanvas = styled.div`
   display: block;
@@ -46,7 +52,6 @@ const StyledCanvas = styled.div`
 `;
 
 function Canvas() {
-  const [newObjectId, setNewObjectId] = useState("");
   const canvasRef = useRef(null);
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
@@ -56,20 +61,24 @@ function Canvas() {
   const selectedColor = useSelector(getColor);
   const selectedTool = useSelector(getSelectedTool);
   const selectedObjectId = useSelector(getSelectedObjectId);
-  // const isDraggable = selectedTool == "none";
-  const isDraggable = true;
   const dimensions = useDimensions(canvasRef);
 
-  useClickOutsideContainer(canvasRef, () => dispatch(deselectObject()));
+  const [newObjectId, setNewObjectId] = useState("");
+
+  const outsideClickException = "adjust";
+  useClickOutsideContainer(
+    canvasRef,
+    () => dispatch(deselectObject()),
+    outsideClickException
+  );
+  useCtrlAndKeyDown("z", () => dispatch(undo()));
+  useCtrlAndKeyDown("y", () => dispatch(redo()));
 
   //https://konvajs.org/docs/react/Transformer.html
   function checkDeselect(e) {
     if (selectedObjectId === null) return;
-
     if (e.target === e.target.getStage()) {
       dispatch(deselectObject());
-    } else {
-      dispatch(selectObject(e.target.id()));
     }
   }
 
@@ -96,7 +105,7 @@ function Canvas() {
 
     const clickedObjectId = e.target.id();
 
-    if (clickedObjectId && objects[clickedObjectId]) {
+    if (clickedObjectId === selectedObjectId) {
       return;
     } else if (selectedObjectId != null) {
       dispatch(deselectObject(selectedObjectId));
@@ -140,6 +149,8 @@ function Canvas() {
 
   function handleMove(e) {
     if (!isDrawing || selectedTool === "none") return;
+
+    if (selectedObjectId != null) dispatch(deselectObject());
 
     const position = e.target.getStage().getPointerPosition();
     if (
@@ -187,6 +198,11 @@ function Canvas() {
 
     if (!objects) return;
 
+    if (notLongEnoughToDraw(objects[newObjectId])) {
+      dispatch(undo()); // todo make custom action for deleting object and restoring previous history state
+      return;
+    }
+
     if (selectedTool === "freeHand") {
       smoothLine({
         objects,
@@ -194,12 +210,10 @@ function Canvas() {
         id: newObjectId,
         step: 4,
       });
-    } else if (objects[newObjectId].points.lenght < 10) {
-      dispatch(removeObject(newObjectId));
     }
   }
 
-  function handleSelect(e, objectId) {
+  function handleSelect(objectId) {
     dispatch(selectObject(objectId));
   }
 
@@ -225,14 +239,15 @@ function Canvas() {
           <Layer>
             <PoseImage dimensions={dimensions} />
             {Object.values(objects).map((object) => {
+              if (notLongEnoughToDraw(object)) return null;
               if (object.type === "freeHand") {
                 return (
                   <FreeHand
                     key={object.id}
                     line={object}
-                    isDraggable={isDraggable}
+                    isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
-                    onSelect={(e) => handleSelect(e, object.id)}
+                    onSelect={() => handleSelect(object.id)}
                   />
                 );
               } else if (object.type === "line") {
@@ -240,9 +255,9 @@ function Canvas() {
                   <Line
                     key={object.id}
                     line={object}
-                    isDraggable={isDraggable}
+                    isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
-                    onSelect={(e) => handleSelect(e, object.id)}
+                    onSelect={() => handleSelect(object.id)}
                   />
                 );
               } else if (object.type === "arrow") {
@@ -250,9 +265,9 @@ function Canvas() {
                   <Arrow
                     key={object.id}
                     arrow={object}
-                    isDraggable={isDraggable}
+                    isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
-                    onSelect={(e) => handleSelect(e, object.id)}
+                    onSelect={() => handleSelect(object.id)}
                   />
                 );
               } else if (object.type === "circle") {
@@ -260,16 +275,13 @@ function Canvas() {
                   <Circle
                     key={object.id}
                     circle={object}
-                    isDraggable={isDraggable}
+                    isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
-                    onSelect={(e) => handleSelect(e, object.id)}
-                    onChange={(newCircle) => {
-                      dispatch(updateWithObject(newCircle));
-                    }}
+                    onSelect={() => handleSelect(object.id)}
                   />
                 );
               }
-              return null; // return null for objects with unsupported types
+              return null;
             })}
             {/* <CircleRotator x={500} y={600} arrowLength={40} /> */}
           </Layer>

@@ -8,6 +8,7 @@ import {
   updateWithObject,
 } from "../canvas/canvasSlice";
 import { getNewPoints } from "./circleUtils";
+import useAdjustColorAndWidth from "./useAdjustColorandWidth";
 
 function Circle({ circle, isDraggable, isSelected, onSelect }) {
   const shapeRef = useRef();
@@ -15,6 +16,8 @@ function Circle({ circle, isDraggable, isSelected, onSelect }) {
   const dispatch = useDispatch();
   const [points, setPoints] = useState([0, 0, 0, 0]);
   const [radius, setRadius] = useState(0);
+
+  useAdjustColorAndWidth(circle, isSelected);
 
   useEffect(() => {
     setPoints(circle.points);
@@ -31,11 +34,16 @@ function Circle({ circle, isDraggable, isSelected, onSelect }) {
   function handleTransform(e) {
     const node = shapeRef.current;
     const scaleX = node.scaleX();
+    const scaleY = node.scaleY();
 
     node.scaleX(1);
     node.scaleY(1);
 
-    const newPoints = getNewPoints(e, points);
+    const scaledPoints = points.map((value, index) => {
+      return index % 2 === 0 ? value * scaleX : value * scaleY;
+    });
+
+    const newPoints = getNewPoints(e, scaledPoints);
 
     setRadius(node.radius() * scaleX * 2);
     setPoints(newPoints);
@@ -93,6 +101,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect }) {
           objectId={circle.id}
           centeredScaling={false}
           onRemove={() => dispatch(removeObject(circle.id))}
+          keepRatio={true}
         />
       )}
     </>

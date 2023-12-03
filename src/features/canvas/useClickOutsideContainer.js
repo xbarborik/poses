@@ -1,9 +1,13 @@
 import { useEffect } from "react";
 
-function useClickOutsideContainer(ref, callback) {
+function useClickOutsideContainer(ref, callback, exception) {
   useEffect(() => {
     const handleGlobalClick = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
+      if (
+        ref.current &&
+        !ref.current.contains(e.target) &&
+        !e.target?.name?.includes(exception)
+      ) {
         callback();
       }
     };
@@ -13,7 +17,7 @@ function useClickOutsideContainer(ref, callback) {
     return () => {
       document.removeEventListener("click", handleGlobalClick);
     };
-  }, [ref, callback]);
+  }, [ref, callback, exception]);
 }
 
 export default useClickOutsideContainer;

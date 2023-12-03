@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Arrow as ArrowKonva } from "react-konva";
 import { useDispatch } from "react-redux";
-import CustomTransformer from "../../ui/CustomTransformer";
 import { hitDetectionMultiplier } from "../../utils/constants";
 import LineTransformer from "../../ui/LineTransformer";
 import {
@@ -9,11 +8,14 @@ import {
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
+import useAdjustColorAndWidth from "./useAdjustColorandWidth";
 
 function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
   const shapeRef = useRef();
   const dispatch = useDispatch();
   const [points, setPoints] = useState([0, 0, 0, 0]);
+
+  useAdjustColorAndWidth(arrow, isSelected);
 
   useEffect(() => {
     setPoints(arrow.points);
@@ -47,13 +49,10 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
         pointerWidth={20}
         hitStrokeWidth={arrow.strokeWidth * hitDetectionMultiplier}
         ref={shapeRef}
-        onTouchStart={(e) => onSelect(e)}
-        onMouseDown={(e) => onSelect(e)}
+        onTap={(e) => onSelect(e)}
+        onClick={(e) => onSelect(e)}
       />
     </LineTransformer>
-    // {isSelected && (
-    //   <CustomTransformer trRef={trRef} objectId={arrow.id} rotation={200} />
-    // )}
   );
 }
 

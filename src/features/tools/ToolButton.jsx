@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { getSelectedTool, selectTool } from "./toolbarSlice";
-import { getColor } from "../canvas/canvasSlice";
+import { getColor } from "../colors/colorSlice";
 
 const StyledToolButton = styled.button`
   display: flex;

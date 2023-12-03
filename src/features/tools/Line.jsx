@@ -8,11 +8,14 @@ import {
 } from "../canvas/canvasSlice";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
+import useAdjustColorAndWidth from "./useAdjustColorandWidth";
 
 // https://jsbin.com/wahetunepa/edit?html,js,output
 function Line({ line, isDraggable, isSelected, onSelect }) {
   const dispatch = useDispatch();
   const [points, setPoints] = useState([0, 0, 0, 0]);
+
+  useAdjustColorAndWidth(line, isSelected);
 
   useEffect(() => {
     setPoints(line.points);
