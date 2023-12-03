@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Stage, Layer } from "react-konva";
+import { Stage, Layer, Transformer } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deselectObject,
@@ -8,6 +8,7 @@ import {
   getIsLoading,
   getObjects,
   getSelectedObjectId,
+  removeObject,
   selectObject,
   setIsDrawing,
   updateHistory,
@@ -55,7 +56,8 @@ function Canvas() {
   const selectedColor = useSelector(getColor);
   const selectedTool = useSelector(getSelectedTool);
   const selectedObjectId = useSelector(getSelectedObjectId);
-  const isDraggable = selectedTool == "none";
+  // const isDraggable = selectedTool == "none";
+  const isDraggable = true;
   const dimensions = useDimensions(canvasRef);
 
   useClickOutsideContainer(canvasRef, () => dispatch(deselectObject()));
@@ -71,11 +73,18 @@ function Canvas() {
     }
   }
 
+  function isButtonOrAnchor(e) {
+    const name = e?.target?.attrs?.name;
+    return name?.includes("anchor") || name?.includes("removeButton");
+  }
+
   function handleStart(e) {
-    if (selectedTool === "none") return;
     const position = e.target.getStage().getPointerPosition();
 
     if (
+      selectedTool === "none" ||
+      // Don't draw when scaling
+      isButtonOrAnchor(e) ||
       outOfBounds({
         position,
         endX: dimensions.width,
@@ -85,11 +94,20 @@ function Canvas() {
       return;
     }
 
+    const clickedObjectId = e.target.id();
+
+    if (clickedObjectId && objects[clickedObjectId]) {
+      return;
+    } else if (selectedObjectId != null) {
+      dispatch(deselectObject(selectedObjectId));
+    }
+
     dispatch(updateHistory());
     dispatch(setIsDrawing(true));
 
     const id = String(new Date().valueOf());
     setNewObjectId(id);
+
     switch (selectedTool) {
       case "freeHand":
       case "line":
@@ -163,17 +181,26 @@ function Canvas() {
   }
 
   function handleEnd() {
+    if (!isDrawing) return;
+
     dispatch(setIsDrawing(false));
+
     if (!objects) return;
 
-    if (selectedTool === "freeHand")
+    if (selectedTool === "freeHand") {
       smoothLine({
         objects,
         updateWithObject: (object) => dispatch(updateWithObject(object)),
         id: newObjectId,
         step: 4,
       });
-    // console.log(objects);
+    } else if (objects[newObjectId].points.lenght < 10) {
+      dispatch(removeObject(newObjectId));
+    }
+  }
+
+  function handleSelect(e, objectId) {
+    dispatch(selectObject(objectId));
   }
 
   return (
@@ -185,12 +212,15 @@ function Canvas() {
           onMouseDown={(e) => {
             handleStart(e);
           }}
-          onMousemove={handleMove}
-          onMouseup={handleEnd}
-          onTouchStart={handleStart}
-          onTouchMove={handleMove}
-          onTouchEnd={handleEnd}
-          onClick={checkDeselect}
+          onMousemove={(e) => handleMove(e)}
+          onMouseup={(e) => handleEnd(e)}
+          onTouchStart={(e) => {
+            handleStart(e);
+          }}
+          onTouchMove={(e) => handleMove(e)}
+          onTouchEnd={(e) => handleEnd(e)}
+          onClick={(e) => checkDeselect(e)}
+          onTap={(e) => checkDeselect(e)}
         >
           <Layer>
             <PoseImage dimensions={dimensions} />
@@ -202,10 +232,7 @@ function Canvas() {
                     line={object}
                     isDraggable={isDraggable}
                     isSelected={selectedObjectId === object.id}
-                    onSelect={() => dispatch(selectObject(object.id))}
-                    onChange={(newLine) => {
-                      dispatch(updateWithObject(newLine));
-                    }}
+                    onSelect={(e) => handleSelect(e, object.id)}
                   />
                 );
               } else if (object.type === "line") {
@@ -215,10 +242,7 @@ function Canvas() {
                     line={object}
                     isDraggable={isDraggable}
                     isSelected={selectedObjectId === object.id}
-                    onSelect={() => dispatch(selectObject(object.id))}
-                    onChange={(newLine) => {
-                      dispatch(updateWithObject(newLine));
-                    }}
+                    onSelect={(e) => handleSelect(e, object.id)}
                   />
                 );
               } else if (object.type === "arrow") {
@@ -228,10 +252,7 @@ function Canvas() {
                     arrow={object}
                     isDraggable={isDraggable}
                     isSelected={selectedObjectId === object.id}
-                    onSelect={() => dispatch(selectObject(object.id))}
-                    onChange={(newArrow) => {
-                      dispatch(updateWithObject(newArrow));
-                    }}
+                    onSelect={(e) => handleSelect(e, object.id)}
                   />
                 );
               } else if (object.type === "circle") {
@@ -241,7 +262,7 @@ function Canvas() {
                     circle={object}
                     isDraggable={isDraggable}
                     isSelected={selectedObjectId === object.id}
-                    onSelect={() => dispatch(selectObject(object.id))}
+                    onSelect={(e) => handleSelect(e, object.id)}
                     onChange={(newCircle) => {
                       dispatch(updateWithObject(newCircle));
                     }}

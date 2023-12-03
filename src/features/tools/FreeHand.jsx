@@ -1,13 +1,24 @@
 import { Line } from "react-konva";
 import { hitDetectionMultiplier } from "../../utils/constants";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import CustomTransformer from "../../ui/CustomTransformer";
 import { getNewPoints } from "./freeHandUtils";
+import {
+  removeObject,
+  updateHistory,
+  updateWithObject,
+} from "../canvas/canvasSlice";
 
-function FreeHand({ line, isDraggable, isSelected, onSelect, onChange }) {
+function FreeHand({ line, isDraggable, isSelected, onSelect }) {
   const shapeRef = useRef();
   const trRef = useRef();
+  const dispatch = useDispatch();
+  const [points, setPoints] = useState([0, 0, 0, 0]);
+
+  useEffect(() => {
+    setPoints(line.points);
+  }, [line.points]);
 
   useEffect(() => {
     if (isSelected) {
@@ -17,38 +28,46 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, onChange }) {
   }, [isSelected]);
 
   // https://stackoverflow.com/questions/61048076/how-to-get-new-points-of-line-after-transformation-in-konvajs
-  function handleTransformEnd(e) {
+  function handleTransform(e) {
     const node = shapeRef.current;
     const scaleX = node.scaleX();
 
     node.scaleX(1);
     node.scaleY(1);
 
-    const scaledPoints = line.points.map((value) => value * scaleX);
+    const scaledPoints = points.map((value) => value * scaleX);
 
-    const newLine = {
-      ...line,
-      points: getNewPoints(e, scaledPoints),
-    };
-
-    onChange(newLine);
+    setPoints(getNewPoints(e, scaledPoints));
 
     shapeRef.current.position({ x: 0, y: 0 });
   }
 
-  function handleDragEnd(e) {
+  function handleTransformEnd() {
+    const newLine = {
+      ...line,
+      points: points,
+    };
+
+    dispatch(updateWithObject(newLine));
+  }
+
+  function handleDragMove(e) {
     const offset = e.target.position();
 
     const newPoints = line.points.map((value, i) =>
       i % 2 == 0 ? value + offset.x : value + offset.y
     );
 
-    onChange({
-      ...line,
-      points: newPoints,
-    });
-
+    setPoints(newPoints);
     shapeRef.current.position({ x: 0, y: 0 });
+  }
+  function handleDragEnd() {
+    dispatch(
+      updateWithObject({
+        ...line,
+        points: points,
+      })
+    );
   }
 
   return (
@@ -56,7 +75,7 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, onChange }) {
       <Line
         id={line.id}
         ref={shapeRef}
-        points={line.points}
+        points={points}
         stroke={line.color}
         strokeWidth={line.strokeWidth}
         tension={0.7}
@@ -64,18 +83,23 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, onChange }) {
         lineJoin="round"
         globalCompositeOperation={"source-over"}
         draggable={isDraggable}
-        onDragEnd={(e) => handleDragEnd(e)}
-        onTransformEnd={(e) => handleTransformEnd(e)}
+        onTransformStart={() => dispatch(updateHistory())}
+        onTransform={(e) => handleTransform(e)}
+        onTransformEnd={handleTransformEnd}
+        onDragStart={() => dispatch(updateHistory())}
+        onDragMove={(e) => handleDragMove(e)}
+        onDragEnd={handleDragEnd}
         strokeScaleEnabled={false}
         hitStrokeWidth={line.strokeWidth * hitDetectionMultiplier}
-        onClick={onSelect}
-        onTouchStart={onSelect}
+        onTap={(e) => onSelect(e)}
+        onClick={(e) => onSelect(e)}
       />
       {isSelected && (
         <CustomTransformer
           trRef={trRef}
           objectId={line.id}
           centeredScaling={false}
+          onRemove={() => dispatch(removeObject(line.id))}
         />
       )}
     </>

@@ -1,52 +1,41 @@
 import { Line as LineKonva } from "react-konva";
 import LineTransformer from "../../ui/LineTransformer";
 import { hitDetectionMultiplier } from "../../utils/constants";
-import {
-  removeObject,
-  updateHistory,
-  updateWithObject,
-} from "../canvas/canvasSlice";
+import { removeObject, updateHistory } from "../canvas/canvasSlice";
 import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
 
 // https://jsbin.com/wahetunepa/edit?html,js,output
-function Line({ line, isDraggable, isSelected, onSelect }) {
+function Angle({ line, isDraggable, isSelected, onSelect, onChange }) {
   const dispatch = useDispatch();
-  const [points, setPoints] = useState([0, 0, 0, 0]);
 
-  useEffect(() => {
-    setPoints(line.points);
-  }, [line.points]);
-
-  function handleChangeEnd(newPoints) {
+  function handleChange(newPoints) {
     dispatch(updateHistory());
-    dispatch(updateWithObject({ ...line, points: newPoints }));
+    onChange({ ...line, points: newPoints });
   }
 
   return (
     <LineTransformer
       show={isSelected}
-      points={points}
-      setPoints={setPoints}
+      line={line}
       isDraggable={isDraggable}
-      onTransformEnd={handleChangeEnd}
-      onDragEnd={handleChangeEnd}
+      onTransformEnd={handleChange}
+      onDragEnd={handleChange}
       onRemove={() => dispatch(removeObject(line.id))}
     >
       <LineKonva
         id={line.id}
-        points={points}
+        onClick={onSelect}
+        onTap={onSelect}
+        points={line.points}
         stroke={line.color}
         strokeWidth={line.strokeWidth}
         tension={0.7}
         lineCap="round"
         globalCompositeOperation={"source-over"}
         hitStrokeWidth={line.strokeWidth * hitDetectionMultiplier}
-        onTap={(e) => onSelect(e)}
-        onClick={(e) => onSelect(e)}
       />
     </LineTransformer>
   );
 }
 
-export default Line;
+export default Angle;

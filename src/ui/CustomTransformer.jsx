@@ -1,14 +1,17 @@
 import { Circle, Group, Image, Line, Transformer } from "react-konva";
 
 import { useImage } from "react-konva-utils";
-import { useDispatch } from "react-redux";
-import { removeObject } from "../features/canvas/canvasSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-function CustomTransformer({ trRef, objectId, centeredScaling = true }) {
-  const dispatch = useDispatch();
+function CustomTransformer({ trRef, centeredScaling = true, onRemove }) {
   const [tr, setTr] = useState({ x: -10, y: -10, width: 0, height: 0 });
   const [image] = useImage("/poses/icons/double-arrow.svg");
+  const groupRef = useRef();
+
+  const scaleButtonX = tr.x + tr.width - 8;
+  const scaleButtonY = tr.y + tr.height - 8;
+  const removeButtonX = tr.x;
+  const removeButtonY = tr.y;
 
   useEffect(() => {
     const trRect = trRef.current.getClientRect();
@@ -20,11 +23,12 @@ function CustomTransformer({ trRef, objectId, centeredScaling = true }) {
       height: trRect.height,
     });
 
-    // I need trRef.current for getting buttons on render
+    groupRef.current.moveToTop();
+    // I need trRef.current for getting buttons on initial render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trRef, trRef.current]);
 
-  function updateTr() {
+  function updateTransformer() {
     const trRect = trRef.current.getClientRect();
 
     setTr({
@@ -35,62 +39,75 @@ function CustomTransformer({ trRef, objectId, centeredScaling = true }) {
     });
   }
 
-  function handleMove() {
-    updateTr();
-  }
-
   return (
-    <Group>
+    <Group ref={groupRef}>
       <Transformer
         ref={trRef}
         flipEnabled={false}
         centeredScaling={centeredScaling}
         enabledAnchors={["bottom-right"]}
         rotateEnabled={false}
-        onDragMove={handleMove}
-        onTransform={handleMove}
-        anchorSize={16}
+        onDragMove={updateTransformer}
+        onTransform={updateTransformer}
+        anchorSize={18}
       />
 
-      <Circle
-        x={tr.x}
-        y={tr.y}
-        radius={16}
-        fill="red"
-        onClick={() => dispatch(removeObject(objectId))}
-        onTap={() => dispatch(removeObject(objectId))}
-      />
+      {/* Scale Button */}
+      <Group listening={false}>
+        <Circle
+          x={scaleButtonX}
+          y={scaleButtonY}
+          radius={16}
+          fill="white"
+          listening={false}
+        />
 
-      <Line
-        points={[tr.x - 8, tr.y - 8, tr.x + 8, tr.y + 8]}
-        stroke="white"
-        strokeWidth={3}
-        listening={false}
-      />
+        <Image
+          image={image}
+          x={scaleButtonX - 10}
+          y={scaleButtonY - 10}
+          width={20}
+          height={20}
+          listening={false}
+        />
+      </Group>
 
-      <Line
-        points={[tr.x - 8, tr.y + 8, tr.x + 8, tr.y - 8]}
-        stroke="white"
-        strokeWidth={3}
-        listening={false}
-      />
+      {/* Remove Button */}
+      <Group>
+        <Circle
+          name="removeButton"
+          x={removeButtonX}
+          y={removeButtonY}
+          radius={16}
+          fill="red"
+          onClick={onRemove}
+          onTap={onRemove}
+        />
 
-      <Circle
-        x={tr.x + tr.width - 8}
-        y={tr.y + tr.height - 8}
-        radius={16}
-        fill="white"
-        listening={false}
-      />
+        <Line
+          points={[
+            removeButtonX - 8,
+            removeButtonY - 8,
+            removeButtonX + 8,
+            removeButtonY + 8,
+          ]}
+          stroke="white"
+          strokeWidth={3}
+          listening={false}
+        />
 
-      <Image
-        image={image}
-        x={tr.x + tr.width - 18}
-        y={tr.y + tr.height - 18}
-        width={20}
-        height={20}
-        listening={false}
-      />
+        <Line
+          points={[
+            removeButtonX - 8,
+            removeButtonY + 8,
+            removeButtonX + 8,
+            removeButtonY - 8,
+          ]}
+          stroke="white"
+          strokeWidth={3}
+          listening={false}
+        />
+      </Group>
     </Group>
   );
 }

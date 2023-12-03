@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isLoading: false,
   images: [], // {id: null, path: , objects: {}}
-  currentImage: {},
   currentImageIndx: 0,
   color: "#FF0000",
   stageSize: { width: 0, height: 0 },
@@ -39,9 +38,15 @@ const canvasSlice = createSlice({
       state.images[state.currentImageIndx].pastObjects.push(objects);
     },
     removeObject(state, action) {
-      const objects = { ...state.images[state.currentImageIndx].objects };
-      state.images[state.currentImageIndx].pastObjects.push(objects);
-      delete state.images[state.currentImageIndx].objects[action.payload];
+      const objects = state.images[state.currentImageIndx].objects;
+      const object = objects[action.payload];
+
+      if (object?.id === state.selectedObjectId) state.selectedObjectId = null;
+
+      const pastObjects = { ...objects };
+
+      state.images[state.currentImageIndx].pastObjects.push(pastObjects);
+      delete objects[action.payload];
       state.images[state.currentImageIndx].futureObjects = [];
     },
     undo(state) {
@@ -117,3 +122,9 @@ export const getSelectedObjectId = (state) => state.canvas.selectedObjectId;
 
 export const isSelectedObject = (state, payload) =>
   state.canvas.selectedObject === payload;
+
+export const isPastEmpty = (state) =>
+  state.canvas.images[state.currentImageIndx]?.pastObjects.length === 0;
+
+export const isFutureEmpty = (state) =>
+  state.canvas.images[state.currentImageIndx]?.futureObjects.length === 0;

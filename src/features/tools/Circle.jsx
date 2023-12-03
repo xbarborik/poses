@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Circle as CircleKonva } from "react-konva";
 import CustomTransformer from "../../ui/CustomTransformer";
 import { useDispatch } from "react-redux";
-import { updateHistory } from "../canvas/canvasSlice";
+import { removeObject, updateHistory } from "../canvas/canvasSlice";
 
 function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
   const shapeRef = useRef();
@@ -49,15 +49,20 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
         stroke={circle.color}
         strokeWidth={circle.strokeWidth}
         strokeScaleEnabled={false}
-        onTap={onSelect}
-        onClick={onSelect}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
         onTransformEnd={handleTransformEnd}
         onDragStart={() => dispatch(updateHistory())}
         onDragEnd={(e) => handleDragEnd(e)}
+        onTap={(e) => onSelect(e)}
+        onClick={(e) => onSelect(e)}
       />
-      {isSelected && <CustomTransformer trRef={trRef} objectId={circle.id} />}
+      {isSelected && (
+        <CustomTransformer
+          trRef={trRef}
+          onRemove={() => dispatch(removeObject(circle.id))}
+        />
+      )}
     </>
   );
 }

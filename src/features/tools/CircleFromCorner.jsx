@@ -1,14 +1,25 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Circle as CircleKonva } from "react-konva";
 import CustomTransformer from "../../ui/CustomTransformer";
 import { useDispatch } from "react-redux";
-import { updateHistory } from "../canvas/canvasSlice";
+import {
+  removeObject,
+  updateHistory,
+  updateWithObject,
+} from "../canvas/canvasSlice";
 import { getNewPoints } from "./circleUtils";
 
-function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
+function Circle({ circle, isDraggable, isSelected, onSelect }) {
   const shapeRef = useRef();
   const trRef = useRef();
   const dispatch = useDispatch();
+  const [points, setPoints] = useState([0, 0, 0, 0]);
+  const [radius, setRadius] = useState(0);
+
+  useEffect(() => {
+    setPoints(circle.points);
+    setRadius(circle.radius);
+  }, [circle]);
 
   useEffect(() => {
     if (isSelected) {
@@ -17,31 +28,42 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
     }
   }, [isSelected]);
 
-  function handleTransformEnd(e) {
+  function handleTransform(e) {
     const node = shapeRef.current;
     const scaleX = node.scaleX();
 
     node.scaleX(1);
     node.scaleY(1);
 
-    const newPoints = getNewPoints(e, circle.points);
+    const newPoints = getNewPoints(e, points);
 
-    const newCircle = {
-      ...circle,
-      radius: node.radius() * scaleX * 2,
-      points: newPoints,
-    };
-
-    onChange(newCircle);
+    setRadius(node.radius() * scaleX * 2);
+    setPoints(newPoints);
   }
 
-  function handleDragEnd(e) {
-    const newPoints = getNewPoints(e, circle.points);
-
-    onChange({
+  function handleTransformEnd() {
+    const newCircle = {
       ...circle,
-      points: newPoints,
-    });
+      radius: radius,
+      points: points,
+    };
+
+    dispatch(updateWithObject(newCircle));
+  }
+
+  function handleDragMove(e) {
+    const newPoints = getNewPoints(e, points);
+
+    setPoints(newPoints);
+  }
+
+  function handleDragEnd() {
+    dispatch(
+      updateWithObject({
+        ...circle,
+        points: points,
+      })
+    );
   }
 
   return (
@@ -49,25 +71,28 @@ function Circle({ circle, isDraggable, isSelected, onSelect, onChange }) {
       <CircleKonva
         id={circle.id}
         ref={shapeRef}
-        x={(circle.points[0] + circle.points[2]) / 2}
-        y={(circle.points[1] + circle.points[3]) / 2}
-        radius={circle.radius / 2}
+        x={(points[0] + points[2]) / 2}
+        y={(points[1] + points[3]) / 2}
+        radius={radius / 2}
         stroke={circle.color}
         strokeWidth={circle.strokeWidth}
         strokeScaleEnabled={false}
-        onTap={onSelect}
-        onClick={onSelect}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
-        onTransformEnd={(e) => handleTransformEnd(e)}
+        onTransform={(e) => handleTransform(e)}
+        onTransformEnd={handleTransformEnd}
         onDragStart={() => dispatch(updateHistory())}
-        onDragEnd={(e) => handleDragEnd(e)}
+        onDragMove={(e) => handleDragMove(e)}
+        onDragEnd={handleDragEnd}
+        onTap={(e) => onSelect(e)}
+        onClick={(e) => onSelect(e)}
       />
       {isSelected && (
         <CustomTransformer
           trRef={trRef}
           objectId={circle.id}
           centeredScaling={false}
+          onRemove={() => dispatch(removeObject(circle.id))}
         />
       )}
     </>

@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import Button from "../../ui/Button";
 import { LiaUndoSolid, LiaRedoSolid } from "react-icons/lia";
-import { useDispatch } from "react-redux";
-import { redo, undo } from "../canvas/canvasSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { isFutureEmpty, isPastEmpty, redo, undo } from "../canvas/canvasSlice";
+import { useEffect } from "react";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -21,8 +22,8 @@ const HistoryControlButton = styled.button`
   height: 3.5rem;
   border: none;
   pointer-events: auto;
-  opacity: 60%;
-  /* background-color: ; */
+
+  opacity: ${(props) => (props.$disabled ? "30%" : "60%")};
 
   &:hover {
     transform: scale(1.05);
@@ -38,13 +39,21 @@ const HistoryControlButton = styled.button`
 
 function UndoRedo() {
   const dispatch = useDispatch();
+  const isUndoDisabled = useSelector(isPastEmpty);
+  const isRedoDisabled = useSelector(isFutureEmpty);
 
   return (
     <StyledContainer>
-      <HistoryControlButton onClick={() => dispatch(undo())}>
+      <HistoryControlButton
+        onClick={() => dispatch(undo())}
+        disabled={isUndoDisabled}
+      >
         <LiaUndoSolid />
       </HistoryControlButton>
-      <HistoryControlButton onClick={() => dispatch(redo())}>
+      <HistoryControlButton
+        onClick={() => dispatch(redo())}
+        disabled={isRedoDisabled}
+      >
         <LiaRedoSolid />
       </HistoryControlButton>
     </StyledContainer>

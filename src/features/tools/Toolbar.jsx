@@ -38,6 +38,7 @@ function Toolbar() {
         <ToolButton type={"circle"}>
           <BsCircle />
         </ToolButton>
+        {/* <ToolButton type={"angle"}>Angle</ToolButton> */}
         {/* <ToolButton type={"eraser"}>
           <FaEraser />
         </ToolButton> */}
