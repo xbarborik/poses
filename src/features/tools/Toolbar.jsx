@@ -10,7 +10,6 @@ import Button from "../../ui/Button";
 import { MdArrowLeft, MdArrowRight } from "react-icons/md";
 
 const StyledToolBar = styled.div`
-  grid-area: tools;
   display: flex;
   flex-direction: column;
   width: fit-content;
@@ -21,6 +20,7 @@ const StyledToolBar = styled.div`
 const ToolbarContainer = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   width: fit-content;
   /* justify-content: center; */
   align-items: end;
@@ -30,12 +30,12 @@ const ToolbarContainer = styled.div`
   top: 50%;
   transform: translateY(-50%);
 
-  gap: 1rem;
+  pointer-events: none;
 `;
 
 const HideBarButton = styled(Button)`
+  pointer-events: auto;
   background-color: rgba(255, 255, 255, 0.5);
-  /* border: 10px solid red; */
 `;
 
 function Toolbar() {
@@ -58,16 +58,16 @@ function Toolbar() {
               pointerEvents: showToolbar ? "auto" : "none",
             }}
           >
-            <ToolButton type={"freeHand"}>
+            <ToolButton type={"freeHand"} preventEvents={!showToolbar}>
               <TbScribble />
             </ToolButton>
-            <ToolButton type={"line"}>
+            <ToolButton type={"line"} preventEvents={!showToolbar}>
               <GoHorizontalRule style={{ transform: "rotate(90deg)" }} />
             </ToolButton>
-            <ToolButton type={"arrow"}>
+            <ToolButton type={"arrow"} preventEvents={!showToolbar}>
               <BsArrowUp />
             </ToolButton>
-            <ToolButton type={"circle"}>
+            <ToolButton type={"circle"} preventEvents={!showToolbar}>
               <BsCircle />
             </ToolButton>
             {/* <ToolButton type={"angle"}>Angle</ToolButton> */}

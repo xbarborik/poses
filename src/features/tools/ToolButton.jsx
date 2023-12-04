@@ -19,6 +19,7 @@ const StyledToolButton = styled.button`
     props.$isActive ? `4px solid ${props.$color}` : "0px"};
   outline-offset: 2px;
   margin-right: 0.5rem;
+  pointer-events: ${(props) => (props.$preventEvents ? "none" : "auto")};
 
   &:hover {
     transform: scale(1.05);
@@ -40,7 +41,7 @@ const StyledToolButton = styled.button`
   } */
 `;
 
-function ToolButton({ children, type }) {
+function ToolButton({ children, type, preventEvents }) {
   const dispatch = useDispatch();
   const selectedToolType = useSelector(getSelectedTool);
   const color = useSelector(getColor);
@@ -56,7 +57,12 @@ function ToolButton({ children, type }) {
 
   return (
     // <StyledWrapper>
-    <StyledToolButton onClick={handleClick} $isActive={isActive} $color={color}>
+    <StyledToolButton
+      onClick={handleClick}
+      $isActive={isActive}
+      $color={color}
+      $preventEvents={preventEvents}
+    >
       {children}
     </StyledToolButton>
     // </StyledWrapper>
