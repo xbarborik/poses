@@ -10,7 +10,7 @@ import {
 import { getNewPoints } from "./circleUtils";
 import useAdjustColorAndWidth from "./useAdjustColorandWidth";
 
-function Circle({ circle, isDraggable, isSelected, onSelect }) {
+function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
   const trRef = useRef();
   const dispatch = useDispatch();
@@ -72,6 +72,8 @@ function Circle({ circle, isDraggable, isSelected, onSelect }) {
         points: points,
       })
     );
+
+    console.log(points);
   }
 
   return (
@@ -102,6 +104,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect }) {
           centeredScaling={false}
           onRemove={() => dispatch(removeObject(circle.id))}
           keepRatio={true}
+          stageRef={stageRef}
         />
       )}
     </>

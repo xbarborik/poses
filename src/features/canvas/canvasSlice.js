@@ -2,10 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: false,
-  images: [], // {id: null, path: , objects: {}}
+  images: [], // {id: null, path: [] , past: objects: {}, futre: []}
   currentImageIndx: 0,
 
-  stageSize: { width: 0, height: 0 },
+  stageScale: 1,
   selectedObjectId: null,
   isDrawing: false,
 };
@@ -28,6 +28,10 @@ const canvasSlice = createSlice({
         futureObjects: [],
       }));
       state.isLoading = false;
+    },
+
+    setStageScale(state, action) {
+      state.stageScale = action.payload;
     },
     updateWithObject(state, action) {
       state.images[state.currentImageIndx].objects[action.payload.id] =
@@ -90,6 +94,7 @@ export const {
   setIsLoading,
   setImages,
   setCurrentImageIndx,
+  setStageScale,
   updateWithObject,
   updateHistory,
   removeObject,
@@ -117,6 +122,8 @@ export const getObjects = (state) =>
   state.canvas.images[state.canvas.currentImageIndx]?.objects;
 
 export const getIsDrawing = (state) => state.canvas.isDrawing;
+
+export const getStageScale = (state) => state.canvas.stageScale;
 
 export const getSelectedObjectId = (state) => state.canvas.selectedObjectId;
 

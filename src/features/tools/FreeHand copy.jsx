@@ -1,5 +1,5 @@
 import { Line } from "react-konva";
-import { hitDetectionMultiplier } from "../../utils/constants";
+import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import CustomTransformer from "../../ui/CustomTransformer";
@@ -99,7 +99,7 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
         onDragMove={(e) => handleDragMove(e)}
         onDragEnd={(e) => handleDragEnd(e)}
         strokeScaleEnabled={false}
-        hitStrokeWidth={line.strokeWidth * hitDetectionMultiplier}
+        hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
         onTap={(e) => onSelect(e)}
         onClick={(e) => onSelect(e)}
       />

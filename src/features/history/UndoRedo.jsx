@@ -28,6 +28,10 @@ const HistoryControlButton = styled.button`
     transform: scale(1.05);
   }
 
+  &:hover {
+    cursor: ${(props) => (props.disabled ? "default" : "pointer")};
+  }
+
   @media only screen and (max-width: 768px) {
     width: 2.8rem;
     height: 2.8rem;
@@ -41,9 +45,6 @@ function UndoRedo() {
   const isUndoDisabled = useSelector(isPastEmpty);
   const isRedoDisabled = useSelector(isFutureEmpty);
 
-  useEffect(() => {
-    console.log(isUndoDisabled);
-  }, [isUndoDisabled]);
   return (
     <StyledContainer>
       <HistoryControlButton

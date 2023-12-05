@@ -10,8 +10,13 @@ function useDimensions(ref) {
       height: (ref && ref.current.offsetHeight) || 0,
     });
 
+    let resizeTimer;
+
     const handleResize = () => {
-      setDimensions(getDimensions());
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        setDimensions(getDimensions());
+      }, 200);
     };
 
     if (ref.current) {
@@ -25,7 +30,7 @@ function useDimensions(ref) {
     };
   }, [ref]);
 
-  return dimensions;
+  return [dimensions, setDimensions];
 }
 
 export { useDimensions };

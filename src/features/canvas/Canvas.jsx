@@ -7,10 +7,12 @@ import {
   getIsLoading,
   getObjects,
   getSelectedObjectId,
+  getStageScale,
   redo,
   removeInvalidObject,
   selectObject,
   setIsDrawing,
+  setStageScale,
   undo,
   updateHistory,
   updateWithObject,
@@ -22,6 +24,7 @@ import {
   smoothLine,
   outOfBounds,
   notLongEnoughToDraw,
+  getRelativePointerPosition,
 } from "../../utils/helpers";
 import FreeHand from "../tools/FreeHand";
 import { updateFreeHand } from "../tools/freeHandUtils";
@@ -32,11 +35,13 @@ import PoseImage from "./PoseImage";
 // import CircleRotator from "../customShapes/circleRotator";
 import { updateCircle } from "../tools/circleUtils";
 import { useDimensions } from "./useDimensions";
-import useClickOutsideContainer from "./useClickOutsideContainer";
+import useClickOutsideContainer from "../../hooks/useClickOutsideContainer";
 
 import Circle from "../tools/CircleFromCorner";
 import { getColor } from "../colors/colorSlice";
 import useCtrlAndKeyDown from "../../hooks/useCtrlAndKeyDown";
+
+import { Circle as CircleKonva } from "react-konva"; // TODO delete
 
 const StyledCanvas = styled.div`
   display: block;
@@ -50,10 +55,12 @@ const StyledCanvas = styled.div`
   width: 100%;
   overscroll-behavior: none;
   background-color: #ffffffca;
+  zoom: 1;
 `;
 
 function Canvas() {
   const canvasRef = useRef(null);
+  const stageRef = useRef(null);
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
   const objects = useSelector(getObjects);
@@ -62,9 +69,11 @@ function Canvas() {
   const selectedColor = useSelector(getColor);
   const selectedTool = useSelector(getSelectedTool);
   const selectedObjectId = useSelector(getSelectedObjectId);
-  const dimensions = useDimensions(canvasRef);
 
   const [newObjectId, setNewObjectId] = useState("");
+  const [dimensions, setDimensions] = useDimensions(canvasRef);
+
+  const stageScale = useSelector(getStageScale);
 
   const outsideClickException = "adjust";
   useClickOutsideContainer(
@@ -89,9 +98,11 @@ function Canvas() {
   }
 
   function handleStart(e) {
-    const position = e.target.getStage().getPointerPosition();
+    const position = getRelativePointerPosition(e);
 
     if (
+      // Block draw with mouse wheel press
+      e.evt.button === 1 ||
       selectedTool === "none" ||
       // Don't draw when scaling
       isButtonOrAnchor(e) ||
@@ -149,11 +160,13 @@ function Canvas() {
   }
 
   function handleMove(e) {
+    e.evt.preventDefault();
+
     if (!isDrawing || selectedTool === "none") return;
 
     if (selectedObjectId != null) dispatch(deselectObject());
 
-    const position = e.target.getStage().getPointerPosition();
+    const position = getRelativePointerPosition(e);
     if (
       outOfBounds({
         position,
@@ -218,12 +231,45 @@ function Canvas() {
     dispatch(selectObject(objectId));
   }
 
+  // https://konvajs.org/docs/sandbox/Zooming_Relative_To_Pointer.html#sidebar
+  function handleWheel(e) {
+    const stage = stageRef.current;
+    const scaleBy = 1.1;
+
+    e.evt.preventDefault();
+
+    var oldScale = stage.scaleX();
+    var pointer = stage.getPointerPosition();
+
+    var mousePointTo = {
+      x: (pointer.x - stage.x()) / oldScale,
+      y: (pointer.y - stage.y()) / oldScale,
+    };
+
+    let direction = e.evt.deltaY > 0 ? -1 : 1;
+
+    // when we zoom on trackpad, e.evt.ctrlKey is true
+
+    var newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+
+    stage.scale({ x: newScale, y: newScale });
+    dispatch(setStageScale(newScale));
+
+    var newPos = {
+      x: pointer.x - mousePointTo.x * newScale,
+      y: pointer.y - mousePointTo.y * newScale,
+    };
+    stage.position(newPos);
+  }
+
   return (
     <StyledCanvas ref={canvasRef} id="canvas">
       {!isLoading && objects && (
         <Stage
+          ref={stageRef}
           width={dimensions.width}
           height={dimensions.height}
+          onWheel={handleWheel}
           onMouseDown={(e) => {
             handleStart(e);
           }}
@@ -236,6 +282,7 @@ function Canvas() {
           onTouchEnd={(e) => handleEnd(e)}
           onClick={(e) => checkDeselect(e)}
           onTap={(e) => checkDeselect(e)}
+          draggable={selectedTool === "none"}
         >
           <Layer>
             <PoseImage dimensions={dimensions} />
@@ -249,6 +296,7 @@ function Canvas() {
                     isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
                     onSelect={() => handleSelect(object.id)}
+                    stageRef={stageRef}
                   />
                 );
               } else if (object.type === "line") {
@@ -259,6 +307,7 @@ function Canvas() {
                     isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
                     onSelect={() => handleSelect(object.id)}
+                    stageRef={stageRef}
                   />
                 );
               } else if (object.type === "arrow") {
@@ -269,6 +318,7 @@ function Canvas() {
                     isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
                     onSelect={() => handleSelect(object.id)}
+                    stageRef={stageRef}
                   />
                 );
               } else if (object.type === "circle") {
@@ -279,6 +329,7 @@ function Canvas() {
                     isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
                     onSelect={() => handleSelect(object.id)}
+                    stageRef={stageRef}
                   />
                 );
               }

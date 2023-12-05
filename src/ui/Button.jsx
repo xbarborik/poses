@@ -3,8 +3,8 @@ import styled, { css } from "styled-components";
 const sizes = (size = "medium") =>
   ({
     smallEven: css`
-      width: 2rem;
-      height: 2rem;
+      width: 2.3rem;
+      height: 2.3rem;
     `,
     small: css`
       width: 3rem;
@@ -34,6 +34,7 @@ const StyledButton = styled.button`
 
   &:hover {
     background-color: #fff;
+    cursor: pointer;
   }
 
   &:disabled {

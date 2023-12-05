@@ -63,10 +63,10 @@ function LineTransformer({
   // Update line when group is dragged
   function handleGroupDragEnd() {
     const [x1, y1, x2, y2] = points;
-    const { x: xOffset, y: yOffset } =
-      groupRef.current.children[0].getAbsolutePosition();
+    const { x: xOffset, y: yOffset } = groupRef.current.getPosition();
 
     const newPoints = [x1 + xOffset, y1 + yOffset, x2 + xOffset, y2 + yOffset];
+
     setPoints(newPoints);
     onDragEnd(newPoints);
 
@@ -92,7 +92,7 @@ function LineTransformer({
             radius={12}
             fill="white"
             strokeWidth={2} // border width
-            stroke="#33ABF9" // border color
+            stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handleAnchorDragMove(e)}
             onDragEnd={(e) => handleAnchorDragEnd(e)}
@@ -105,7 +105,7 @@ function LineTransformer({
             radius={12}
             fill="white"
             strokeWidth={2} // border width
-            stroke="#33ABF9" // border color
+            stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handleAnchorDragMove(e)}
             onDragEnd={(e) => handleAnchorDragEnd(e)}
@@ -120,7 +120,7 @@ function LineTransformer({
               // strokeWidth={1} // border width
               // stroke="white" // border color
               radius={16}
-              fill="red"
+              fill="#ee3535"
               onClick={onRemove}
               onTap={onRemove}
             />

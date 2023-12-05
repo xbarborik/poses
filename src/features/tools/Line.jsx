@@ -1,6 +1,6 @@
 import { Line as LineKonva } from "react-konva";
 import LineTransformer from "../../ui/LineTransformer";
-import { hitDetectionMultiplier } from "../../utils/constants";
+import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
 import {
   removeObject,
   updateHistory,
@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import useAdjustColorAndWidth from "./useAdjustColorandWidth";
 
 // https://jsbin.com/wahetunepa/edit?html,js,output
-function Line({ line, isDraggable, isSelected, onSelect }) {
+function Line({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const dispatch = useDispatch();
   const [points, setPoints] = useState([0, 0, 0, 0]);
 
@@ -35,6 +35,7 @@ function Line({ line, isDraggable, isSelected, onSelect }) {
       onTransformEnd={handleChangeEnd}
       onDragEnd={handleChangeEnd}
       onRemove={() => dispatch(removeObject(line.id))}
+      stageRef={stageRef}
     >
       <LineKonva
         id={line.id}
@@ -44,7 +45,7 @@ function Line({ line, isDraggable, isSelected, onSelect }) {
         tension={0.7}
         lineCap="round"
         globalCompositeOperation={"source-over"}
-        hitStrokeWidth={line.strokeWidth * hitDetectionMultiplier}
+        hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
         onTap={(e) => onSelect(e)}
         onClick={(e) => onSelect(e)}
       />

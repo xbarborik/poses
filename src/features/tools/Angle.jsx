@@ -1,6 +1,6 @@
 import { Line as LineKonva } from "react-konva";
 import LineTransformer from "../../ui/LineTransformer";
-import { hitDetectionMultiplier } from "../../utils/constants";
+import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
 import { removeObject, updateHistory } from "../canvas/canvasSlice";
 import { useDispatch } from "react-redux";
 
@@ -32,7 +32,7 @@ function Angle({ line, isDraggable, isSelected, onSelect, onChange }) {
         tension={0.7}
         lineCap="round"
         globalCompositeOperation={"source-over"}
-        hitStrokeWidth={line.strokeWidth * hitDetectionMultiplier}
+        hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
       />
     </LineTransformer>
   );

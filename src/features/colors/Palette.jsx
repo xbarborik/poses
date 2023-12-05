@@ -2,29 +2,46 @@ import styled from "styled-components";
 import ColorButton from "./ColorButton";
 import { useSelector } from "react-redux";
 import { getSelectedTool } from "../tools/toolbarSlice";
+import StrokeWidthSlider from "../stroke-width-slider/StrokeWidthSlider";
 
 const StyledPalette = styled.div`
-  grid-area: colors;
   display: flex;
-  flex-grow: 1;
+
   gap: 1rem;
-  /* justify-content: space-evenly; */
-  justify-content: flex-end;
+
   @media only screen and (max-width: 768px) {
     gap: 0.5rem;
   }
 `;
 
+const PaletteContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  flex-grow: 1;
+
+  align-items: center;
+  flex-direction: row-reverse;
+  margin-left: auto;
+
+  @media only screen and (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
 function Palette() {
   return (
-    <StyledPalette>
-      <ColorButton color={"#FF0000"} />
-      <ColorButton color={"#000000"} />
-      <ColorButton color={"#ffffff"} />
-      <ColorButton color={"#1133e0"} />
-      <ColorButton color={"#f8f400"} />
-      <ColorButton color={"#2fe900"} />
-    </StyledPalette>
+    <PaletteContainer>
+      <StyledPalette>
+        <ColorButton color={"#FF0000"} />
+        <ColorButton color={"#000000"} />
+        <ColorButton color={"#ffffff"} />
+        <ColorButton color={"#1133e0"} />
+        <ColorButton color={"#f8f400"} />
+        <ColorButton color={"#2fe900"} />
+      </StyledPalette>
+      <StrokeWidthSlider defaultValue={8} minValue={4} maxValue={16} />
+    </PaletteContainer>
   );
 }
 

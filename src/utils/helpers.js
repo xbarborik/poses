@@ -1,4 +1,4 @@
-import { minimumObjectLength } from "./constants";
+import { MINIMUM_OBJECT_LENGTH } from "./constants";
 
 // Keeps every nth point in the last line
 export function smoothLine({ updateWithObject, objects, id, step }) {
@@ -48,8 +48,28 @@ export function calcLength(points) {
 export function notLongEnoughToDraw(object) {
   return (
     (object.type === "freeHand" &&
-      object.points.length <= minimumObjectLength) ||
+      object.points.length <= MINIMUM_OBJECT_LENGTH) ||
     (object.type !== "freeHand" &&
-      calcLength(object.points) <= minimumObjectLength)
+      calcLength(object.points) <= MINIMUM_OBJECT_LENGTH)
   );
+}
+
+// https://stackoverflow.com/questions/60680088/konva-js-free-drawing-drag-zoom-cant-draw-correctly-with-pointer-after-d/60683019#60683019
+export function getRelativePointerPosition(e) {
+  const stage = e.target.getStage();
+  // the function will return pointer position relative to the passed node
+  var transform = stage.getAbsoluteTransform().copy();
+  // to detect relative position we need to invert transform
+  transform.invert();
+
+  var pos = stage.getPointerPosition();
+
+  return transform.point(pos);
+}
+
+export function getRelativePosition(point, scale) {
+  const scaledX = point.x * scale;
+  const scaledY = point.y * scale;
+  console.log(scale);
+  return { x: scaledX, y: scaledY };
 }

@@ -18,6 +18,10 @@ const StyledColorButton = styled.button`
     width: 2rem;
     height: 2rem;
   }
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 function ColorButton({ color }) {

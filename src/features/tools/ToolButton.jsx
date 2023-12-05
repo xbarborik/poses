@@ -24,6 +24,7 @@ const StyledToolButton = styled.button`
   &:hover {
     transform: scale(1.05);
     background-color: "#fff";
+    cursor: pointer;
   }
 
   @media only screen and (max-width: 768px) {

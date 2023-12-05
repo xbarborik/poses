@@ -41,7 +41,7 @@ function App() {
         <UndoRedo />
         <Palette />
       </TopBar>
-      <StrokeWidthSlider defaultValue={8} minValue={4} maxValue={16} />
+
       <Main>
         {!isLoading && <Canvas />}
         <Toolbar />
