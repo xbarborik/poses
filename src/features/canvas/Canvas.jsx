@@ -98,8 +98,6 @@ function Canvas() {
   }
 
   function handleStart(e) {
-    e.preventDefault();
-
     const position = getRelativePointerPosition(e);
 
     if (
