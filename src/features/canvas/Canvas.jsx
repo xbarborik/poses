@@ -42,6 +42,8 @@ import { getColor } from "../colors/colorSlice";
 import useCtrlAndKeyDown from "../../hooks/useCtrlAndKeyDown";
 
 import { Circle as CircleKonva } from "react-konva"; // TODO delete
+import { useMultiTouchScale } from "./useMultiTouchZoom";
+import { useWheelAndTouchpadZoom } from "./useWheelAndTouchpadZoom";
 
 const StyledCanvas = styled.div`
   display: block;
@@ -73,7 +75,12 @@ function Canvas() {
   const [newObjectId, setNewObjectId] = useState("");
   const [dimensions, setDimensions] = useDimensions(canvasRef);
 
-  const stageScale = useSelector(getStageScale);
+  const {
+    scale: multiTouchScale,
+    handleMultiTouchMove,
+    handleMultiTouchEnd,
+  } = useMultiTouchScale(stageRef);
+  const { scale: wheelScale, handleWheel } = useWheelAndTouchpadZoom(stageRef);
 
   const outsideClickException = "adjust";
   useClickOutsideContainer(
@@ -231,37 +238,6 @@ function Canvas() {
     dispatch(selectObject(objectId));
   }
 
-  // https://konvajs.org/docs/sandbox/Zooming_Relative_To_Pointer.html#sidebar
-  function handleWheel(e) {
-    const stage = stageRef.current;
-    const scaleBy = 1.1;
-
-    e.evt.preventDefault();
-
-    var oldScale = stage.scaleX();
-    var pointer = stage.getPointerPosition();
-
-    var mousePointTo = {
-      x: (pointer.x - stage.x()) / oldScale,
-      y: (pointer.y - stage.y()) / oldScale,
-    };
-
-    let direction = e.evt.deltaY > 0 ? -1 : 1;
-
-    // when we zoom on trackpad, e.evt.ctrlKey is true
-
-    var newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-
-    stage.scale({ x: newScale, y: newScale });
-    dispatch(setStageScale(newScale));
-
-    var newPos = {
-      x: pointer.x - mousePointTo.x * newScale,
-      y: pointer.y - mousePointTo.y * newScale,
-    };
-    stage.position(newPos);
-  }
-
   return (
     <StyledCanvas ref={canvasRef} id="canvas">
       {!isLoading && objects && (
@@ -269,7 +245,10 @@ function Canvas() {
           ref={stageRef}
           width={dimensions.width}
           height={dimensions.height}
-          onWheel={handleWheel}
+          onWheel={(e) => {
+            handleWheel(e);
+            dispatch(setStageScale(wheelScale));
+          }}
           onMouseDown={(e) => {
             handleStart(e);
           }}
@@ -278,8 +257,17 @@ function Canvas() {
           onTouchStart={(e) => {
             handleStart(e);
           }}
-          onTouchMove={(e) => handleMove(e)}
-          onTouchEnd={(e) => handleEnd(e)}
+          onTouchMove={(e) => {
+            if (e.evt.touches.length === 2) {
+              handleMultiTouchMove(e);
+              dispatch(setStageScale(multiTouchScale));
+            } else handleMove(e);
+          }}
+          onTouchEnd={(e) => {
+            if (e.evt.touches.length === 2) handleMultiTouchEnd();
+            else handleMove(e);
+            handleEnd(e);
+          }}
           onClick={(e) => checkDeselect(e)}
           onTap={(e) => checkDeselect(e)}
           draggable={selectedTool === "none"}
