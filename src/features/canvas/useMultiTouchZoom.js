@@ -6,18 +6,18 @@ export function useMultiTouchScale(stageRef) {
   const [lastDistance, setLastDistance] = useState(0);
   const [scale, setScale] = useState(1);
 
-  const getDistance = (p1, p2) => {
+  function getDistance(p1, p2) {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-  };
+  }
 
-  const getCenter = (p1, p2) => {
+  function getCenter(p1, p2) {
     return {
       x: (p1.x + p2.x) / 2,
       y: (p1.y + p2.y) / 2,
     };
-  };
+  }
 
-  const handleMultiTouchMove = (e) => {
+  function handleMultiTouchMove(e) {
     e.evt.preventDefault();
 
     const touch1 = e.evt.touches[0];
@@ -41,16 +41,16 @@ export function useMultiTouchScale(stageRef) {
 
       const distance = getDistance(point1, point2);
 
-      if (!lastDistance) {
-        setLastDistance(distance);
-      }
-
       const pointTo = {
         x: (newCenter.x - stageRef.current.x()) / stageRef.current.scaleX(),
         y: (newCenter.y - stageRef.current.y()) / stageRef.current.scaleX(),
       };
 
-      const newScale = stageRef.current.scaleX() * (distance / lastDistance);
+      const newScale =
+        stageRef.current.scaleX() *
+        (distance / (lastDistance ? lastDistance : distance));
+
+      setLastDistance(distance);
 
       stageRef.current.scaleX(newScale);
       stageRef.current.scaleY(newScale);
@@ -69,7 +69,7 @@ export function useMultiTouchScale(stageRef) {
       setLastCenter(newCenter);
       setScale(newScale);
     }
-  };
+  }
 
   const handleMultiTouchEnd = () => {
     setLastDistance(0);

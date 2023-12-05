@@ -12,6 +12,10 @@
   -webkit-text-size-adjust: 100%;
 }
 
+#root {
+  margin: 0 auto;
+}
+
 body {
   margin: 0;
   display: flex;
@@ -34,4 +38,12 @@ body {
 
 body * {
   transition: 0.15s;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+  -webkit-tap-highlight-color: transparent;
 }

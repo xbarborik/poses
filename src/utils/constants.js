@@ -1,3 +1,3 @@
-export const HIT_DETECTION_MULTIPLIER = 3;
+export const HIT_DETECTION_MULTIPLIER = 4;
 
-export const MINIMUM_OBJECT_LENGTH = 4;
+export const MINIMUM_OBJECT_LENGTH = 10;

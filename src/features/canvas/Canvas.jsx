@@ -7,7 +7,6 @@ import {
   getIsLoading,
   getObjects,
   getSelectedObjectId,
-  getStageScale,
   redo,
   removeInvalidObject,
   selectObject,
@@ -41,7 +40,6 @@ import Circle from "../tools/CircleFromCorner";
 import { getColor } from "../colors/colorSlice";
 import useCtrlAndKeyDown from "../../hooks/useCtrlAndKeyDown";
 
-import { Circle as CircleKonva } from "react-konva"; // TODO delete
 import { useMultiTouchScale } from "./useMultiTouchZoom";
 import { useWheelAndTouchpadZoom } from "./useWheelAndTouchpadZoom";
 
@@ -80,6 +78,7 @@ function Canvas() {
     handleMultiTouchMove,
     handleMultiTouchEnd,
   } = useMultiTouchScale(stageRef);
+
   const { scale: wheelScale, handleWheel } = useWheelAndTouchpadZoom(stageRef);
 
   const outsideClickException = "adjust";
@@ -105,6 +104,8 @@ function Canvas() {
   }
 
   function handleStart(e) {
+    e.evt.preventDefault();
+
     const position = getRelativePointerPosition(e);
 
     if (
@@ -264,13 +265,12 @@ function Canvas() {
             } else handleMove(e);
           }}
           onTouchEnd={(e) => {
-            if (e.evt.touches.length === 2) handleMultiTouchEnd();
-            else handleMove(e);
+            handleMultiTouchEnd();
             handleEnd(e);
           }}
           onClick={(e) => checkDeselect(e)}
           onTap={(e) => checkDeselect(e)}
-          draggable={selectedTool === "none"}
+          // draggable={selectedTool === "none"  }
         >
           <Layer>
             <PoseImage dimensions={dimensions} />

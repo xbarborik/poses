@@ -1,4 +1,3 @@
-import "./App.css";
 import Canvas from "./features/canvas/Canvas";
 import Palette from "./features/colors/palette";
 import Toolbar from "./features/tools/Toolbar";
@@ -7,15 +6,10 @@ import TopBar from "./ui/TopBar";
 import Main from "./ui/Main";
 import BottomBar from "./ui/BottomBar";
 import Navigation from "./features/navigation/Navigation";
-import StrokeWidthSlider from "./features/stroke-width-slider/StrokeWidthSlider";
 import UndoRedo from "./features/history/UndoRedo";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getIsLoading,
-  setImages,
-  setIsLoading,
-} from "./features/canvas/canvasSlice";
+import { getIsLoading, setImages } from "./features/canvas/canvasSlice";
 
 function App() {
   const dispatch = useDispatch();

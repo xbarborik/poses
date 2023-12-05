@@ -20,8 +20,6 @@ export function useWheelAndTouchpadZoom(stageRef) {
 
     let direction = e.evt.deltaY > 0 ? -1 : 1;
 
-    // when we zoom on trackpad, e.evt.ctrlKey is true
-
     var newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
     stage.scale({ x: newScale, y: newScale });
