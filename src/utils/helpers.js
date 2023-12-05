@@ -70,6 +70,6 @@ export function getRelativePointerPosition(e) {
 export function getRelativePosition(point, scale) {
   const scaledX = point.x * scale;
   const scaledY = point.y * scale;
-  console.log(scale);
+
   return { x: scaledX, y: scaledY };
 }

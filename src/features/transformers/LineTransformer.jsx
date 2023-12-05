@@ -12,6 +12,8 @@ function LineTransformer({
   onRemove,
 }) {
   const groupRef = useRef();
+  const anchor1Ref = useRef();
+  const anchor2Ref = useRef();
 
   // Use latter for simpler transformer
   const removeButtonPoint = findEquidistantPoint(points, 40) || {
@@ -47,10 +49,10 @@ function LineTransformer({
 
   function handleAnchorDragMove() {
     const newPoints = [
-      groupRef.current.children[1].x(),
-      groupRef.current.children[1].y(),
-      groupRef.current.children[2].x(),
-      groupRef.current.children[2].y(),
+      anchor1Ref.current.x(),
+      anchor1Ref.current.y(),
+      anchor2Ref.current.x(),
+      anchor2Ref.current.y(),
     ];
 
     setPoints(newPoints);
@@ -86,6 +88,7 @@ function LineTransformer({
         <>
           {/* Anchors */}
           <Circle
+            ref={anchor1Ref}
             name="anchor"
             x={points[0]}
             y={points[1]}
@@ -99,6 +102,7 @@ function LineTransformer({
           />
 
           <Circle
+            ref={anchor2Ref}
             name="anchor"
             x={points[2]}
             y={points[3]}

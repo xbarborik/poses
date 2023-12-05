@@ -2,7 +2,7 @@ import { Line } from "react-konva";
 import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import CustomTransformer from "../../ui/CustomTransformer";
+import CustomTransformer from "../transformers/CustomTransformer";
 import { getNewPoints } from "./freeHandUtils";
 import {
   removeObject,
@@ -15,7 +15,7 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
   const shapeRef = useRef();
   const trRef = useRef();
   const dispatch = useDispatch();
-  const [points, setPoints] = useState([0, 0, 0, 0]);
+  const [points, setPoints] = useState([]);
 
   useAdjustColorAndWidth(line, isSelected);
 
@@ -79,6 +79,8 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
     );
   }
 
+  if (!points.length) return;
+
   return (
     <>
       <Line
@@ -87,6 +89,7 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
         points={points}
         stroke={line.color}
         strokeWidth={line.strokeWidth}
+        strokeScaleEnabled={false}
         tension={0.7}
         lineCap="round"
         lineJoin="round"
@@ -98,7 +101,6 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
         onDragStart={() => dispatch(updateHistory())}
         onDragMove={(e) => handleDragMove(e)}
         onDragEnd={(e) => handleDragEnd(e)}
-        strokeScaleEnabled={false}
         hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
         onTap={(e) => onSelect(e)}
         onClick={(e) => onSelect(e)}

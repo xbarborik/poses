@@ -1,9 +1,9 @@
-import { Circle, Group, Image, Line, Stage, Transformer } from "react-konva";
+import { Circle, Group, Image, Line, Transformer } from "react-konva";
 
 import { useImage } from "react-konva-utils";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { getStageScale } from "../features/canvas/canvasSlice";
+import { getStageScale } from "../canvas/canvasSlice";
 
 function CustomTransformer({
   trRef,
@@ -18,28 +18,31 @@ function CustomTransformer({
   const stageScale = useSelector(getStageScale);
 
   const buttonRadius = 16;
+  const padding = buttonRadius / 4;
 
-  const scaleButtonX = (tr.x + tr.width - buttonRadius / 2) / stageScale;
-  const scaleButtonY = (tr.y + tr.height - buttonRadius / 2) / stageScale;
-  const removeButtonX = tr.x / stageScale;
-  const removeButtonY = tr.y / stageScale;
+  const scaleButtonX = tr.x + tr.width - buttonRadius;
+  const scaleButtonY = tr.y + tr.height - buttonRadius;
+  const removeButtonX = tr.x;
+  const removeButtonY = tr.y;
 
   useEffect(() => {
     getTransformerRect();
 
     groupRef.current.moveToTop();
-    // I need trRef.current for getting buttons on initial render
+    // We need trRef.current for getting buttons on initial render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trRef, trRef.current]);
 
   function getTransformerRect() {
     const trRect = trRef.current.getClientRect();
 
+    const { x: xOffset, y: yOffset } = stageRef.current.getPosition();
+
     setTr({
-      x: trRect.x,
-      y: trRect.y,
-      width: trRect.width,
-      height: trRect.height,
+      x: trRect.x / stageScale - xOffset / stageScale,
+      y: trRect.y / stageScale - yOffset / stageScale,
+      width: trRect.width / stageScale,
+      height: trRect.height / stageScale,
     });
   }
 
@@ -53,10 +56,10 @@ function CustomTransformer({
         rotateEnabled={false}
         onDragMove={getTransformerRect}
         onTransform={getTransformerRect}
-        anchorSize={18}
+        anchorSize={buttonRadius * 2 * stageScale}
+        anchorCornerRadius={50}
         keepRatio={keepRatio}
       />
-
       {/* Scale Button */}
       <Group listening={false}>
         <Circle
@@ -71,10 +74,10 @@ function CustomTransformer({
 
         <Image
           image={image}
-          x={scaleButtonX - (buttonRadius + buttonRadius / 4) / 2}
-          y={scaleButtonY - (buttonRadius + buttonRadius / 4) / 2}
-          width={buttonRadius + buttonRadius / 4}
-          height={buttonRadius + buttonRadius / 4}
+          x={scaleButtonX - (buttonRadius + padding) / 2}
+          y={scaleButtonY - (buttonRadius + padding) / 2}
+          width={buttonRadius + padding}
+          height={buttonRadius + padding}
           listening={false}
         />
       </Group>

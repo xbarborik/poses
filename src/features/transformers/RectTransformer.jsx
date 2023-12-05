@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Circle, Group, Rect } from "react-konva";
-import { calcAngle } from "../utils/helpers";
+import { calcAngle } from "../../utils/helpers";
 
 function RectTransformer({
   children,

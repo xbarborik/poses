@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Circle as CircleKonva } from "react-konva";
-import CustomTransformer from "../../ui/CustomTransformer";
+import CustomTransformer from "../transformers/CustomTransformer";
 import { useDispatch } from "react-redux";
 import {
   removeObject,
@@ -9,12 +9,13 @@ import {
 } from "../canvas/canvasSlice";
 import { getNewPoints } from "./circleUtils";
 import useAdjustColorAndWidth from "./useAdjustColorandWidth";
+import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
 
 function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
   const trRef = useRef();
   const dispatch = useDispatch();
-  const [points, setPoints] = useState([0, 0, 0, 0]);
+  const [points, setPoints] = useState([]);
   const [radius, setRadius] = useState(0);
 
   useAdjustColorAndWidth(circle, isSelected);
@@ -72,9 +73,10 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         points: points,
       })
     );
-
-    console.log(points);
+    console.log("circle", points[0], points[1]);
   }
+
+  if (!points.length) return;
 
   return (
     <>
@@ -86,7 +88,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         radius={radius / 2}
         stroke={circle.color}
         strokeWidth={circle.strokeWidth}
-        strokeScaleEnabled={false}
+        // strokeScaleEnabled={false}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
         onTransform={(e) => handleTransform(e)}
@@ -96,6 +98,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         onDragEnd={handleDragEnd}
         onTap={(e) => onSelect(e)}
         onClick={(e) => onSelect(e)}
+        hitStrokeWidth={circle.strokeWidth * HIT_DETECTION_MULTIPLIER * 100}
       />
       {isSelected && (
         <CustomTransformer

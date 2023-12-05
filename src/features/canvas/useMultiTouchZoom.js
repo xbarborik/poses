@@ -23,6 +23,8 @@ export function useMultiTouchScale(stageRef) {
     const touch1 = e.evt.touches[0];
     const touch2 = e.evt.touches[1];
 
+    const stage = stageRef.current;
+
     if (touch1 && touch2) {
       const point1 = {
         x: touch1.clientX,
@@ -42,18 +44,16 @@ export function useMultiTouchScale(stageRef) {
       const distance = getDistance(point1, point2);
 
       const pointTo = {
-        x: (newCenter.x - stageRef.current.x()) / stageRef.current.scaleX(),
-        y: (newCenter.y - stageRef.current.y()) / stageRef.current.scaleX(),
+        x: (newCenter.x - stage.x()) / stage.scaleX(),
+        y: (newCenter.y - stage.y()) / stage.scaleX(),
       };
 
       const newScale =
-        stageRef.current.scaleX() *
-        (distance / (lastDistance ? lastDistance : distance));
+        stage.scaleX() * (distance / (lastDistance ? lastDistance : distance));
 
       setLastDistance(distance);
 
-      stageRef.current.scaleX(newScale);
-      stageRef.current.scaleY(newScale);
+      stage.scale({ x: newScale, y: newScale });
 
       const dx = newCenter.x - lastCenter.x;
       const dy = newCenter.y - lastCenter.y;
@@ -63,7 +63,7 @@ export function useMultiTouchScale(stageRef) {
         y: newCenter.y - pointTo.y * newScale + dy,
       };
 
-      stageRef.current.position(newPos);
+      stage.position(newPos);
 
       setLastDistance(distance);
       setLastCenter(newCenter);

@@ -10,21 +10,21 @@ export function useWheelAndTouchpadZoom(stageRef) {
 
     e.evt.preventDefault();
 
-    var oldScale = stage.scaleX();
-    var pointer = stage.getPointerPosition();
+    const oldScale = stage.scaleX();
+    const pointer = stage.getPointerPosition();
 
-    var mousePointTo = {
+    const mousePointTo = {
       x: (pointer.x - stage.x()) / oldScale,
       y: (pointer.y - stage.y()) / oldScale,
     };
 
-    let direction = e.evt.deltaY > 0 ? -1 : 1;
+    const direction = e.evt.deltaY > 0 ? -1 : 1;
 
-    var newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
     stage.scale({ x: newScale, y: newScale });
 
-    var newPos = {
+    const newPos = {
       x: pointer.x - mousePointTo.x * newScale,
       y: pointer.y - mousePointTo.y * newScale,
     };

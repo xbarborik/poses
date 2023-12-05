@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Arrow as ArrowKonva } from "react-konva";
 import { useDispatch } from "react-redux";
 import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
-import LineTransformer from "../../ui/LineTransformer";
+import LineTransformer from "../transformers/LineTransformer";
 import {
   removeObject,
   updateHistory,
@@ -13,7 +13,7 @@ import useAdjustColorAndWidth from "./useAdjustColorandWidth";
 function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
   const shapeRef = useRef();
   const dispatch = useDispatch();
-  const [points, setPoints] = useState([0, 0, 0, 0]);
+  const [points, setPoints] = useState([]);
 
   useAdjustColorAndWidth(arrow, isSelected);
 
@@ -25,6 +25,8 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
     dispatch(updateHistory());
     dispatch(updateWithObject({ ...arrow, points: newPoints }));
   }
+
+  if (!points.length) return;
 
   return (
     <LineTransformer

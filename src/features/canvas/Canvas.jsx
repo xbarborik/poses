@@ -295,7 +295,6 @@ function Canvas() {
                     isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
                     onSelect={() => handleSelect(object.id)}
-                    stageRef={stageRef}
                   />
                 );
               } else if (object.type === "arrow") {
@@ -306,7 +305,6 @@ function Canvas() {
                     isDraggable={selectedObjectId === object.id}
                     isSelected={selectedObjectId === object.id}
                     onSelect={() => handleSelect(object.id)}
-                    stageRef={stageRef}
                   />
                 );
               } else if (object.type === "circle") {
