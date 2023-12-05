@@ -85,16 +85,18 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   if (!points.length) return;
 
   const [lastX, lastY] = points.slice(-2);
-  const secondToLastX = points[points.length - 4];
-  const secondToLastY = points[points.length - 3];
+  const prevX = points[points.length - 4];
+  const prevY = points[points.length - 3];
 
-  const arrowHeadPoints = [secondToLastX, secondToLastY, lastX, lastY];
+  const arrowHeadPoints = [prevX, prevY, lastX, lastY];
   return (
     <>
       <Arrow
         points={arrowHeadPoints}
         stroke={line.color}
-        strokeWidth={line.strokeWidth * 1}
+        fill={line.color}
+        strokeWidth={line.strokeWidth}
+        pointerWidth={line.strokeWidth * 2}
       />
 
       <Line

@@ -234,7 +234,7 @@ function Canvas() {
         objects,
         updateWithObject: (object) => dispatch(updateWithObject(object)),
         id: newObjectId,
-        step: 4,
+        step: 2,
       });
     }
   }
