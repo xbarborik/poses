@@ -47,9 +47,9 @@ export function calcLength(points) {
 
 export function notLongEnoughToDraw(object) {
   return (
-    (object.type === "freeHand" &&
+    (object.type.includes("freeHand") &&
       object.points.length <= MINIMUM_OBJECT_LENGTH) ||
-    (object.type !== "freeHand" &&
+    (!object.type.includes("freeHand") &&
       calcLength(object.points) <= MINIMUM_OBJECT_LENGTH)
   );
 }

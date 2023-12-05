@@ -52,6 +52,7 @@ function ToolButton({ children, type, preventEvents }) {
     if (isActive) {
       dispatch(selectTool("none"));
     } else {
+      console.log(type);
       dispatch(selectTool(type));
     }
   }

@@ -1,5 +1,8 @@
-import { Line } from "react-konva";
-import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
+import { Arrow, Group, Line } from "react-konva";
+import {
+  HIT_DETECTION_MULTIPLIER,
+  MINIMUM_OBJECT_LENGTH,
+} from "../../utils/constants";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import CustomTransformer from "../transformers/CustomTransformer";
@@ -11,7 +14,7 @@ import {
 } from "../canvas/canvasSlice";
 import useAdjustColorAndWidth from "./useAdjustColorandWidth";
 
-function FreeHand({ line, isDraggable, isSelected, onSelect }) {
+function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
   const trRef = useRef();
   const dispatch = useDispatch();
@@ -81,15 +84,26 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
 
   if (!points.length) return;
 
+  const [lastX, lastY] = points.slice(-2);
+  const secondToLastX = points[points.length - 4];
+  const secondToLastY = points[points.length - 3];
+
+  const arrowHeadPoints = [secondToLastX, secondToLastY, lastX, lastY];
   return (
     <>
+      <Arrow
+        points={arrowHeadPoints}
+        stroke={line.color}
+        strokeWidth={line.strokeWidth * 1}
+      />
+
       <Line
         id={line.id}
         ref={shapeRef}
         points={points}
         stroke={line.color}
         strokeWidth={line.strokeWidth}
-        strokeScaleEnabled={false}
+        hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
         tension={0.7}
         lineCap="round"
         lineJoin="round"
@@ -101,10 +115,10 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
         onDragStart={() => dispatch(updateHistory())}
         onDragMove={(e) => handleDragMove(e)}
         onDragEnd={(e) => handleDragEnd(e)}
-        hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
         onTap={(e) => onSelect(e)}
         onClick={(e) => onSelect(e)}
       />
+
       {isSelected && (
         <CustomTransformer
           trRef={trRef}
@@ -112,10 +126,11 @@ function FreeHand({ line, isDraggable, isSelected, onSelect }) {
           centeredScaling={false}
           onRemove={() => dispatch(removeObject(line.id))}
           keepRatio={false}
+          stageRef={stageRef}
         />
       )}
     </>
   );
 }
 
-export default FreeHand;
+export default FreeHandArrow;

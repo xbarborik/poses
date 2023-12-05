@@ -42,6 +42,8 @@ import useCtrlAndKeyDown from "../../hooks/useCtrlAndKeyDown";
 
 import { useMultiTouchScale } from "./useMultiTouchZoom";
 import { useWheelAndTouchpadZoom } from "./useWheelAndTouchpadZoom";
+import FreeHandArrow from "../tools/FreeHandArrow";
+import { object } from "prop-types";
 
 const StyledCanvas = styled.div`
   display: block;
@@ -139,6 +141,7 @@ function Canvas() {
 
     switch (selectedTool) {
       case "freeHand":
+      case "freeHandArrow":
       case "line":
       case "arrow":
         dispatch(
@@ -169,7 +172,6 @@ function Canvas() {
 
   function handleMove(e) {
     e.evt.preventDefault();
-
     if (!isDrawing || selectedTool === "none") return;
 
     if (selectedObjectId != null) dispatch(deselectObject());
@@ -187,6 +189,7 @@ function Canvas() {
 
     switch (selectedTool) {
       case "freeHand":
+      case "freeHandArrow":
         updateFreeHand({
           updateWithObject: (object) => dispatch(updateWithObject(object)),
           freeHand: objects[newObjectId],
@@ -215,17 +218,18 @@ function Canvas() {
 
   function handleEnd() {
     if (!isDrawing) return;
-
+    console.log(objects);
     dispatch(setIsDrawing(false));
 
     if (!objects) return;
 
+    console.log(selectedTool);
     if (notLongEnoughToDraw(objects[newObjectId])) {
       dispatch(removeInvalidObject(newObjectId)); // todo make custom action for deleting object and restoring previous history state
       return;
     }
 
-    if (selectedTool === "freeHand") {
+    if (selectedTool === "freeHand" || selectedTool === "freeHandArrow") {
       smoothLine({
         objects,
         updateWithObject: (object) => dispatch(updateWithObject(object)),
@@ -279,6 +283,17 @@ function Canvas() {
               if (object.type === "freeHand") {
                 return (
                   <FreeHand
+                    key={object.id}
+                    line={object}
+                    isDraggable={selectedObjectId === object.id}
+                    isSelected={selectedObjectId === object.id}
+                    onSelect={() => handleSelect(object.id)}
+                    stageRef={stageRef}
+                  />
+                );
+              } else if (object.type === "freeHandArrow") {
+                return (
+                  <FreeHandArrow
                     key={object.id}
                     line={object}
                     isDraggable={selectedObjectId === object.id}

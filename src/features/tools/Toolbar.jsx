@@ -8,6 +8,7 @@ import { getIsDrawing } from "../canvas/canvasSlice";
 import { useState } from "react";
 import Button from "../../ui/Button";
 import { MdArrowLeft, MdArrowRight } from "react-icons/md";
+import { MdUndo } from "react-icons/md";
 
 const StyledToolBar = styled.div`
   display: flex;
@@ -66,6 +67,9 @@ function Toolbar() {
             </ToolButton>
             <ToolButton type={"arrow"} preventEvents={!showToolbar}>
               <BsArrowUp />
+            </ToolButton>
+            <ToolButton type={"freeHandArrow"} preventEvents={!showToolbar}>
+              <MdUndo />
             </ToolButton>
             <ToolButton type={"circle"} preventEvents={!showToolbar}>
               <BsCircle />
