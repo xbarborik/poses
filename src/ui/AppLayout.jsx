@@ -2,15 +2,15 @@ import styled from "styled-components";
 
 const StyledAppLayout = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
-  justify-content: center;
+
   align-items: stretch;
   box-sizing: border-box;
-  height: 98vh;
+  height: 100vh;
   overflow: hidden;
   width: 100vw;
-  padding: 0.2rem;
-  max-width: 1200px;
+  max-width: 1250px;
 `;
 
 function AppLayout({ children }) {

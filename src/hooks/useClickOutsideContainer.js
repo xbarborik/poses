@@ -6,7 +6,7 @@ function useClickOutsideContainer(ref, callback, exception) {
       if (
         ref.current &&
         !ref.current.contains(e.target) &&
-        !e.target?.name?.includes(exception)
+        !e.target?.getAttribute("name")?.includes(exception)
       ) {
         callback();
       }

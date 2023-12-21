@@ -6,6 +6,7 @@ const initialState = {
   currentImageIndx: 0,
 
   stageScale: 1,
+  stagePos: { x: 0, y: 0 },
   selectedObjectId: null,
   isDrawing: false,
 };
@@ -32,6 +33,9 @@ const canvasSlice = createSlice({
 
     setStageScale(state, action) {
       state.stageScale = action.payload;
+    },
+    setStagePos(state, action) {
+      state.stagePos = action.payload;
     },
     updateWithObject(state, action) {
       state.images[state.currentImageIndx].objects[action.payload.id] =
@@ -95,6 +99,7 @@ export const {
   setImages,
   setCurrentImageIndx,
   setStageScale,
+  setStagePos,
   updateWithObject,
   updateHistory,
   removeObject,
@@ -124,8 +129,14 @@ export const getObjects = (state) =>
 export const getIsDrawing = (state) => state.canvas.isDrawing;
 
 export const getStageScale = (state) => state.canvas.stageScale;
+export const getStagePos = (state) => state.canvas.stagePos;
 
 export const getSelectedObjectId = (state) => state.canvas.selectedObjectId;
+
+export const getSelectedObject = (state) =>
+  state.canvas.images[state.canvas.currentImageIndx]?.objects[
+    state.canvas.selectedObjectId
+  ];
 
 export const isSelectedObject = (state, payload) =>
   state.canvas.selectedObject === payload;

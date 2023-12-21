@@ -1,22 +1,25 @@
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { getColor, selectColor } from "./colorSlice";
+import { getColor, selectColor } from "./styleSlice";
 
 const StyledColorButton = styled.button`
   display: block;
   /* flex: 1; */
   aspect-ratio: 1;
-  /* max-width: 2.5rem; */
-  width: 2.5rem;
-  height: 2.5rem;
+  pointer-events: auto;
+  margin: 0.1rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
-  background-color: ${(props) => props.color};
-  border: ${(props) =>
-    props.$isActive ? "3px solid #fff" : "3px groove #4e4c4c44"};
+  background-color: ${(props) => props.$color};
+  border: none;
+  outline: ${(props) =>
+    props.$isActive ? `2px solid ${props.$color}` : "0px"};
+  outline-offset: 1.5px;
 
   @media only screen and (max-width: 768px) {
-    width: 2rem;
-    height: 2rem;
+    width: 1.5rem;
+    height: 1.5rem;
   }
 
   &:hover {
@@ -32,7 +35,7 @@ function ColorButton({ color }) {
     <StyledColorButton
       name="adjust-color"
       onClick={() => dispatch(selectColor(color))}
-      color={color}
+      $color={color}
       $isActive={color === activeColor}
     />
   );

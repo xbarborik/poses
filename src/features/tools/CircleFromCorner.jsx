@@ -8,8 +8,11 @@ import {
   updateWithObject,
 } from "../canvas/canvasSlice";
 import { getNewPoints } from "./circleUtils";
-import useAdjustColorAndWidth from "./useAdjustColorandWidth";
-import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
+import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import {
+  HIT_DETECTION_MULTIPLIER,
+  HIT_FUNC_MULTIPLIER,
+} from "../../utils/constants";
 
 function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
@@ -31,6 +34,13 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
       trRef.current.getLayer().batchDraw();
     }
   }, [isSelected]);
+
+  function customHitFunc(context, shape) {
+    context.beginPath();
+    context.arc(0, 0, shape.attrs.radius * HIT_FUNC_MULTIPLIER, 0, 2 * Math.PI);
+    context.closePath();
+    context.fillStrokeShape(shape);
+  }
 
   function handleTransform(e) {
     const node = shapeRef.current;
@@ -60,20 +70,13 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
     dispatch(updateWithObject(newCircle));
   }
 
-  function handleDragMove(e) {
-    const newPoints = getNewPoints(e, points);
-
-    setPoints(newPoints);
-  }
-
-  function handleDragEnd() {
+  function handleDragEnd(e) {
     dispatch(
       updateWithObject({
         ...circle,
-        points: points,
+        points: getNewPoints(e, circle.points),
       })
     );
-    console.log("circle", points[0], points[1]);
   }
 
   if (!points.length) return;
@@ -88,17 +91,16 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         radius={radius / 2}
         stroke={circle.color}
         strokeWidth={circle.strokeWidth}
-        // strokeScaleEnabled={false}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
         onTransform={(e) => handleTransform(e)}
         onTransformEnd={handleTransformEnd}
         onDragStart={() => dispatch(updateHistory())}
-        onDragMove={(e) => handleDragMove(e)}
-        onDragEnd={handleDragEnd}
-        onTap={(e) => onSelect(e)}
-        onClick={(e) => onSelect(e)}
+        onDragEnd={(e) => handleDragEnd(e)}
+        onTap={onSelect}
+        onClick={onSelect}
         hitStrokeWidth={circle.strokeWidth * HIT_DETECTION_MULTIPLIER * 100}
+        hitFunc={customHitFunc}
       />
       {isSelected && (
         <CustomTransformer

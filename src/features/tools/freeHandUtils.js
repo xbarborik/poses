@@ -11,6 +11,6 @@ export function getNewPoints(e, previousPoints) {
   const newPoints = previousPoints.map((value, i) =>
     i % 2 == 0 ? value + offset.x : value + offset.y
   );
-
+  //console.log(previousPoints, offset, newPoints);
   return newPoints;
 }

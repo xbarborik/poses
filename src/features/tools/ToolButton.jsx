@@ -1,16 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { getSelectedTool, selectTool } from "./toolbarSlice";
-import { getColor } from "../colors/colorSlice";
+import { getColor } from "../stylePanel/styleSlice";
 
 const StyledToolButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.8rem;
   border-radius: 50%;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border: none;
   pointer-events: auto;
   background-color: ${(props) =>
@@ -20,6 +20,8 @@ const StyledToolButton = styled.button`
   outline-offset: 2px;
   margin-right: 0.5rem;
   pointer-events: ${(props) => (props.$preventEvents ? "none" : "auto")};
+  color: #393d47;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 
   &:hover {
     transform: scale(1.05);
@@ -28,10 +30,10 @@ const StyledToolButton = styled.button`
   }
 
   @media only screen and (max-width: 768px) {
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3rem;
+    height: 3rem;
     font-size: 2rem;
-    outline-width: 2px;
+    outline-width: 3px;
   }
 
   /* @media only screen and (orientation: landscape) {
@@ -52,7 +54,6 @@ function ToolButton({ children, type, preventEvents }) {
     if (isActive) {
       dispatch(selectTool("none"));
     } else {
-      console.log(type);
       dispatch(selectTool(type));
     }
   }

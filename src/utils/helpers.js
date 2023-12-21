@@ -2,17 +2,17 @@ import { MINIMUM_OBJECT_LENGTH } from "./constants";
 
 // Keeps every nth point in the last line
 export function smoothLine({ updateWithObject, objects, id, step }) {
-  const lastLine = objects[id];
-  const points = lastLine.points;
+  const line = objects[id];
+  const points = line.points;
 
-  if (lastLine.points.length <= step) return;
-  // console.log("original", lastLine);
-  const filteredLastLine = {
-    ...lastLine,
+  if (line.points.length <= step) return;
+
+  const filteredLine = {
+    ...line,
     points: points.filter((_, i) => i % step === 0 || i % step === 1),
   };
-  // console.log("filtered", filteredLastLine);
-  updateWithObject(filteredLastLine);
+
+  updateWithObject(filteredLine);
 }
 
 export function outOfBounds({ position, startX = 1, endX, startY = 1, endY }) {
@@ -30,12 +30,12 @@ export function mapPoints(x, y, width, height) {
   return { x: x * width, y: y * height };
 }
 
-export function calcAngle(x1, y1, x2, y2) {
+export function calcAngle(points) {
+  const [x1, y1, x2, y2] = points;
   const angleRadians = Math.atan2(y2 - y1, x2 - x1);
   const angleDegrees = (angleRadians * 180) / Math.PI;
 
-  // Ensure the angle is between 0 and 360 degrees
-  return (angleDegrees + 360) % 360;
+  return angleDegrees;
 }
 
 export function calcLength(points) {
@@ -50,6 +50,7 @@ export function notLongEnoughToDraw(object) {
     (object.type.includes("freeHand") &&
       object.points.length <= MINIMUM_OBJECT_LENGTH) ||
     (!object.type.includes("freeHand") &&
+      object.type !== "comment" &&
       calcLength(object.points) <= MINIMUM_OBJECT_LENGTH)
   );
 }
@@ -72,4 +73,11 @@ export function getRelativePosition(point, scale) {
   const scaledY = point.y * scale;
 
   return { x: scaledX, y: scaledY };
+}
+
+export function getCenter(point1, point2) {
+  return {
+    x: (point1.x + point2.x) / 2,
+    y: (point1.y + point2.y) / 2,
+  };
 }

@@ -2,11 +2,10 @@ import styled from "styled-components";
 import { LiaUndoSolid, LiaRedoSolid } from "react-icons/lia";
 import { useDispatch, useSelector } from "react-redux";
 import { isFutureEmpty, isPastEmpty, redo, undo } from "../canvas/canvasSlice";
-import { useEffect } from "react";
 
 const StyledContainer = styled.div`
   display: flex;
-  gap: 0.8rem;
+  gap: 0rem;
   padding: 0 0.2rem;
 `;
 
@@ -15,10 +14,11 @@ const HistoryControlButton = styled.button`
   align-items: center;
   justify-content: center;
 
-  font-size: 2rem;
-  border-radius: 50%;
-  width: 3.5rem;
-  height: 3.5rem;
+  font-size: 1.5rem;
+  border-radius: ${(props) =>
+    props.$position === "left" ? "35% 0 0 35%" : "0 35% 35% 0"};
+  width: 2.8rem;
+  height: 1.8rem;
   border: none;
   pointer-events: auto;
 
@@ -33,8 +33,8 @@ const HistoryControlButton = styled.button`
   }
 
   @media only screen and (max-width: 768px) {
-    width: 2.8rem;
-    height: 2.8rem;
+    width: 2.5rem;
+    height: 2rem;
     font-size: 2rem;
     outline-width: 2px;
   }
@@ -48,12 +48,14 @@ function UndoRedo() {
   return (
     <StyledContainer>
       <HistoryControlButton
+        $position="left"
         onClick={() => dispatch(undo())}
         disabled={isUndoDisabled}
       >
         <LiaUndoSolid />
       </HistoryControlButton>
       <HistoryControlButton
+        $position="right"
         onClick={() => dispatch(redo())}
         disabled={isRedoDisabled}
       >

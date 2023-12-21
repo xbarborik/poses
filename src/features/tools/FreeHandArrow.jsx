@@ -12,7 +12,7 @@ import {
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import useAdjustColorAndWidth from "./useAdjustColorandWidth";
+import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 
 function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
@@ -109,6 +109,8 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         tension={0.7}
         lineCap="round"
         lineJoin="round"
+        pointerLength={line.strokeWidth * 2}
+        pointerWidth={line.strokeWidth * 2}
         globalCompositeOperation={"source-over"}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
@@ -117,8 +119,8 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         onDragStart={() => dispatch(updateHistory())}
         onDragMove={(e) => handleDragMove(e)}
         onDragEnd={(e) => handleDragEnd(e)}
-        onTap={(e) => onSelect(e)}
-        onClick={(e) => onSelect(e)}
+        onTap={onSelect}
+        onClick={onSelect}
       />
 
       {isSelected && (

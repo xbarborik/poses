@@ -10,7 +10,9 @@ import {
 
 const StyledNavigation = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  gap: 10rem;
   width: 80%;
   padding: 0.5rem;
   margin: auto;

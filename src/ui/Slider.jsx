@@ -1,14 +1,15 @@
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
+import { useEffect, useState } from "react";
 
 // https://deadsimplechat.com/blog/react-slider-rc-slider-step-by-step-tutorial-with-examples/
-const trackHeightScale = 1.5;
+const trackHeightScale = 2;
 
-function calcOutline(value, minValue, maxValue) {
-  const ratio = (maxValue - value) / maxValue;
-  const outlineWidth = maxValue * ratio;
+function calcOutline(value, maxValue) {
+  const circleDiameter = value;
+  const border = (maxValue - circleDiameter) / 2;
 
-  return outlineWidth;
+  return border;
 }
 
 function CustomSlider({
@@ -19,25 +20,22 @@ function CustomSlider({
   color = "blue",
   name,
 }) {
-  const scale = 1.4;
-
+  const [currentValue, setCurrentValue] = useState(value);
+  const scale = 1.5;
   const styles = {
     handle: {
       backgroundColor: color,
       opacity: 1,
-      outline: `${calcOutline(
-        value,
-        minValue,
-        maxValue,
-        scale
-      )}px solid rgba(255,255,255,0.3)`,
+      border: `${
+        calcOutline(value, maxValue) * scale
+      }px solid rgba(255,255,255,0.5)`,
       cursor: "pointer",
-      border: "none",
       boxShadow: "none",
+      height: (value + calcOutline(value, maxValue) * 2) * scale,
+      width: (value + calcOutline(value, maxValue) * 2) * scale,
+      top: (minValue * trackHeightScale) / 2,
       boxSizing: "border-box",
-      height: value * scale,
-      width: value * scale,
-      top: (minValue / 2) * trackHeightScale ** 2,
+      backgroundClip: "padding-box",
       bottom: 0,
       margin: "auto 0",
       zIndex: 1,
@@ -50,16 +48,20 @@ function CustomSlider({
     },
 
     rail: {
-      backgroundColor: "rgba(255,255,255,0.4)",
+      backgroundColor: "rgba(0,0,0,0.2)",
       height: minValue * trackHeightScale,
     },
   };
+
+  useEffect(() => {
+    setCurrentValue(value);
+  }, [value]);
 
   return (
     <Slider
       name={name}
       onChange={onChange}
-      defaultValue={value || minValue}
+      value={currentValue || minValue}
       min={minValue}
       max={maxValue}
       styles={styles}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Arrow as ArrowKonva } from "react-konva";
 import { useDispatch } from "react-redux";
 import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
@@ -8,10 +8,9 @@ import {
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import useAdjustColorAndWidth from "./useAdjustColorandWidth";
+import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 
 function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
-  const shapeRef = useRef();
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
 
@@ -47,12 +46,11 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
         tension={0.7}
         lineCap="round"
         globalCompositeOperation={"source-over"}
-        pointerLength={20}
-        pointerWidth={20}
+        pointerLength={arrow.strokeWidth * 2}
+        pointerWidth={arrow.strokeWidth * 2}
         hitStrokeWidth={arrow.strokeWidth * HIT_DETECTION_MULTIPLIER}
-        ref={shapeRef}
-        onTap={(e) => onSelect(e)}
-        onClick={(e) => onSelect(e)}
+        onTap={onSelect}
+        onClick={onSelect}
       />
     </LineTransformer>
   );

@@ -1,18 +1,21 @@
 import styled from "styled-components";
 
 const StyledTopBar = styled.div`
-  flex-grow: 0.7;
-  width: 99%;
+  width: 100%;
   display: flex;
-  margin: 0 auto;
-  padding: 0.2rem 0;
-  box-sizing: border-box;
-  align-items: center;
-  /* justify-content: flex-end; */
+  border-radius: 0 0 20px 20px;
   gap: 0.1rem;
+  z-index: 99;
+  box-sizing: border-box;
+
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  justify-content: center;
 
   @media only screen and (max-width: 768px) {
     /* flex-direction: column; */
+    // background: rgba(255, 255, 255, 0.2);
   }
 `;
 

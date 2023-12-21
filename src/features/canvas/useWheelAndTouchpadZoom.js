@@ -3,6 +3,7 @@ import { useState } from "react";
 // https://konvajs.org/docs/sandbox/Multi-touch_Scale_Stage.html
 export function useWheelAndTouchpadZoom(stageRef) {
   const [scale, setScale] = useState(1);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
 
   function handleWheel(e) {
     const stage = stageRef.current;
@@ -24,15 +25,18 @@ export function useWheelAndTouchpadZoom(stageRef) {
 
     stage.scale({ x: newScale, y: newScale });
 
+    const dx = -e.evt.deltaX;
+    const dy = -e.evt.deltaY;
+
     const newPos = {
       x: pointer.x - mousePointTo.x * newScale,
       y: pointer.y - mousePointTo.y * newScale,
     };
 
     stage.position(newPos);
-
+    setPos(newPos);
     setScale(newScale);
   }
 
-  return { scale, handleWheel };
+  return { scale, handleWheel, pos };
 }

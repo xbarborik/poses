@@ -1,15 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import canvasReducer from "./features/canvas/canvasSlice";
 import toolbarReducer from "./features/tools/toolbarSlice";
-import sliderReducer from "./features/stroke-width-slider/sliderSlice";
-import colorReducer from "./features/colors/colorSlice";
+import styleReducer from "./features/stylePanel/styleSlice";
 
 const store = configureStore({
   reducer: {
     canvas: canvasReducer,
     toolbar: toolbarReducer,
-    slider: sliderReducer,
-    color: colorReducer,
+    style: styleReducer,
   },
 });
 

@@ -9,7 +9,7 @@ import {
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import useAdjustColorAndWidth from "./useAdjustColorandWidth";
+import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 
 function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
@@ -47,8 +47,6 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
     const newPoints = getNewPoints(e, scaledPoints);
 
     setPoints(newPoints);
-    // shapeRef.current.points(newPoints);
-    // shapeRef.current.getLayer().batchDraw();
 
     shapeRef.current.position({ x: 0, y: 0 });
   }
@@ -62,22 +60,17 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
     dispatch(updateWithObject(newLine));
   }
 
-  function handleDragMove(e) {
+  function handleDragEnd(e) {
     const newPoints = getNewPoints(e, line.points);
-
     setPoints(newPoints);
-
     shapeRef.current.position({ x: 0, y: 0 });
-  }
 
-  function handleDragEnd() {
     dispatch(
       updateWithObject({
         ...line,
-        points: points,
+        points: newPoints,
       })
     );
-    console.log("freehand", points[0], points[1]);
   }
 
   if (!points.length) return;
@@ -100,10 +93,9 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
         onTransform={(e) => handleTransform(e)}
         onTransformEnd={handleTransformEnd}
         onDragStart={() => dispatch(updateHistory())}
-        onDragMove={(e) => handleDragMove(e)}
         onDragEnd={(e) => handleDragEnd(e)}
-        onTap={(e) => onSelect(e)}
-        onClick={(e) => onSelect(e)}
+        onTap={onSelect}
+        onClick={onSelect}
       />
       {isSelected && (
         <CustomTransformer

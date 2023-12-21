@@ -8,7 +8,7 @@ import {
 } from "../canvas/canvasSlice";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import useAdjustColorAndWidth from "./useAdjustColorandWidth";
+import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 
 // https://jsbin.com/wahetunepa/edit?html,js,output
 function Line({ line, isDraggable, isSelected, onSelect }) {
@@ -20,6 +20,10 @@ function Line({ line, isDraggable, isSelected, onSelect }) {
   useEffect(() => {
     setPoints(line.points);
   }, [line.points]);
+
+  useEffect(() => {
+    //console.log(JSON.stringify(points));
+  }, [points]);
 
   function handleChangeEnd(newPoints) {
     dispatch(updateHistory());
@@ -47,8 +51,8 @@ function Line({ line, isDraggable, isSelected, onSelect }) {
         tension={0.7}
         lineCap="round"
         globalCompositeOperation={"source-over"}
-        onTap={(e) => onSelect(e)}
-        onClick={(e) => onSelect(e)}
+        onTap={onSelect}
+        onClick={onSelect}
       />
     </LineTransformer>
   );

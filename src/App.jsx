@@ -1,5 +1,5 @@
 import Canvas from "./features/canvas/Canvas";
-import Palette from "./features/colors/palette";
+import Palette from "./features/stylePanel/Palette";
 import Toolbar from "./features/tools/Toolbar";
 import AppLayout from "./ui/AppLayout";
 import TopBar from "./ui/TopBar";
@@ -32,13 +32,14 @@ function App() {
   return (
     <AppLayout>
       <TopBar>
-        <UndoRedo />
         <Palette />
       </TopBar>
 
       <Main>
         {!isLoading && <Canvas />}
-        <Toolbar />
+        <Toolbar>
+          <UndoRedo />
+        </Toolbar>
       </Main>
       <BottomBar>
         <Navigation />

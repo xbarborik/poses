@@ -9,19 +9,22 @@ import { useState } from "react";
 import Button from "../../ui/Button";
 import { MdArrowLeft, MdArrowRight } from "react-icons/md";
 import { MdUndo } from "react-icons/md";
+import angleIcon from "../../assets/angle.svg";
+import freehandArrowIcon from "../../assets/fr-ar.svg";
+import freehandIcon from "../../assets/fr.svg";
 
 const StyledToolBar = styled.div`
   display: flex;
   flex-direction: column;
   width: fit-content;
-  gap: 2rem;
+  gap: 1rem;
   pointer-events: none;
 `;
 
 const ToolbarContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   width: fit-content;
   /* justify-content: center; */
   align-items: end;
@@ -39,49 +42,58 @@ const HideBarButton = styled(Button)`
   background-color: rgba(255, 255, 255, 0.5);
 `;
 
-function Toolbar() {
+const IconImg = styled.img`
+  width: 2.2rem;
+  height: 2.2rem;
+`;
+
+function Toolbar({ children }) {
   const isDrawing = useSelector(getIsDrawing);
   const [showToolbar, setShowToolbar] = useState(true);
 
+  if (isDrawing) return null;
+
   return (
-    !isDrawing && (
-      <ToolbarContainer>
-        <HideBarButton
+    <ToolbarContainer>
+      {/* <HideBarButton
           size={"smallEven"}
           onClick={() => setShowToolbar((showToolbar) => !showToolbar)}
         >
           {showToolbar ? <MdArrowRight /> : <MdArrowLeft />}
-        </HideBarButton>
-        {
-          <StyledToolBar
-            style={{
-              opacity: showToolbar ? 1 : 0,
-              pointerEvents: showToolbar ? "auto" : "none",
-            }}
-          >
-            <ToolButton type={"freeHand"} preventEvents={!showToolbar}>
-              <TbScribble />
-            </ToolButton>
-            <ToolButton type={"line"} preventEvents={!showToolbar}>
-              <GoHorizontalRule style={{ transform: "rotate(90deg)" }} />
-            </ToolButton>
-            <ToolButton type={"arrow"} preventEvents={!showToolbar}>
-              <BsArrowUp />
-            </ToolButton>
-            <ToolButton type={"freeHandArrow"} preventEvents={!showToolbar}>
-              <MdUndo />
-            </ToolButton>
-            <ToolButton type={"circle"} preventEvents={!showToolbar}>
-              <BsCircle />
-            </ToolButton>
-            {/* <ToolButton type={"angle"}>Angle</ToolButton> */}
-            {/* <ToolButton type={"eraser"}>
+        </HideBarButton> */}
+      {children}
+      {
+        <StyledToolBar
+          style={{
+            opacity: showToolbar ? 1 : 0,
+            pointerEvents: showToolbar ? "auto" : "none",
+          }}
+        >
+          <ToolButton type={"freeHand"} preventEvents={!showToolbar}>
+            <IconImg src={freehandIcon} />
+          </ToolButton>
+          <ToolButton type={"line"} preventEvents={!showToolbar}>
+            <GoHorizontalRule style={{ transform: "rotate(90deg)" }} />
+          </ToolButton>
+          <ToolButton type={"arrow"} preventEvents={!showToolbar}>
+            <BsArrowUp />
+          </ToolButton>
+          <ToolButton type={"freeHandArrow"} preventEvents={!showToolbar}>
+            <IconImg src={freehandArrowIcon} />
+          </ToolButton>
+          <ToolButton type={"circle"} preventEvents={!showToolbar}>
+            <BsCircle />
+          </ToolButton>
+          <ToolButton type={"angle"}>
+            <IconImg src={angleIcon} />
+          </ToolButton>
+          <ToolButton type={"comment"}>Aa</ToolButton>
+          {/* <ToolButton type={"eraser"}>
           <FaEraser />
         </ToolButton> */}
-          </StyledToolBar>
-        }
-      </ToolbarContainer>
-    )
+        </StyledToolBar>
+      }
+    </ToolbarContainer>
   );
 }
 

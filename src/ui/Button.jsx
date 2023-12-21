@@ -11,8 +11,8 @@ const sizes = (size = "medium") =>
       height: 2rem;
     `,
     medium: css`
-      width: 4rem;
-      height: 3rem;
+      width: 3rem;
+      height: 2rem;
     `,
     large: css`
       width: 5rem;
@@ -27,7 +27,7 @@ const StyledButton = styled.button`
   background-color: ${(props) => props.color || "#bbbbbb"};
 
   border: none;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   border-radius: 10px;
 
   ${({ size }) => sizes(size)}

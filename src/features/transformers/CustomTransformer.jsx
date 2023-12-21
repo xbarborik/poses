@@ -4,6 +4,8 @@ import { useImage } from "react-konva-utils";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { getStageScale } from "../canvas/canvasSlice";
+import { circleHitFunc } from "../../hit_functions/circleHitFunction";
+import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
 
 function CustomTransformer({
   trRef,
@@ -12,12 +14,13 @@ function CustomTransformer({
   keepRatio = true,
   stageRef,
 }) {
-  const [tr, setTr] = useState({ x: -10, y: -10, width: 0, height: 0 });
+  const [tr, setTr] = useState({ x: null, y: null, width: 0, height: 0 });
   const [image] = useImage("/poses/icons/double-arrow.svg");
   const groupRef = useRef();
   const stageScale = useSelector(getStageScale);
 
-  const buttonRadius = 16;
+  const buttonScale = stageScale / 0.9;
+  const buttonRadius = 16 / buttonScale;
   const padding = buttonRadius / 4;
 
   const scaleButtonX = tr.x + tr.width - buttonRadius;
@@ -38,11 +41,13 @@ function CustomTransformer({
 
     const { x: xOffset, y: yOffset } = stageRef.current.getPosition();
 
+    const scale = stageScale;
+
     setTr({
-      x: trRect.x / stageScale - xOffset / stageScale,
-      y: trRect.y / stageScale - yOffset / stageScale,
-      width: trRect.width / stageScale,
-      height: trRect.height / stageScale,
+      x: (trRect.x - xOffset) / scale,
+      y: (trRect.y - yOffset) / scale,
+      width: trRect.width / scale,
+      height: trRect.height / scale,
     });
   }
 
@@ -58,6 +63,8 @@ function CustomTransformer({
         onTransform={getTransformerRect}
         anchorSize={buttonRadius * 2 * stageScale}
         anchorCornerRadius={50}
+        anchorFill="rgba(0, 0, 0, 0)" // Transparency
+        anchorStroke="rgba(0, 0, 0, 0)"
         keepRatio={keepRatio}
       />
       {/* Scale Button */}
@@ -68,8 +75,9 @@ function CustomTransformer({
           radius={buttonRadius}
           fill="white"
           listening={false}
-          strokeWidth={2} // border width
+          strokeWidth={2 / buttonScale} // border width
           stroke="#b5b5b5" // border color
+          hitFunc={circleHitFunc}
         />
 
         <Image
@@ -92,6 +100,7 @@ function CustomTransformer({
           fill="#ee3535"
           onClick={onRemove}
           onTap={onRemove}
+          hitFunc={circleHitFunc}
         />
 
         <Line
@@ -102,7 +111,7 @@ function CustomTransformer({
             removeButtonY + buttonRadius / 2,
           ]}
           stroke="white"
-          strokeWidth={3}
+          strokeWidth={3 / buttonScale}
           listening={false}
         />
 
@@ -114,7 +123,7 @@ function CustomTransformer({
             removeButtonY - buttonRadius / 2,
           ]}
           stroke="white"
-          strokeWidth={3}
+          strokeWidth={3 / buttonScale}
           listening={false}
         />
       </Group>
