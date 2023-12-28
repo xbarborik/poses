@@ -72,7 +72,7 @@ function Main({ children }) {
   return (
     <StyledMain id="main">
       {children}
-      {object?.type === "comment" && (
+      {/* {object?.type === "comment" && (
         <Input
           ref={inputRef}
           name="adjust"
@@ -83,7 +83,7 @@ function Main({ children }) {
           y={object?.points[1] * scale + offset.y}
           spellCheck="false"
         />
-      )}
+      )} */}
     </StyledMain>
   );
 }

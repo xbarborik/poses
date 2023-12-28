@@ -7,7 +7,7 @@ const StyledAppLayout = styled.div`
 
   align-items: stretch;
   box-sizing: border-box;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   width: 100vw;
   max-width: 1250px;
