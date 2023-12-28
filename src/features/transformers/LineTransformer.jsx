@@ -140,7 +140,7 @@ function LineTransformer({
             onDragMove={(e) => handleAnchorDragMove(e)}
             onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
-            opacity={showAnchors}
+            // opacity={showAnchors}
           />
 
           <Circle
@@ -156,7 +156,7 @@ function LineTransformer({
             onDragMove={(e) => handleAnchorDragMove(e)}
             onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
-            opacity={showAnchors}
+            // opacity={showAnchors}
           />
 
           {/* Remove Button */}

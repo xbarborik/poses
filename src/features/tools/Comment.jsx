@@ -22,7 +22,7 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
   const objects = useSelector(getObjects);
   const [number, setNumber] = useState(0);
 
-  const radius = 18;
+  const radius = 16;
 
   useEffect(() => {
     function getNextValue() {
@@ -72,16 +72,20 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
         fill="#fff"
         onClick={onSelect}
         onTap={onSelect}
+        opacity={0.8}
       />
       <Text
         id={comment.id}
-        x={comment.points[0] - radius / 2 + 4}
+        x={comment.points[0] - radius / 2}
         y={comment.points[1] - radius / 2}
+        width={radius}
+        height={radius}
         text={number}
         fontSize={radius}
         fill="black"
         onClick={onSelect}
         onTap={onSelect}
+        align="center"
       />
 
       {isSelected && (

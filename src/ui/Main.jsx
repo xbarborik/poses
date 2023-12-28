@@ -21,14 +21,15 @@ const StyledMain = styled.div`
 const Input = styled.textarea`
   display: block;
   position: absolute;
-  top: ${(props) => `${props.y - 20}px`};
-  left: ${(props) => `${props.x + 30}px`};
-  width: 15rem;
+  top: ${(props) => `${props.y + 32}px`};
+  left: ${(props) => `${props.x - 100}px`};
+  width: 200px;
   height: auto;
   padding: 5px;
   box-sizing: border-box;
   overflow: hidden;
   resize: none;
+  fontsize: 0.8rem;
 `;
 
 function Main({ children }) {
@@ -50,11 +51,17 @@ function Main({ children }) {
       element.focus();
       element.selectionStart = element.value.length;
     }
+
+    console.log(object?.points);
   }, [object]);
 
   useEffect(() => {
     setShow(object?.type === "comment");
   }, [object?.type]);
+
+  useEffect(() => {
+    console.log(offset.x, offset.y);
+  }, [offset]);
 
   function onChange(e) {
     const input_value = e.target.value;
@@ -72,8 +79,8 @@ function Main({ children }) {
           type="text"
           value={text}
           onChange={onChange}
-          x={object.points[0]}
-          y={object.points[1]}
+          x={object?.points[0] * scale + offset.x}
+          y={object?.points[1] * scale + offset.y}
           spellCheck="false"
         />
       )}

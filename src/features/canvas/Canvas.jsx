@@ -298,14 +298,14 @@ function Canvas() {
       return;
     }
 
-    if (selectedTool === "freeHand" || selectedTool === "freeHandArrow") {
-      smoothLine({
-        objects,
-        updateWithObject: (object) => dispatch(updateWithObject(object)),
-        id: newObjectId,
-        step: 4,
-      });
-    }
+    // if (selectedTool === "freeHand" || selectedTool === "freeHandArrow") {
+    //   smoothLine({
+    //     objects,
+    //     updateWithObject: (object) => dispatch(updateWithObject(object)),
+    //     id: newObjectId,
+    //     step: 2,
+    //   });
+    // }
   }
 
   function handleSelect(object) {

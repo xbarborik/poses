@@ -23,6 +23,7 @@ const HistoryControlButton = styled.button`
   pointer-events: auto;
 
   opacity: ${(props) => (props.disabled ? 0.4 : 0.6)};
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 
   &:active {
     transform: scale(1.05);
