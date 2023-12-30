@@ -13,7 +13,7 @@ const StyledMain = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 90%;
+  height: 100%;
   // flex-grow: 0.8;
   position: relative;
 `;
@@ -51,17 +51,11 @@ function Main({ children }) {
       element.focus();
       element.selectionStart = element.value.length;
     }
-
-    console.log(object?.points);
   }, [object]);
 
   useEffect(() => {
     setShow(object?.type === "comment");
   }, [object?.type]);
-
-  useEffect(() => {
-    console.log(offset.x, offset.y);
-  }, [offset]);
 
   function onChange(e) {
     const input_value = e.target.value;
@@ -72,7 +66,7 @@ function Main({ children }) {
   return (
     <StyledMain id="main">
       {children}
-      {/* {object?.type === "comment" && (
+      {object?.type === "comment" && (
         <Input
           ref={inputRef}
           name="adjust"
@@ -83,7 +77,7 @@ function Main({ children }) {
           y={object?.points[1] * scale + offset.y}
           spellCheck="false"
         />
-      )} */}
+      )}
     </StyledMain>
   );
 }

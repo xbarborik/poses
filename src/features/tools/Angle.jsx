@@ -1,4 +1,4 @@
-import { Arc, Line as LineKonva } from "react-konva";
+import { Arc, Circle, Line as LineKonva, Text } from "react-konva";
 import LineTransformer from "../transformers/LineTransformer";
 import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
 import {
@@ -44,6 +44,8 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
   const [primaryLinePoints, setPrimaryLinePoints] = useState([]);
   const [secondaryLinePoints, setSecondaryLinePoints] = useState([]);
   const [angle, setAngle] = useState(0);
+
+  const radius = 16;
 
   useAdjustColorAndWidth(angleObject, isSelected);
 
@@ -131,6 +133,36 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         outerRadius={arcLength}
         onTap={() => onSelect()}
         onClick={() => onSelect()}
+      />
+
+      {/* <Circle
+        id={angleObject.id}
+        x={angleObject.points[0]}
+        y={angleObject.points[1]}
+        radius={radius}
+        stroke="#fff"
+        strokeWidth={1}
+        fill="#fff"
+        onClick={onSelect}
+        onTap={onSelect}
+        opacity={0.8}
+      /> */}
+
+      <Text
+        id={angleObject.id}
+        x={angleObject.points[0] - radius}
+        y={angleObject.points[1] - radius / 2}
+        width={radius * 2}
+        height={radius}
+        text={`${angle.toFixed(0)}`}
+        fontSize={radius}
+        fontStyle="bold"
+        fill="white"
+        stroke="black"
+        strokeWidth={1}
+        onClick={onSelect}
+        onTap={onSelect}
+        align="center"
       />
     </AngleTransformer>
   );

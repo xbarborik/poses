@@ -55,7 +55,6 @@ import Comment from "../tools/Comment";
 
 const StyledCanvas = styled.div`
   display: block;
-
   outline: 2px solid orange;
   outline-offset: -1px;
   flex-grow: 1;
@@ -415,7 +414,15 @@ function Canvas() {
                     onSelect={() => handleSelect(object)}
                   />
                 );
-              } else if (object.type === "comment") {
+              } else {
+                return null;
+              }
+            })}
+            {/* <CircleRotator x={500} y={600} arrowLength={40} /> */}
+          </Layer>
+          <Layer>
+            {Object.values(objects).map((object) => {
+              if (object.type === "comment") {
                 return (
                   <Comment
                     key={object.id}
@@ -425,11 +432,9 @@ function Canvas() {
                     onSelect={() => handleSelect(object)}
                   />
                 );
-              } else {
-                return null;
               }
+              return null; // It's a good practice to return null if no element is to be rendered
             })}
-            {/* <CircleRotator x={500} y={600} arrowLength={40} /> */}
           </Layer>
         </Stage>
       )}

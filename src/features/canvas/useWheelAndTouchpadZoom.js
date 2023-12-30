@@ -21,7 +21,10 @@ export function useWheelAndTouchpadZoom(stageRef) {
 
     const direction = e.evt.deltaY > 0 ? -1 : 1;
 
-    const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+    const newScale = Math.max(
+      direction > 0 ? oldScale * scaleBy : oldScale / scaleBy,
+      1
+    );
 
     stage.scale({ x: newScale, y: newScale });
 

@@ -14,7 +14,7 @@ import { INITIAL_STROKE_WIDTH } from "../../utils/constants";
 
 const StyledPalette = styled.div`
   display: flex;
-  gap: 0.6rem;
+  gap: 0.5rem;
 
   @media only screen and (max-width: 768px) {
     gap: 0.5rem;
@@ -79,12 +79,12 @@ function Palette() {
           <>
             <StrokeWidthSlider defaultValue={6} minValue={4} maxValue={16} />
             <StyledPalette name="adjust">
-              <ColorButton color={"#FF0000"} />
+              <ColorButton color={"#F50035"} />
               <ColorButton color={"#000000"} />
-              <ColorButton color={"#ffffff"} />
-              <ColorButton color={"#1133e0"} />
-              <ColorButton color={"#f8f400"} />
-              <ColorButton color={"#2fe900"} />
+              <ColorButton color={"#F8F8F8"} />
+              <ColorButton color={"#1E88E5"} />
+              <ColorButton color={"#FFDF07"} />
+              <ColorButton color={"#62e22b"} />
             </StyledPalette>
           </>
         )}

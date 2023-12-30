@@ -1,5 +1,6 @@
 import { Arrow, Group, Line } from "react-konva";
 import {
+  ARROW_POINTER_SCALE,
   HIT_DETECTION_MULTIPLIER,
   MINIMUM_OBJECT_LENGTH,
 } from "../../utils/constants";
@@ -96,7 +97,8 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         stroke={line.color}
         fill={line.color}
         strokeWidth={line.strokeWidth}
-        pointerWidth={line.strokeWidth * 2}
+        pointerWidth={line.strokeWidth * ARROW_POINTER_SCALE}
+        pointerLength={line.strokeWidth}
       />
 
       <Line

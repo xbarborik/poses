@@ -138,7 +138,7 @@ function LineTransformer({
             stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handleAnchorDragMove(e)}
-            onDragEnd={(e) => handleAnchorDragEnd(e)}
+            // onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
             // opacity={showAnchors}
           />
@@ -154,13 +154,13 @@ function LineTransformer({
             stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handleAnchorDragMove(e)}
-            onDragEnd={(e) => handleAnchorDragEnd(e)}
+            // onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
             // opacity={showAnchors}
           />
 
           {/* Remove Button */}
-          <Group opacity={showAnchors}>
+          <Group opacity={showAnchors ? 1 : 0}>
             <Circle
               name="removeButton"
               x={removeButtonPoint.x}

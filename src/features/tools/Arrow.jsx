@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Arrow as ArrowKonva } from "react-konva";
 import { useDispatch } from "react-redux";
-import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
+import {
+  ARROW_POINTER_SCALE,
+  HIT_DETECTION_MULTIPLIER,
+} from "../../utils/constants";
 import LineTransformer from "../transformers/LineTransformer";
 import {
   removeObject,
@@ -46,8 +49,8 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
         tension={0.7}
         lineCap="round"
         globalCompositeOperation={"source-over"}
-        pointerLength={arrow.strokeWidth * 2}
-        pointerWidth={arrow.strokeWidth * 2}
+        pointerLength={arrow.strokeWidth}
+        pointerWidth={arrow.strokeWidth * ARROW_POINTER_SCALE}
         hitStrokeWidth={arrow.strokeWidth * HIT_DETECTION_MULTIPLIER}
         onTap={onSelect}
         onClick={onSelect}

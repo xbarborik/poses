@@ -139,7 +139,7 @@ function AngleTransformer({
             stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handlePrimaryAnchorDragMove(e)}
-            onDragEnd={(e) => handleAnchorDragEnd(e)}
+            // onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
           />
 
@@ -154,12 +154,12 @@ function AngleTransformer({
             stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handleSecondaryAnchorDragMove(e)}
-            onDragEnd={(e) => handleAnchorDragEnd(e)}
+            // onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
           />
 
           {/* Remove Button */}
-          <Group>
+          {/* <Group>
             <Circle
               name="removeButton"
               x={removeButtonPoint.x}
@@ -196,7 +196,7 @@ function AngleTransformer({
               strokeWidth={3 / anchorScale}
               listening={false}
             />
-          </Group>
+          </Group> */}
         </>
       )}
     </Group>

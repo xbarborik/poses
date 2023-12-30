@@ -49,8 +49,10 @@ export function useMultiTouchScale(stageRef) {
         y: (newCenter.y - stage.y()) / oldScale,
       };
 
-      const newScale =
-        oldScale * (distance / (lastDistance ? lastDistance : distance));
+      const newScale = Math.max(
+        oldScale * (distance / (lastDistance ? lastDistance : distance)),
+        1
+      );
 
       stage.scale({ x: newScale, y: newScale });
 
