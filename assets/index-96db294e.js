@@ -216,8 +216,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   }
 
   @media only screen and (max-width: 768px) {
-    width: 3rem;
-    height: 3rem;
+    width: 2.6rem;
+    height: 2.6rem;
     font-size: 2rem;
     outline-width: 3px;
   }
