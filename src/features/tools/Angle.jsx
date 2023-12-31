@@ -135,19 +135,6 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         onClick={() => onSelect()}
       />
 
-      {/* <Circle
-        id={angleObject.id}
-        x={angleObject.points[0]}
-        y={angleObject.points[1]}
-        radius={radius}
-        stroke="#fff"
-        strokeWidth={1}
-        fill="#fff"
-        onClick={onSelect}
-        onTap={onSelect}
-        opacity={0.8}
-      /> */}
-
       <Text
         id={angleObject.id}
         x={angleObject.points[0] - radius}

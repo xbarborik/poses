@@ -1,13 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
+  getIsDragging,
   getSelectedObject,
   getStagePos,
   getStageScale,
+  removeObject,
   updateWithObject,
 } from "../features/canvas/canvasSlice";
 import { useEffect, useRef, useState } from "react";
 import useAutosizeTextArea from "../hooks/useAutosizeTextArea";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const StyledMain = styled.div`
   display: flex;
@@ -30,18 +33,60 @@ const Input = styled.textarea`
   overflow: hidden;
   resize: none;
   fontsize: 0.8rem;
+  transition: 0s;
 `;
 
-function Main({ children }) {
+const ShapeOptions = styled.div`
+  position: absolute;
+  top: ${(props) => `${props.y}px`};
+  left: ${(props) => `${props.x}px`};
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 20%;
+  transition: 0s;
+  opacity: ${(props) => (props.isVisible ? 1 : 0)};
+`;
+
+const OptionsContainer = styled.div``;
+
+const OptionsButton = styled.button`
+  font-size: 0.9rem;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  padding: 0.5rem;
+`;
+
+function Main({ children, stageRef }) {
   const dispatch = useDispatch();
   const object = useSelector(getSelectedObject);
   const offset = useSelector(getStagePos);
   const scale = useSelector(getStageScale);
+  const isDragging = useSelector(getIsDragging);
   const [text, setText] = useState("");
-  const [show, setShow] = useState(false);
+  const [showText, setShowText] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [shapeOptionsPosition, setShapeOptionsPosition] = useState({
+    x: 0,
+    y: 0,
+  });
   const inputRef = useRef();
+  const shapeOptionsRef = useRef();
 
-  useAutosizeTextArea(inputRef, text, show);
+  useAutosizeTextArea(inputRef, text, showText);
+
+  useEffect(() => {
+    if (isDragging) setIsLoading(true);
+    else setTimeout(setIsLoading(false), 100);
+  }, [isDragging]);
 
   useEffect(() => {
     const element = inputRef.current;
@@ -51,10 +96,27 @@ function Main({ children }) {
       element.focus();
       element.selectionStart = element.value.length;
     }
-  }, [object]);
+    if (stageRef.current !== null && object) {
+      const shapeNode = stageRef.current.findOne(`#${object.id}`);
+      const groupNode = shapeNode.getParent();
+
+      const boundingBox =
+        groupNode.getClassName() === "Group"
+          ? groupNode.getClientRect()
+          : shapeNode.getClientRect();
+
+      // no need to adjust, because clientRect already has scales applied
+      const shapeOptionsWidth = shapeOptionsRef.current.offsetWidth;
+
+      const x = boundingBox.x + boundingBox.width / 2 - shapeOptionsWidth / 2;
+      const y = boundingBox.y - 50;
+
+      setShapeOptionsPosition({ x, y });
+    }
+  }, [object, offset, scale, stageRef]);
 
   useEffect(() => {
-    setShow(object?.type === "comment");
+    setShowText(object?.type === "comment");
   }, [object?.type]);
 
   function onChange(e) {
@@ -66,7 +128,7 @@ function Main({ children }) {
   return (
     <StyledMain id="main">
       {children}
-      {object?.type === "comment" && (
+      {!isDragging && !isLoading && object?.type === "comment" && (
         <Input
           ref={inputRef}
           name="adjust"
@@ -77,6 +139,21 @@ function Main({ children }) {
           y={object?.points[1] * scale + offset.y}
           spellCheck="false"
         />
+      )}
+      {object && (
+        <ShapeOptions
+          x={shapeOptionsPosition.x}
+          y={shapeOptionsPosition.y}
+          ref={shapeOptionsRef}
+          isVisible={!isLoading}
+        >
+          <OptionsButton onClick={() => dispatch(removeObject(object.id))}>
+            <FaRegTrashAlt />
+          </OptionsButton>
+          {/* <OptionsButton
+            onClick={() => dispatch(removeObject(object.id))}
+          ></OptionsButton> */}
+        </ShapeOptions>
       )}
     </StyledMain>
   );

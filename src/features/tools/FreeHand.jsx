@@ -103,7 +103,6 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
           objectId={line.id}
           centeredScaling={false}
           onRemove={() => dispatch(removeObject(line.id))}
-          keepRatio={false}
           stageRef={stageRef}
         />
       )}

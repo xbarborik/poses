@@ -9,6 +9,7 @@ const initialState = {
   stagePos: { x: 0, y: 0 },
   selectedObjectId: null,
   isDrawing: false,
+  isDragging: false,
 };
 
 const canvasSlice = createSlice({
@@ -91,6 +92,9 @@ const canvasSlice = createSlice({
     setIsDrawing(state, action) {
       state.isDrawing = action.payload;
     },
+    setIsDragging(state, action) {
+      state.isDragging = action.payload;
+    },
   },
 });
 
@@ -111,6 +115,7 @@ export const {
   selectObject,
   deselectObject,
   setIsDrawing,
+  setIsDragging,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
 
@@ -128,7 +133,10 @@ export const getObjects = (state) =>
 
 export const getIsDrawing = (state) => state.canvas.isDrawing;
 
+export const getIsDragging = (state) => state.canvas.isDragging;
+
 export const getStageScale = (state) => state.canvas.stageScale;
+
 export const getStagePos = (state) => state.canvas.stagePos;
 
 export const getSelectedObjectId = (state) => state.canvas.selectedObjectId;

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Circle, Group, Line } from "react-konva";
-import { useSelector } from "react-redux";
-import { getStageScale } from "../canvas/canvasSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getStageScale, setIsDragging } from "../canvas/canvasSlice";
 import { circleHitFunc } from "../../hit_functions/circleHitFunction";
 
 function AngleTransformer({
@@ -16,6 +16,7 @@ function AngleTransformer({
   onDragEnd,
   onRemove,
 }) {
+  const dispatch = useDispatch();
   const groupRef = useRef();
   const anchor1Ref = useRef();
   const anchor2Ref = useRef();
@@ -89,6 +90,10 @@ function AngleTransformer({
     onTransformEnd(primaryPoints, secondaryPoints);
   }
 
+  function handleGroupDragStart() {
+    dispatch(setIsDragging(true));
+  }
+
   // Update line when group is dragged
   function handleGroupDragEnd() {
     let [x1, y1, x2, y2] = primaryPoints;
@@ -115,12 +120,17 @@ function AngleTransformer({
 
     // Reset group origin position
     groupRef.current.position({ x: 0, y: 0 });
+
+    setTimeout(() => {
+      dispatch(setIsDragging(false));
+    }, 100);
   }
 
   return (
     <Group
       ref={groupRef}
       draggable={isDraggable}
+      onDragStart={handleGroupDragStart}
       onDragEnd={(e) => handleGroupDragEnd(e)}
     >
       {children}

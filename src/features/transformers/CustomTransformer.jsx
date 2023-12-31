@@ -2,8 +2,8 @@ import { Circle, Group, Image, Line, Transformer } from "react-konva";
 
 import { useImage } from "react-konva-utils";
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { getStageScale } from "../canvas/canvasSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getStageScale, setIsDragging } from "../canvas/canvasSlice";
 import { circleHitFunc } from "../../hit_functions/circleHitFunction";
 import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
 
@@ -14,6 +14,7 @@ function CustomTransformer({
   keepRatio = true,
   stageRef,
 }) {
+  const dispatch = useDispatch();
   const [tr, setTr] = useState({ x: null, y: null, width: 0, height: 0 });
   const [image] = useImage("/poses/icons/double-arrow.svg");
   const groupRef = useRef();
@@ -25,8 +26,6 @@ function CustomTransformer({
 
   const scaleButtonX = tr.x + tr.width - buttonRadius;
   const scaleButtonY = tr.y + tr.height - buttonRadius;
-  const removeButtonX = tr.x;
-  const removeButtonY = tr.y;
 
   useEffect(() => {
     getTransformerRect();
@@ -59,13 +58,18 @@ function CustomTransformer({
         centeredScaling={centeredScaling}
         enabledAnchors={["bottom-right"]}
         rotateEnabled={false}
+        onDragStart={() => dispatch(setIsDragging(true))}
         onDragMove={getTransformerRect}
+        onDragEnd={() => dispatch(setIsDragging(false))}
+        onTransformStart={() => dispatch(setIsDragging(true))}
         onTransform={getTransformerRect}
+        onTransformEnd={() => dispatch(setIsDragging(false))}
         anchorSize={buttonRadius * 2 * stageScale}
         anchorCornerRadius={50}
         anchorFill="rgba(0, 0, 0, 0)" // Transparency
         anchorStroke="rgba(0, 0, 0, 0)"
         keepRatio={keepRatio}
+        borderStroke="rgba(0,0,0,0)"
       />
       {/* Scale Button */}
       <Group listening={false}>
@@ -86,44 +90,6 @@ function CustomTransformer({
           y={scaleButtonY - (buttonRadius + padding) / 2}
           width={buttonRadius + padding}
           height={buttonRadius + padding}
-          listening={false}
-        />
-      </Group>
-
-      {/* Remove Button */}
-      <Group>
-        <Circle
-          name="removeButton"
-          x={removeButtonX}
-          y={removeButtonY}
-          radius={buttonRadius}
-          fill="#ee3535"
-          onClick={onRemove}
-          onTap={onRemove}
-          hitFunc={circleHitFunc}
-        />
-
-        <Line
-          points={[
-            removeButtonX - buttonRadius / 2,
-            removeButtonY - buttonRadius / 2,
-            removeButtonX + buttonRadius / 2,
-            removeButtonY + buttonRadius / 2,
-          ]}
-          stroke="white"
-          strokeWidth={3 / buttonScale}
-          listening={false}
-        />
-
-        <Line
-          points={[
-            removeButtonX - buttonRadius / 2,
-            removeButtonY + buttonRadius / 2,
-            removeButtonX + buttonRadius / 2,
-            removeButtonY - buttonRadius / 2,
-          ]}
-          stroke="white"
-          strokeWidth={3 / buttonScale}
           listening={false}
         />
       </Group>

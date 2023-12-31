@@ -7,13 +7,14 @@ import Main from "./ui/Main";
 import BottomBar from "./ui/BottomBar";
 import Navigation from "./features/navigation/Navigation";
 import UndoRedo from "./features/history/UndoRedo";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getIsLoading, setImages } from "./features/canvas/canvasSlice";
 
 function App() {
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
+  const stageRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,12 +36,13 @@ function App() {
         <Palette />
       </TopBar>
 
-      <Main>
-        {!isLoading && <Canvas />}
+      <Main stageRef={stageRef}>
+        {!isLoading && <Canvas stageRef={stageRef} />}
         <Toolbar>
           <UndoRedo />
         </Toolbar>
       </Main>
+
       <BottomBar>
         <Navigation />
       </BottomBar>

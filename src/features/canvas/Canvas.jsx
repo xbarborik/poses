@@ -67,9 +67,8 @@ const StyledCanvas = styled.div`
   zoom: 1;
 `;
 
-function Canvas() {
+function Canvas({ stageRef }) {
   const canvasRef = useRef(null);
-  const stageRef = useRef(null);
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
   const objects = useSelector(getObjects);
@@ -111,7 +110,6 @@ function Canvas() {
   }, [scaleAfterWheel, dispatch, posAfterWheel]);
 
   useEffect(() => {
-    console.log(posAfterMultitouch);
     dispatch(setStagePos(posAfterMultitouch));
     dispatch(setStageScale(scaleAfterMultitouch));
   }, [scaleAfterMultitouch, dispatch, posAfterMultitouch]);
@@ -336,6 +334,7 @@ function Canvas() {
           }}
           onTouchMove={(e) => {
             if (e.evt.touches.length === 2) {
+              dispatch(deselectObject());
               handleMultiTouchMove(e);
             } else handleMove(e);
           }}

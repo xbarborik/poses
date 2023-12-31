@@ -6,6 +6,7 @@ import {
   deselectObject,
   getObjects,
   removeObject,
+  setIsDragging,
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
@@ -17,8 +18,8 @@ import {
 } from "../../utils/constants";
 
 function Comment({ comment, isDraggable, onSelect, isSelected }) {
-  const groupRef = useRef();
   const dispatch = useDispatch();
+  const groupRef = useRef();
   const objects = useSelector(getObjects);
   const [number, setNumber] = useState(0);
 
@@ -40,6 +41,10 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
     setNumber(getNextValue());
   }, [objects, comment.id]);
 
+  function handleDragStart() {
+    dispatch(setIsDragging(true));
+  }
+
   function handleDragEnd() {
     const [x1, y1, x2, y2] = comment.points;
     const { x: xOffset, y: yOffset } = groupRef.current.getPosition();
@@ -56,12 +61,19 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
     groupRef.current.moveToTop();
     // Reset group origin position
     groupRef.current.position({ x: 0, y: 0 });
+
+    dispatch(setIsDragging(false));
   }
 
   if (!comment?.points.length) return;
 
   return (
-    <Group ref={groupRef} draggable={isDraggable} onDragEnd={handleDragEnd}>
+    <Group
+      ref={groupRef}
+      draggable={isDraggable}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
       <CircleKonva
         id={comment.id}
         x={comment.points[0]}
@@ -87,46 +99,6 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
         onTap={onSelect}
         align="center"
       />
-
-      {isSelected && (
-        <>
-          <Circle
-            name="removeButton"
-            x={comment.points[0] - 30}
-            y={comment.points[1] - 30}
-            // strokeWidth={1} // border width
-            // stroke="white" // border color
-            radius={12}
-            fill="#ee3535"
-            onClick={() => dispatch(removeObject(comment.id))}
-            onTap={() => dispatch(removeObject(comment.id))}
-            // hitFunc={circleHitFunc}
-          />
-          <Line
-            points={[
-              comment.points[0] - 30 + 5,
-              comment.points[1] - 30 - 5,
-              comment.points[0] - 30 - 5,
-              comment.points[1] - 30 + 5,
-            ]}
-            stroke="white"
-            strokeWidth={3}
-            listening={false}
-          />
-
-          <Line
-            points={[
-              comment.points[0] - 30 - 5,
-              comment.points[1] - 30 - 5,
-              comment.points[0] - 30 + 5,
-              comment.points[1] - 30 + 5,
-            ]}
-            stroke="white"
-            strokeWidth={3}
-            listening={false}
-          />
-        </>
-      )}
     </Group>
   );
 }
