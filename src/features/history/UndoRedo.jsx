@@ -21,6 +21,7 @@ const HistoryControlButton = styled.button`
   height: 1.8rem;
   border: none;
   pointer-events: auto;
+  transition: 0.15s;
 
   opacity: ${(props) => (props.disabled ? 0.4 : 0.6)};
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;

@@ -16,12 +16,13 @@ const StyledToolButton = styled.button`
   background-color: ${(props) =>
     props.$isActive ? "#fff" : "rgba(255, 255, 255, 0.5)"};
   outline: ${(props) =>
-    props.$isActive ? `4px solid ${props.$color}` : "0px"};
+    props.$isActive ? `3px solid ${props.$color}` : "0px"};
   outline-offset: 2px;
   margin-right: 0.5rem;
   pointer-events: ${(props) => (props.$preventEvents ? "none" : "auto")};
   color: #393d47;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  transition: 0.15s;
 
   &:hover {
     transform: scale(1.05);
@@ -30,8 +31,8 @@ const StyledToolButton = styled.button`
   }
 
   @media only screen and (max-width: 768px) {
-    width: 3rem;
-    height: 3rem;
+    width: 2.6rem;
+    height: 2.6rem;
     font-size: 2rem;
     outline-width: 3px;
   }
@@ -52,7 +53,7 @@ function ToolButton({ children, type, preventEvents }) {
 
   function handleClick() {
     if (isActive) {
-      dispatch(selectTool("none"));
+      dispatch(selectTool(type));
     } else {
       dispatch(selectTool(type));
     }

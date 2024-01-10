@@ -36,10 +36,6 @@ body {
   width: 100%;
 }
 
-body * {
-  transition: 0.15s;
-}
-
 input,
 textarea,
 button,

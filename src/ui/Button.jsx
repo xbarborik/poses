@@ -7,8 +7,8 @@ const sizes = (size = "medium") =>
       height: 2.3rem;
     `,
     small: css`
-      width: 3rem;
-      height: 2rem;
+      width: 2.5rem;
+      height: 1.6rem;
     `,
     medium: css`
       width: 3rem;

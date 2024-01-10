@@ -81,13 +81,14 @@ function Canvas({ stageRef }) {
 
   const [newObjectId, setNewObjectId] = useState("");
   const [dimensions, setDimensions] = useDimensions(canvasRef);
+  // const [dimensions, setDimensions] = useState({ width: 500, height: 500 });
 
   const {
     scale: scaleAfterMultitouch,
     handleMultiTouchMove,
     handleMultiTouchEnd,
     pos: posAfterMultitouch,
-  } = useMultiTouchScale(stageRef);
+  } = useMultiTouchScale(stageRef, dimensions);
 
   const {
     scale: scaleAfterWheel,
@@ -312,6 +313,11 @@ function Canvas({ stageRef }) {
     }
     dispatch(selectObject(object.id));
   }
+
+  const [stageSize, setSize] = useState({
+    width: dimensions.width,
+    height: dimensions.height,
+  });
 
   return (
     <StyledCanvas ref={canvasRef} id="canvas">

@@ -3,6 +3,7 @@ import { Circle, Group, Line } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { getStageScale, setIsDragging } from "../canvas/canvasSlice";
 import { circleHitFunc } from "../../hit_functions/circleHitFunction";
+import { ANCHOR_SHADOW_WIDTH } from "../../utils/constants";
 
 function AngleTransformer({
   children,
@@ -145,7 +146,7 @@ function AngleTransformer({
             y={primaryPoints[3] + primaryAnchorOffset.y}
             radius={anchorSize}
             fill="white"
-            strokeWidth={2 / anchorScale} // border width
+            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
             stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handlePrimaryAnchorDragMove(e)}
@@ -160,7 +161,7 @@ function AngleTransformer({
             y={secondaryPoints[3] + secondaryAnchorOffset.y}
             radius={anchorSize}
             fill="white"
-            strokeWidth={2 / anchorScale} // border width
+            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
             stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handleSecondaryAnchorDragMove(e)}

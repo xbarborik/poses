@@ -8,7 +8,8 @@ import { getCurrentImage } from "./canvasSlice";
 
 function PoseImage({ dimensions }) {
   const imageData = useSelector(getCurrentImage);
-  const [image] = useImage("/poses/images/" + imageData?.path);
+  // const [image] = useImage("/poses/images/" + imageData?.path);
+  const [image] = useImage(imageData?.path);
   const [scaledDimensions, setScaledDimensions] = useState({
     dimensions,
   });

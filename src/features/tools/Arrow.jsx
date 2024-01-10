@@ -54,6 +54,7 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
         hitStrokeWidth={arrow.strokeWidth * HIT_DETECTION_MULTIPLIER}
         onTap={onSelect}
         onClick={onSelect}
+        pointerAtBeginning={true}
       />
     </LineTransformer>
   );

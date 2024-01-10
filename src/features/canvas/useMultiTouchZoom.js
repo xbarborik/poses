@@ -2,7 +2,7 @@ import { useState } from "react";
 import { getCenter } from "../../utils/helpers";
 
 // https://konvajs.org/docs/sandbox/Multi-touch_Scale_Stage.html
-export function useMultiTouchScale(stageRef) {
+export function useMultiTouchScale(stageRef, dimensions) {
   const [oldCenter, setOldCenter] = useState(null);
   const [lastDistance, setLastDistance] = useState(0);
   const [scale, setScale] = useState(1);
@@ -63,6 +63,16 @@ export function useMultiTouchScale(stageRef) {
         x: newCenter.x - pointTo.x * newScale + dx,
         y: newCenter.y - pointTo.y * newScale + dy,
       };
+
+      //constrained
+      newPos.x = Math.min(
+        Math.max(newPos.x, -dimensions.width * (newScale - 1)),
+        0
+      );
+      newPos.y = Math.min(
+        Math.max(newPos.y, -dimensions.height * (newScale - 1)),
+        0
+      );
       // console.log("np", newPos.x, newPos.y);
       // console.log("oc", oldCenter.x, oldCenter.y);
       // console.log("nc", newCenter.x, newCenter.y);
@@ -81,6 +91,9 @@ export function useMultiTouchScale(stageRef) {
   const handleMultiTouchEnd = () => {
     setLastDistance(0);
     setOldCenter(null);
+    if (scale === 1) {
+      setPos({ x: 0, y: 0 });
+    }
   };
 
   return {

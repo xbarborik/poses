@@ -12,9 +12,9 @@ const StyledNavigation = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10rem;
+  gap: 5rem;
   width: 80%;
-  padding: 0.5rem;
+  padding: 0.4rem;
   margin: auto;
   box-sizing: border-box;
 `;
@@ -35,11 +35,11 @@ function Navigation() {
 
   return (
     <StyledNavigation>
-      <Button onClick={handlePrevious} disabled={index === 0}>
+      <Button onClick={handlePrevious} disabled={index === 0} size={"small"}>
         <SlArrowLeft />
       </Button>
 
-      <Button onClick={handleNext} disabled={index === maxIndex}>
+      <Button onClick={handleNext} disabled={index === maxIndex} size={"small"}>
         <SlArrowRight />
       </Button>
     </StyledNavigation>

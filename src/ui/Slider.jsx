@@ -39,20 +39,17 @@ function CustomSlider({
       bottom: 0,
       margin: "auto 0",
       zIndex: 1,
-      transition: "none",
     },
 
     track: {
       backgroundColor: color,
       opacity: 0.5,
       height: minValue * trackHeightScale,
-      transition: "none",
     },
 
     rail: {
       backgroundColor: "rgba(0,0,0,0.2)",
       height: minValue * trackHeightScale,
-      transition: "none",
     },
   };
 

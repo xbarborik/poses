@@ -3,6 +3,7 @@ import { Circle, Group, Line } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { getStageScale, setIsDragging } from "../canvas/canvasSlice";
 import { circleHitFunc } from "../../hit_functions/circleHitFunction";
+import { ANCHOR_SHADOW_WIDTH } from "../../utils/constants";
 
 function LineTransformer({
   children,
@@ -101,7 +102,7 @@ function LineTransformer({
             y={points[1] - anchorOffset.y}
             radius={anchorSize}
             fill="white"
-            strokeWidth={2 / anchorScale} // border width
+            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
             stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handleAnchorDragMove(e)}
@@ -117,7 +118,7 @@ function LineTransformer({
             y={points[3] + anchorOffset.y}
             radius={anchorSize}
             fill="white"
-            strokeWidth={2 / anchorScale} // border width
+            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
             stroke="#b5b5b5" // border color
             draggable
             onDragMove={(e) => handleAnchorDragMove(e)}

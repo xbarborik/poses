@@ -1,4 +1,3 @@
-import { TbScribble } from "react-icons/tb";
 import { GoHorizontalRule } from "react-icons/go";
 import { BsCircle, BsArrowUp } from "react-icons/bs";
 import ToolButton from "./ToolButton";
@@ -7,11 +6,11 @@ import { useSelector } from "react-redux";
 import { getIsDrawing } from "../canvas/canvasSlice";
 import { useState } from "react";
 import Button from "../../ui/Button";
-import { MdArrowLeft, MdArrowRight } from "react-icons/md";
-import { MdUndo } from "react-icons/md";
 import angleIcon from "../../assets/angle.svg";
 import freehandArrowIcon from "../../assets/fr-ar.svg";
 import freehandIcon from "../../assets/fr.svg";
+import { TfiArrowsVertical } from "react-icons/tfi";
+import { PiArrowsVerticalFill } from "react-icons/pi";
 
 const StyledToolBar = styled.div`
   display: flex;
@@ -47,6 +46,10 @@ const IconImg = styled.img`
   height: 2.2rem;
 `;
 
+const IconText = styled.span`
+  font-size: 1.4rem;
+`;
+
 function Toolbar({ children }) {
   const isDrawing = useSelector(getIsDrawing);
   const [showToolbar, setShowToolbar] = useState(true);
@@ -69,25 +72,31 @@ function Toolbar({ children }) {
             pointerEvents: showToolbar ? "auto" : "none",
           }}
         >
-          <ToolButton type={"freeHand"} preventEvents={!showToolbar}>
+          <ToolButton type={"freeHand"}>
             <IconImg src={freehandIcon} />
           </ToolButton>
-          <ToolButton type={"line"} preventEvents={!showToolbar}>
+          <ToolButton type={"line"}>
             <GoHorizontalRule style={{ transform: "rotate(90deg)" }} />
           </ToolButton>
-          <ToolButton type={"arrow"} preventEvents={!showToolbar}>
-            <BsArrowUp />
-          </ToolButton>
-          <ToolButton type={"freeHandArrow"} preventEvents={!showToolbar}>
+          <ToolButton type={"freeHandArrow"}>
             <IconImg src={freehandArrowIcon} />
           </ToolButton>
-          <ToolButton type={"circle"} preventEvents={!showToolbar}>
+          <ToolButton type={"arrow"}>
+            {/* <BsArrowUp /> */}
+            <PiArrowsVerticalFill />
+          </ToolButton>
+          <ToolButton type={"circle"}>
             <BsCircle />
           </ToolButton>
           <ToolButton type={"angle"}>
             <IconImg src={angleIcon} />
           </ToolButton>
-          <ToolButton type={"comment"}>Aa</ToolButton>
+          <ToolButton type={"comment"}>
+            <IconText>Aa</IconText>
+          </ToolButton>
+          {/* <ToolButton type={"style"}>
+            <IconText>col</IconText>
+          </ToolButton> */}
           {/* <ToolButton type={"eraser"}>
           <FaEraser />
         </ToolButton> */}

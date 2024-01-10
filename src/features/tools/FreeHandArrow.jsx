@@ -86,8 +86,8 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   if (!points.length) return;
 
   const [lastX, lastY] = points.slice(-2);
-  const prevX = points[points.length - 4];
-  const prevY = points[points.length - 3];
+  const prevX = points[points.length - 8];
+  const prevY = points[points.length - 7];
 
   const arrowHeadPoints = [prevX, prevY, lastX, lastY];
   return (

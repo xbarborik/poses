@@ -5,7 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getStageScale, setIsDragging } from "../canvas/canvasSlice";
 import { circleHitFunc } from "../../hit_functions/circleHitFunction";
-import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
+import {
+  ANCHOR_SHADOW_WIDTH,
+  HIT_DETECTION_MULTIPLIER,
+} from "../../utils/constants";
 
 function CustomTransformer({
   trRef,
@@ -79,7 +82,7 @@ function CustomTransformer({
           radius={buttonRadius}
           fill="white"
           listening={false}
-          strokeWidth={2 / buttonScale} // border width
+          strokeWidth={ANCHOR_SHADOW_WIDTH / buttonScale} // border width
           stroke="#b5b5b5" // border color
           hitFunc={circleHitFunc}
         />

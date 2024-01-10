@@ -34,6 +34,7 @@ const Input = styled.textarea`
   resize: none;
   fontsize: 0.8rem;
   transition: 0s;
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
 `;
 
 const ShapeOptions = styled.div`
@@ -49,7 +50,7 @@ const ShapeOptions = styled.div`
   background-color: rgba(255, 255, 255, 1);
   border-radius: 20%;
   transition: 0s;
-  opacity: ${(props) => (props.isVisible ? 1 : 0)};
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
 `;
 
 const OptionsContainer = styled.div``;
@@ -75,18 +76,13 @@ function Main({ children, stageRef }) {
   const [showText, setShowText] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [shapeOptionsPosition, setShapeOptionsPosition] = useState({
-    x: 0,
-    y: 0,
+    x: null,
+    y: null,
   });
   const inputRef = useRef();
   const shapeOptionsRef = useRef();
 
   useAutosizeTextArea(inputRef, text, showText);
-
-  useEffect(() => {
-    if (isDragging) setIsLoading(true);
-    else setTimeout(setIsLoading(false), 100);
-  }, [isDragging]);
 
   useEffect(() => {
     const element = inputRef.current;
@@ -96,6 +92,7 @@ function Main({ children, stageRef }) {
       element.focus();
       element.selectionStart = element.value.length;
     }
+
     if (stageRef.current !== null && object) {
       const shapeNode = stageRef.current.findOne(`#${object.id}`);
       const groupNode = shapeNode.getParent();
@@ -109,11 +106,26 @@ function Main({ children, stageRef }) {
       const shapeOptionsWidth = shapeOptionsRef.current.offsetWidth;
 
       const x = boundingBox.x + boundingBox.width / 2 - shapeOptionsWidth / 2;
-      const y = boundingBox.y - 50;
+      const offset = 50;
+      let y = boundingBox.y - offset;
+
+      if (y < 25) {
+        y = boundingBox.y + boundingBox.height + offset / 2;
+      }
 
       setShapeOptionsPosition({ x, y });
     }
+
+    setIsLoading(false);
   }, [object, offset, scale, stageRef]);
+
+  // useEffect(() => {
+  //   setIsLoading(true);
+  // }, [object?.id]);
+
+  useEffect(() => {
+    if (isDragging) setIsLoading(true);
+  }, [isDragging]);
 
   useEffect(() => {
     setShowText(object?.type === "comment");
@@ -128,7 +140,7 @@ function Main({ children, stageRef }) {
   return (
     <StyledMain id="main">
       {children}
-      {!isDragging && !isLoading && object?.type === "comment" && (
+      {object?.type === "comment" && (
         <Input
           ref={inputRef}
           name="adjust"
@@ -138,14 +150,16 @@ function Main({ children, stageRef }) {
           x={object?.points[0] * scale + offset.x}
           y={object?.points[1] * scale + offset.y}
           spellCheck="false"
+          $isVisible={!isLoading}
         />
       )}
-      {object && (
+
+      {object?.id && (
         <ShapeOptions
           x={shapeOptionsPosition.x}
           y={shapeOptionsPosition.y}
           ref={shapeOptionsRef}
-          isVisible={!isLoading}
+          $isVisible={!isLoading}
         >
           <OptionsButton onClick={() => dispatch(removeObject(object.id))}>
             <FaRegTrashAlt />
