@@ -130,13 +130,8 @@ For more info see: https://github.com/konvajs/react-konva/issues/194
   background-color: ${e=>e.$color};
   border: none;
 
-  width: ${e=>e.$isActive?"2rem":"1.7rem"};
-  height: ${e=>e.$isActive?"2rem":"1.7rem"};
-
-  @media only screen and (max-width: 768px) {
-    width: 1.65rem;
-    height: 1.65rem;
-  }
+  width: ${e=>e.$isActive?"1.9rem":"1.7rem"};
+  height: ${e=>e.$isActive?"1.9rem":"1.7rem"};
 
   &:hover {
     cursor: pointer;
