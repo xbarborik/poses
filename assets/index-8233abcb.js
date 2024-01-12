@@ -196,10 +196,10 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 1.7rem;
   border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.4rem;
+  height: 2.4rem;
   border: none;
   pointer-events: auto;
   background-color: ${e=>e.$isActive?"#fff":"rgba(255, 255, 255, 0.5)"};
@@ -217,12 +217,12 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
     cursor: pointer;
   }
 
-  @media only screen and (max-width: 768px) {
-    width: 2.6rem;
-    height: 2.6rem;
-    font-size: 2rem;
-    outline-width: 3px;
-  }
+  // @media only screen and (max-width: 768px) {
+  //   width: 2.6rem;
+  //   height: 2.6rem;
+  //   font-size: 2rem;
+  //   outline-width: 3px;
+  // }
 
   /* @media only screen and (orientation: landscape) {
     width: 2rem;
