@@ -479,6 +479,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   justify-content: center;
   font-size: 1.8rem;
   border-radius: 50%;
+  color: #393d47
   width: 2.4rem;
   height: 2.4rem;
   border: none;
@@ -511,6 +512,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   transition: 0.15s;
   font-family: "Raleway";
   font-size: 1.1rem;
+  color: #393d47
 
   &:hover {
     background-color: #fff;
