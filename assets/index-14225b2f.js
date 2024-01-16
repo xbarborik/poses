@@ -509,6 +509,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   text-align: left;
   cursor: pointer;
   transition: 0.15s;
+  font-family: "Raleway";
+  font-size: 1.1rem;
 
   &:hover {
     background-color: #fff;
@@ -523,4 +525,4 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `,mO=Te.input`
   display: none;
-`;function yO(){const[e,t]=I.useState(!1),n=Tt(),r=I.useRef(),i=()=>{r.current.click()},a=u=>{const d=Array.from(u.target.files).map((f,v)=>({id:v,path:URL.createObjectURL(f)}));n(z9(d))},l=()=>{t(u=>!u)};return $.jsxs($.Fragment,{children:[$.jsx(mO,{ref:r,type:"file",name:"myImage",onChange:a,multiple:!0}),";",$.jsx(gO,{onClick:l,children:$.jsx(dO,{})}),$.jsxs(vO,{show:e,children:[$.jsxs(fp,{onClick:()=>{i(),l()},children:[$.jsx(fO,{})," Nahrát z galerie"]}),$.jsxs(fp,{onClick:l,children:[$.jsx(hO,{})," Exportovat"]}),$.jsxs(fp,{onClick:l,children:[$.jsx(pO,{})," Zdielať"]})]})]})}function SO(){Tt();const e=xe(av),t=xe($9),n=I.useRef(null);return $.jsxs(jM,{children:[$.jsx(GM,{children:$.jsx(xM,{})}),$.jsxs(ZM,{stageRef:n,children:[e?$.jsx($.Fragment,{children:!t&&$.jsx($R,{stageRef:n})}):$.jsx(cO,{}),$.jsx(zM,{children:$.jsx(nO,{})})]}),null,$.jsx(yO,{})]})}const _O=YN({reducer:{canvas:oR,toolbar:vR,style:hR}});hp.createRoot(document.getElementById("root")).render($.jsx(Ve.StrictMode,{children:$.jsx(hN,{store:_O,children:$.jsx(SO,{})})}));
+`;function yO(){const[e,t]=I.useState(!1),n=Tt(),r=I.useRef(),i=()=>{r.current.click()},a=u=>{const d=Array.from(u.target.files).map((f,v)=>({id:v,path:URL.createObjectURL(f)}));n(z9(d))},l=()=>{t(u=>!u)};return $.jsxs($.Fragment,{children:[$.jsx(mO,{ref:r,type:"file",name:"myImage",onChange:a,multiple:!0}),$.jsx(gO,{onClick:l,children:$.jsx(dO,{})}),$.jsxs(vO,{show:e,children:[$.jsxs(fp,{onClick:()=>{i(),l()},children:[$.jsx(fO,{})," Nahrát z galerie"]}),$.jsxs(fp,{onClick:l,children:[$.jsx(hO,{})," Exportovat"]}),$.jsxs(fp,{onClick:l,children:[$.jsx(pO,{})," Sdílet"]})]})]})}function SO(){Tt();const e=xe(av),t=xe($9),n=I.useRef(null);return $.jsxs(jM,{children:[$.jsx(GM,{children:$.jsx(xM,{})}),$.jsxs(ZM,{stageRef:n,children:[e?$.jsx($.Fragment,{children:!t&&$.jsx($R,{stageRef:n})}):$.jsx(cO,{}),$.jsx(zM,{children:$.jsx(nO,{})})]}),null,$.jsx(yO,{})]})}const _O=YN({reducer:{canvas:oR,toolbar:vR,style:hR}});hp.createRoot(document.getElementById("root")).render($.jsx(Ve.StrictMode,{children:$.jsx(hN,{store:_O,children:$.jsx(SO,{})})}));
