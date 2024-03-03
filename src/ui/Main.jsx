@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
+  deselectObject,
   getIsDragging,
   getSelectedObject,
   getStagePos,
@@ -11,6 +12,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import useAutosizeTextArea from "../hooks/useAutosizeTextArea";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { Rect } from "react-konva";
+import { FaCheck } from "react-icons/fa";
 
 const StyledMain = styled.div`
   display: flex;
@@ -21,11 +24,18 @@ const StyledMain = styled.div`
   position: relative;
 `;
 
+const InputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: ${(props) => `${props.y}px`};
+  left: ${(props) => `${props.x}px`};
+  gap: 5px;
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+`;
+
 const Input = styled.textarea`
   display: block;
-  position: absolute;
-  top: ${(props) => `${props.y + 32}px`};
-  left: ${(props) => `${props.x - 100}px`};
   width: 200px;
   height: auto;
   padding: 5px;
@@ -35,6 +45,15 @@ const Input = styled.textarea`
   fontsize: 0.8rem;
   transition: 0s;
   opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+  font-family: "Raleway";
+`;
+
+const DoneButton = styled.button`
+  background-color: #5897ee;
+  border: none;
+  padding: 0.4rem;
+  color: white;
+  border-radius: 5px;
 `;
 
 const ShapeOptions = styled.div`
@@ -48,15 +67,12 @@ const ShapeOptions = styled.div`
   align-items: center;
   justify-content: center;
   background-color: rgba(255, 255, 255, 1);
-  border-radius: 20%;
+  border-radius: 5px;
   transition: 0s;
   opacity: ${(props) => (props.$isVisible ? 1 : 0)};
 `;
 
-const OptionsContainer = styled.div``;
-
 const OptionsButton = styled.button`
-  font-size: 0.9rem;
   background-color: transparent;
   background-repeat: no-repeat;
   border: none;
@@ -106,12 +122,14 @@ function Main({ children, stageRef }) {
       const shapeOptionsWidth = shapeOptionsRef.current.offsetWidth;
 
       const x = boundingBox.x + boundingBox.width / 2 - shapeOptionsWidth / 2;
-      const offset = 50;
+      const offset = 45;
       let y = boundingBox.y - offset;
 
       if (y < 25) {
         y = boundingBox.y + boundingBox.height + offset / 2;
       }
+
+      console.log(x, y);
 
       setShapeOptionsPosition({ x, y });
     }
@@ -137,21 +155,54 @@ function Main({ children, stageRef }) {
     dispatch(updateWithObject({ ...object, text: input_value }));
   }
 
+  function handleKeyPress(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      dispatch(deselectObject());
+    }
+  }
+
+  function adjustX() {
+    if (!object || isLoading) return 0;
+
+    let x = object?.points[0] * scale + offset.x - 100;
+
+    const windowWidth = window.innerWidth;
+
+    const containerWidth = 300;
+
+    if (x + containerWidth > windowWidth) {
+      x = windowWidth - containerWidth;
+    }
+
+    if (x < 0) x = 0;
+
+    return x;
+  }
+
   return (
     <StyledMain id="main">
       {children}
       {object?.type === "comment" && (
-        <Input
-          ref={inputRef}
-          name="adjust"
-          type="text"
-          value={text}
-          onChange={onChange}
-          x={object?.points[0] * scale + offset.x}
-          y={object?.points[1] * scale + offset.y}
-          spellCheck="false"
+        <InputContainer
+          x={adjustX()}
+          y={object?.points[1] * scale + offset.y + 32}
           $isVisible={!isLoading}
-        />
+        >
+          <Input
+            ref={inputRef}
+            name="adjust"
+            type="text"
+            value={text}
+            onKeyDown={handleKeyPress}
+            onChange={onChange}
+            spellCheck="false"
+            $isVisible={!isLoading}
+          />
+          <DoneButton onClick={() => dispatch(deselectObject())}>
+            <FaCheck />
+          </DoneButton>
+        </InputContainer>
       )}
 
       {object?.id && (

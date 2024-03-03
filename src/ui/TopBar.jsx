@@ -7,11 +7,12 @@ const StyledTopBar = styled.div`
   gap: 0.1rem;
   z-index: 99;
   box-sizing: border-box;
+  justify-content: center;
 
   position: absolute;
-  top: 0;
+
+  bottom: 0;
   pointer-events: none;
-  justify-content: center;
 
   @media only screen and (max-width: 768px) {
     /* flex-direction: column; */

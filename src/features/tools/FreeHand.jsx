@@ -6,6 +6,7 @@ import CustomTransformer from "../transformers/CustomTransformer";
 import { getNewPoints } from "./freeHandUtils";
 import {
   removeObject,
+  setIsDragging,
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
@@ -13,7 +14,7 @@ import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 
 function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
-  const trRef = useRef();
+  // const trRef = useRef();
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
 
@@ -23,12 +24,12 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
     setPoints(line.points);
   }, [line.points]);
 
-  useEffect(() => {
-    if (isSelected) {
-      trRef.current.nodes([shapeRef.current]);
-      trRef.current.getLayer().batchDraw();
-    }
-  }, [isSelected]);
+  // useEffect(() => {
+  //   if (isSelected) {
+  //     trRef.current.nodes([shapeRef.current]);
+  //     trRef.current.getLayer().batchDraw();
+  //   }
+  // }, [isSelected]);
 
   // https://stackoverflow.com/questions/61048076/how-to-get-new-points-of-line-after-transformation-in-konvajs
   function handleTransform(e) {
@@ -92,12 +93,18 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
         onTransformStart={() => dispatch(updateHistory())}
         onTransform={(e) => handleTransform(e)}
         onTransformEnd={handleTransformEnd}
-        onDragStart={() => dispatch(updateHistory())}
-        onDragEnd={(e) => handleDragEnd(e)}
+        onDragStart={() => {
+          dispatch(updateHistory());
+          dispatch(setIsDragging(true));
+        }}
+        onDragEnd={(e) => {
+          handleDragEnd(e);
+          dispatch(setIsDragging(false));
+        }}
         onTap={onSelect}
         onClick={onSelect}
       />
-      {isSelected && (
+      {/* {isSelected && (
         <CustomTransformer
           trRef={trRef}
           objectId={line.id}
@@ -105,7 +112,7 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
           onRemove={() => dispatch(removeObject(line.id))}
           stageRef={stageRef}
         />
-      )}
+      )} */}
     </>
   );
 }

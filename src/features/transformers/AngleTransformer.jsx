@@ -152,6 +152,14 @@ function AngleTransformer({
             onDragMove={(e) => handlePrimaryAnchorDragMove(e)}
             // onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
+            onMouseEnter={(e) => {
+              const container = e.target.getStage().container();
+              container.style.cursor = "pointer";
+            }}
+            onMouseLeave={(e) => {
+              const container = e.target.getStage().container();
+              container.style.cursor = "default";
+            }}
           />
 
           <Circle
@@ -167,6 +175,14 @@ function AngleTransformer({
             onDragMove={(e) => handleSecondaryAnchorDragMove(e)}
             // onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
+            onMouseEnter={(e) => {
+              const container = e.target.getStage().container();
+              container.style.cursor = "pointer";
+            }}
+            onMouseLeave={(e) => {
+              const container = e.target.getStage().container();
+              container.style.cursor = "default";
+            }}
           />
 
           {/* Remove Button */}

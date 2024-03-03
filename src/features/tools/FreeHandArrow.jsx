@@ -10,14 +10,16 @@ import CustomTransformer from "../transformers/CustomTransformer";
 import { getNewPoints } from "./freeHandUtils";
 import {
   removeObject,
+  setIsDragging,
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import CustomArrow from "../customShapes/CustomArrow";
 
 function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
-  const trRef = useRef();
+  // const trRef = useRef();
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
 
@@ -27,12 +29,12 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
     setPoints(line.points);
   }, [line.points]);
 
-  useEffect(() => {
-    if (isSelected) {
-      trRef.current.nodes([shapeRef.current]);
-      trRef.current.getLayer().batchDraw();
-    }
-  }, [isSelected]);
+  // useEffect(() => {
+  //   if (isSelected) {
+  //     trRef.current.nodes([shapeRef.current]);
+  //     trRef.current.getLayer().batchDraw();
+  //   }
+  // }, [isSelected]);
 
   // https://stackoverflow.com/questions/61048076/how-to-get-new-points-of-line-after-transformation-in-konvajs
   function handleTransform(e) {
@@ -92,13 +94,13 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const arrowHeadPoints = [prevX, prevY, lastX, lastY];
   return (
     <>
-      <Arrow
+      <CustomArrow
         points={arrowHeadPoints}
         stroke={line.color}
         fill={line.color}
-        strokeWidth={line.strokeWidth}
-        pointerWidth={line.strokeWidth * ARROW_POINTER_SCALE}
-        pointerLength={line.strokeWidth}
+        strokeWidth={line.strokeWidth * 0.9}
+        pointerWidth={line.strokeWidth * 2 * ARROW_POINTER_SCALE}
+        pointerLength={line.strokeWidth * 2}
       />
 
       <Line
@@ -111,21 +113,25 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         tension={0.7}
         lineCap="round"
         lineJoin="round"
-        pointerLength={line.strokeWidth * 2}
-        pointerWidth={line.strokeWidth * 2}
         globalCompositeOperation={"source-over"}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
         onTransform={(e) => handleTransform(e)}
         onTransformEnd={handleTransformEnd}
-        onDragStart={() => dispatch(updateHistory())}
         onDragMove={(e) => handleDragMove(e)}
-        onDragEnd={(e) => handleDragEnd(e)}
+        onDragStart={() => {
+          dispatch(updateHistory());
+          dispatch(setIsDragging(true));
+        }}
+        onDragEnd={(e) => {
+          handleDragEnd(e);
+          dispatch(setIsDragging(false));
+        }}
         onTap={onSelect}
         onClick={onSelect}
       />
 
-      {isSelected && (
+      {/* {isSelected && (
         <CustomTransformer
           trRef={trRef}
           objectId={line.id}
@@ -133,7 +139,7 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
           onRemove={() => dispatch(removeObject(line.id))}
           stageRef={stageRef}
         />
-      )}
+      )} */}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Circle, Group, Line } from "react-konva";
+import { Circle, Group, Line, Rect } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { getStageScale, setIsDragging } from "../canvas/canvasSlice";
 import { circleHitFunc } from "../../hit_functions/circleHitFunction";
@@ -21,6 +21,13 @@ function LineTransformer({
   const anchor2Ref = useRef();
   const stageScale = useSelector(getStageScale);
   const [anchorOffset, setAnchorOffset] = useState({ x: 0, y: 0 });
+
+  const [groupBounds, setGroupBounds] = useState({
+    x: null,
+    y: null,
+    width: null,
+    height: null,
+  });
 
   const anchorScale = stageScale / 0.9;
   const anchorSize = 16 / anchorScale;
@@ -45,6 +52,7 @@ function LineTransformer({
       const offsetY = directionY * anchorOffsetDistance;
 
       setAnchorOffset({ x: offsetX, y: offsetY });
+      // setGroupBounds(groupRef?.current?.getClientRect())
     }
 
     findNewAnchorPoint();
@@ -92,6 +100,17 @@ function LineTransformer({
     >
       {children}
 
+      {groupBounds?.x && (
+        <Rect
+          x={groupBounds.x}
+          y={groupBounds.y}
+          width={groupBounds.width}
+          height={groupBounds.height}
+          stroke="blue" // Color of the border
+          strokeWidth={2} // Width of the border
+        />
+      )}
+
       {show && (
         <>
           {/* Anchors */}
@@ -109,6 +128,14 @@ function LineTransformer({
             // onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
             // opacity={showAnchors}
+            onMouseEnter={(e) => {
+              const container = e.target.getStage().container();
+              container.style.cursor = "pointer";
+            }}
+            onMouseLeave={(e) => {
+              const container = e.target.getStage().container();
+              container.style.cursor = "default";
+            }}
           />
 
           <Circle
@@ -125,6 +152,14 @@ function LineTransformer({
             // onDragEnd={(e) => handleAnchorDragEnd(e)}
             hitFunc={circleHitFunc}
             // opacity={showAnchors}
+            onMouseEnter={(e) => {
+              const container = e.target.getStage().container();
+              container.style.cursor = "pointer";
+            }}
+            onMouseLeave={(e) => {
+              const container = e.target.getStage().container();
+              container.style.cursor = "default";
+            }}
           />
         </>
       )}

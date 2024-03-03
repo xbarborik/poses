@@ -79,7 +79,7 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
     const primaryLen = calcLength(primaryLinePoints);
     const secondaryLen = calcLength(secondaryLinePoints);
     // console.log(Math.min(primaryLen, secondaryLen) / 2);
-    return Math.min(primaryLen, secondaryLen) / 2;
+    return Math.min(primaryLen, secondaryLen) / 3;
   }
 
   if (!primaryLinePoints.length) return;
@@ -130,23 +130,26 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         angle={angle}
         rotation={rotationAngle}
         lineJoin="round"
+        dash={[10, 5]}
+        innerRadius={0}
         outerRadius={arcLength}
         onTap={() => onSelect()}
         onClick={() => onSelect()}
+        closed={false}
       />
 
       <Text
         id={angleObject.id}
         x={angleObject.points[0] - radius}
         y={angleObject.points[1] - radius / 2}
-        width={radius * 2}
+        width={radius * 2.5}
         height={radius}
         text={`${angle.toFixed(0)}`}
-        fontSize={radius}
+        fontSize={radius * 1.4}
         fontStyle="bold"
         fill="white"
         stroke="black"
-        strokeWidth={1}
+        strokeWidth={1.1}
         onClick={onSelect}
         onTap={onSelect}
         align="center"

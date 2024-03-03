@@ -75,12 +75,22 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
       onDragEnd={handleDragEnd}
     >
       <CircleKonva
+        listening={false}
+        x={comment.points[0]}
+        y={comment.points[1]}
+        radius={radius * 1.35}
+        fill="#b5b5b5"
+        onClick={onSelect}
+        onTap={onSelect}
+        opacity={0.4}
+      />
+      <CircleKonva
         id={comment.id}
         x={comment.points[0]}
         y={comment.points[1]}
-        radius={radius}
-        stroke="#fff"
-        strokeWidth={1}
+        radius={radius + 2}
+        stroke={comment.color}
+        strokeWidth={2}
         fill="#fff"
         onClick={onSelect}
         onTap={onSelect}

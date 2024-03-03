@@ -17,6 +17,8 @@ import {
 } from "./features/canvas/canvasSlice";
 import Upload from "./ui/Upload";
 import Button from "./ui/Button";
+import Options from "./features/navigation/Options";
+import Menu from "./ui/Menu";
 
 function App() {
   const dispatch = useDispatch();
@@ -57,9 +59,13 @@ function App() {
         </Toolbar>
       </Main>
 
-      {/* <BottomBar>
-        <Navigation />
-      </BottomBar> */}
+      {false && isImageSet ? (
+        <BottomBar>
+          {/* <Navigation /> */}
+          <Options />
+        </BottomBar>
+      ) : null}
+      <Menu />
     </AppLayout>
   );
 }

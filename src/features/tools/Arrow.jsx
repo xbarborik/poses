@@ -12,6 +12,7 @@ import {
   updateWithObject,
 } from "../canvas/canvasSlice";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import CustomArrow from "../customShapes/CustomArrow";
 
 function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
   const dispatch = useDispatch();
@@ -40,17 +41,15 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
       onDragEnd={handleChangeEnd}
       onRemove={() => dispatch(removeObject(arrow.id))}
     >
-      <ArrowKonva
-        id={arrow.id}
+      <CustomArrow
+        objectId={arrow.id}
         points={points}
         stroke={arrow.color}
         strokeWidth={arrow.strokeWidth}
         fill={arrow.color}
-        tension={0.7}
         lineCap="round"
-        globalCompositeOperation={"source-over"}
-        pointerLength={arrow.strokeWidth}
-        pointerWidth={arrow.strokeWidth * ARROW_POINTER_SCALE}
+        pointerLength={2 * arrow.strokeWidth}
+        pointerWidth={2 * arrow.strokeWidth * ARROW_POINTER_SCALE}
         hitStrokeWidth={arrow.strokeWidth * HIT_DETECTION_MULTIPLIER}
         onTap={onSelect}
         onClick={onSelect}

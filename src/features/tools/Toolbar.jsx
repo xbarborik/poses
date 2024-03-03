@@ -3,14 +3,23 @@ import { BsCircle, BsArrowUp } from "react-icons/bs";
 import ToolButton from "./ToolButton";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { getIsDrawing } from "../canvas/canvasSlice";
+import {
+  getImagesCount,
+  getIsDragging,
+  getIsDrawing,
+} from "../canvas/canvasSlice";
 import { useState } from "react";
 import Button from "../../ui/Button";
-import angleIcon from "../../assets/angle.svg";
+import angleIcon from "../../assets/ang.svg";
 import freehandArrowIcon from "../../assets/fr-ar.svg";
 import freehandIcon from "../../assets/fr.svg";
 import { TfiArrowsVertical } from "react-icons/tfi";
+import { FaArrowUp } from "react-icons/fa6";
+
 import { PiArrowsVerticalFill } from "react-icons/pi";
+import { LuMoveVertical } from "react-icons/lu";
+import { getColor } from "../stylePanel/styleSlice";
+import { MdOutlineMoving } from "react-icons/md";
 
 const StyledToolBar = styled.div`
   display: flex;
@@ -33,7 +42,9 @@ const ToolbarContainer = styled.div`
   top: 50%;
   transform: translateY(-50%);
 
-  pointer-events: none;
+  opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
+
+  pointer-events: ${(props) => (props.$disabled ? "none" : "none")};
 `;
 
 const HideBarButton = styled(Button)`
@@ -44,6 +55,7 @@ const HideBarButton = styled(Button)`
 const IconImg = styled.img`
   width: 2.2rem;
   height: 2.2rem;
+  color: ${(props) => props.$color};
 `;
 
 const IconText = styled.span`
@@ -52,12 +64,15 @@ const IconText = styled.span`
 
 function Toolbar({ children }) {
   const isDrawing = useSelector(getIsDrawing);
+  const isDragging = useSelector(getIsDragging);
+  const color = useSelector(getColor);
   const [showToolbar, setShowToolbar] = useState(true);
+  const disabled = useSelector(getImagesCount) == 0;
 
-  if (isDrawing) return null;
+  if (isDrawing || isDragging) return null;
 
   return (
-    <ToolbarContainer>
+    <ToolbarContainer $disabled={disabled}>
       {/* <HideBarButton
           size={"smallEven"}
           onClick={() => setShowToolbar((showToolbar) => !showToolbar)}
@@ -73,23 +88,25 @@ function Toolbar({ children }) {
           }}
         >
           <ToolButton type={"freeHand"}>
-            <IconImg src={freehandIcon} />
+            <IconImg src={freehandIcon} $color={color} />
           </ToolButton>
           <ToolButton type={"line"}>
             <GoHorizontalRule style={{ transform: "rotate(90deg)" }} />
           </ToolButton>
           <ToolButton type={"freeHandArrow"}>
-            <IconImg src={freehandArrowIcon} />
+            {/* <FaArrowUp /> */}
+            <IconImg src={freehandArrowIcon} $color={color} />
           </ToolButton>
           <ToolButton type={"arrow"}>
             {/* <BsArrowUp /> */}
-            <PiArrowsVerticalFill />
+            {/* <PiArrowsVerticalFill /> */}
+            <LuMoveVertical />
           </ToolButton>
           <ToolButton type={"circle"}>
             <BsCircle />
           </ToolButton>
           <ToolButton type={"angle"}>
-            <IconImg src={angleIcon} />
+            <IconImg src={angleIcon} $color={color} />
           </ToolButton>
           <ToolButton type={"comment"}>
             <IconText>Aa</IconText>

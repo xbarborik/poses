@@ -8,19 +8,13 @@ const StyledColorButton = styled.button`
   aspect-ratio: 1;
   pointer-events: auto;
   margin: 0.1rem;
-  width: 1.7rem;
-  height: 1.7rem;
+
   border-radius: 50%;
   background-color: ${(props) => props.$color};
   border: none;
-  outline: ${(props) =>
-    props.$isActive ? `2px solid ${props.$color}` : "0px"};
-  outline-offset: 1.5px;
 
-  @media only screen and (max-width: 768px) {
-    width: 1.65rem;
-    height: 1.65rem;
-  }
+  width: ${(props) => (props.$isActive ? `1.7rem` : "1.5rem")};
+  height: ${(props) => (props.$isActive ? `1.7rem` : "1.5rem")};
 
   &:hover {
     cursor: pointer;

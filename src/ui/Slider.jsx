@@ -3,7 +3,7 @@ import "rc-slider/assets/index.css";
 import { useEffect, useState } from "react";
 
 // https://deadsimplechat.com/blog/react-slider-rc-slider-step-by-step-tutorial-with-examples/
-const trackHeightScale = 2;
+const trackHeightScale = 2.5;
 
 function calcOutline(value, maxValue) {
   const circleDiameter = value;

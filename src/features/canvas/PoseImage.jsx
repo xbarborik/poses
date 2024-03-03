@@ -6,7 +6,7 @@ import { getCurrentImage } from "./canvasSlice";
 
 // import warrior from ;
 
-function PoseImage({ dimensions }) {
+function PoseImage({ dimensions, setImageSize }) {
   const imageData = useSelector(getCurrentImage);
   // const [image] = useImage("/poses/images/" + imageData?.path);
   const [image] = useImage(imageData?.path);
@@ -28,17 +28,19 @@ function PoseImage({ dimensions }) {
         scaledWidth = dimensions.height * aspectRatio;
       }
 
-      setScaledDimensions({ width: scaledWidth, height: scaledHeight });
+      const newSize = { width: scaledWidth, height: scaledHeight };
+      setScaledDimensions(newSize);
+      setImageSize(newSize);
     }
 
     calcSize();
-  }, [image, dimensions]);
+  }, [image, dimensions, setImageSize]);
 
   return (
     <Image
       image={image}
-      x={dimensions.width / 2 - scaledDimensions.width / 2 || 0}
-      y={dimensions.height / 2 - scaledDimensions.height / 2 || 0}
+      x={dimensions.width / 2 - scaledDimensions.width / 2}
+      y={dimensions.height / 2 - scaledDimensions.height / 2}
       width={scaledDimensions.width}
       height={scaledDimensions.height}
       listening={false}

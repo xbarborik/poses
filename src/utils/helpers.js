@@ -45,7 +45,7 @@ export function calcLength(points) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-export function notLongEnoughToDraw(object) {
+export function notLongEnoughToDraw(object, pad) {
   return (
     (object.type.includes("freeHand") &&
       object.points.length <= MINIMUM_OBJECT_LENGTH) ||

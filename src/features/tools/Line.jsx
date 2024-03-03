@@ -48,9 +48,7 @@ function Line({ line, isDraggable, isSelected, onSelect }) {
         stroke={line.color}
         strokeWidth={line.strokeWidth}
         hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
-        tension={0.7}
         lineCap="round"
-        globalCompositeOperation={"source-over"}
         onTap={onSelect}
         onClick={onSelect}
       />

@@ -21,6 +21,7 @@ import {
 import {
   getStrokeWidth,
   selectColor,
+  setShowStyling,
   setStrokeWidth,
 } from "../stylePanel/styleSlice";
 import { getSelectedTool, selectTool } from "../tools/toolbarSlice";
@@ -54,7 +55,7 @@ import { updateAngle } from "../tools/angleUtils";
 import Comment from "../tools/Comment";
 
 const StyledCanvas = styled.div`
-  display: block;
+  display: flex;
   outline: 2px solid orange;
   outline-offset: -1px;
   flex-grow: 1;
@@ -65,6 +66,7 @@ const StyledCanvas = styled.div`
   overscroll-behavior: none;
   background-color: #ffffffd9;
   zoom: 1;
+  // justify-content: center;
 `;
 
 function Canvas({ stageRef }) {
@@ -81,6 +83,9 @@ function Canvas({ stageRef }) {
 
   const [newObjectId, setNewObjectId] = useState("");
   const [dimensions, setDimensions] = useDimensions(canvasRef);
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [isPinching, setIsPinching] = useState(false);
+
   // const [dimensions, setDimensions] = useState({ width: 500, height: 500 });
 
   const {
@@ -168,6 +173,7 @@ function Canvas({ stageRef }) {
 
     dispatch(updateHistory());
     dispatch(setIsDrawing(true));
+    dispatch(setShowStyling(false));
 
     const id = String(new Date().valueOf());
     setNewObjectId(id);
@@ -224,6 +230,7 @@ function Canvas({ stageRef }) {
             id,
             type: selectedTool,
             text: "",
+            color: selectedColor,
             points: [position.x, position.y, position.x, position.y],
           })
         );
@@ -291,7 +298,7 @@ function Canvas({ stageRef }) {
 
     if (!objects) return;
 
-    if (notLongEnoughToDraw(objects[newObjectId])) {
+    if (notLongEnoughToDraw(objects[newObjectId], strokeWidth)) {
       dispatch(removeInvalidObject(newObjectId));
       return;
     }
@@ -326,6 +333,8 @@ function Canvas({ stageRef }) {
           ref={stageRef}
           width={dimensions.width}
           height={dimensions.height}
+          // width={imageSize.width}
+          // height={imageSize.height}
           onWheel={(e) => {
             handleWheel(e);
             dispatch(deselectObject());
@@ -353,9 +362,9 @@ function Canvas({ stageRef }) {
           // draggable={selectedTool === "none"  }
         >
           <Layer>
-            <PoseImage dimensions={dimensions} />
+            <PoseImage dimensions={dimensions} setImageSize={setImageSize} />
             {Object.values(objects).map((object) => {
-              if (notLongEnoughToDraw(object)) return null;
+              if (notLongEnoughToDraw(object, strokeWidth)) return null;
               if (object.type === "freeHand") {
                 return (
                   <FreeHand
@@ -437,8 +446,9 @@ function Canvas({ stageRef }) {
                     onSelect={() => handleSelect(object)}
                   />
                 );
+              } else {
+                return null;
               }
-              return null; // It's a good practice to return null if no element is to be rendered
             })}
           </Layer>
         </Stage>
