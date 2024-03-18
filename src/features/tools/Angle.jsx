@@ -1,12 +1,13 @@
 import { Arc, Circle, Line as LineKonva, Text } from "react-konva";
 import LineTransformer from "../transformers/LineTransformer";
-import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
+import { HIT_DETECTION_MULTIPLIER, LOWERED_ALPHA } from "../../utils/constants";
 import {
+  getOpacityLowered,
   removeObject,
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 import AngleTransformer from "../transformers/AngleTransformer";
@@ -44,6 +45,7 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
   const [primaryLinePoints, setPrimaryLinePoints] = useState([]);
   const [secondaryLinePoints, setSecondaryLinePoints] = useState([]);
   const [angle, setAngle] = useState(0);
+  const isOpacityLowered = useSelector(getOpacityLowered);
 
   const radius = 16;
 
@@ -148,11 +150,13 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         fontSize={radius * 1.4}
         fontStyle="bold"
         fill="white"
-        stroke="black"
-        strokeWidth={1.1}
+        shadowColor="black"
+        shadowBlur={20}
+        shadowOpacity={1}
         onClick={onSelect}
         onTap={onSelect}
         align="center"
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
     </AngleTransformer>
   );

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Circle as CircleKonva } from "react-konva";
 import CustomTransformer from "../transformers/CustomTransformer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
+  getOpacityLowered,
   removeObject,
   updateHistory,
   updateWithObject,
@@ -12,6 +13,7 @@ import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 import {
   HIT_DETECTION_MULTIPLIER,
   HIT_FUNC_MULTIPLIER,
+  LOWERED_ALPHA,
 } from "../../utils/constants";
 
 function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
@@ -20,6 +22,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
   const [radius, setRadius] = useState(0);
+  const isOpacityLowered = useSelector(getOpacityLowered);
 
   useAdjustColorAndWidth(circle, isSelected);
 
@@ -89,7 +92,10 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         x={(points[0] + points[2]) / 2}
         y={(points[1] + points[3]) / 2}
         radius={radius / 2}
-        stroke={circle.color}
+        stroke={"white"}
+        shadowColor={circle.color}
+        shadowBlur={8}
+        shadowOpacity={1}
         strokeWidth={circle.strokeWidth}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
@@ -101,6 +107,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         onClick={onSelect}
         hitStrokeWidth={circle.strokeWidth * HIT_DETECTION_MULTIPLIER * 100}
         hitFunc={customHitFunc}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
       {isSelected && (
         <CustomTransformer

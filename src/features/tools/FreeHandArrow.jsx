@@ -2,13 +2,15 @@ import { Arrow, Group, Line } from "react-konva";
 import {
   ARROW_POINTER_SCALE,
   HIT_DETECTION_MULTIPLIER,
+  LOWERED_ALPHA,
   MINIMUM_OBJECT_LENGTH,
 } from "../../utils/constants";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CustomTransformer from "../transformers/CustomTransformer";
 import { getNewPoints } from "./freeHandUtils";
 import {
+  getOpacityLowered,
   removeObject,
   setIsDragging,
   updateHistory,
@@ -22,6 +24,7 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   // const trRef = useRef();
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
+  const isOpacityLowered = useSelector(getOpacityLowered);
 
   useAdjustColorAndWidth(line, isSelected);
 
@@ -101,6 +104,7 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         strokeWidth={line.strokeWidth * 0.9}
         pointerWidth={line.strokeWidth * 2 * ARROW_POINTER_SCALE}
         pointerLength={line.strokeWidth * 2}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
 
       <Line
@@ -129,6 +133,7 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         }}
         onTap={onSelect}
         onClick={onSelect}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 0.8}
       />
 
       {/* {isSelected && (

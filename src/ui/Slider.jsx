@@ -21,7 +21,7 @@ function CustomSlider({
   name,
 }) {
   const [currentValue, setCurrentValue] = useState(value);
-  const scale = 1.5;
+  const scale = 1.8;
   const styles = {
     handle: {
       backgroundColor: color,
@@ -48,7 +48,7 @@ function CustomSlider({
     },
 
     rail: {
-      backgroundColor: "rgba(0,0,0,0.2)",
+      backgroundColor: "rgba(0,0,0,0.3)",
       height: minValue * trackHeightScale,
     },
   };

@@ -62,7 +62,9 @@ function Upload({ showText = true }) {
         onChange={(e) => {
           const filesArray = Array.from(e.target.files).map((file, index) => ({
             id: index,
+            objects: {},
             path: URL.createObjectURL(file),
+            file: file,
           }));
 
           dispatch(setImages(filesArray));

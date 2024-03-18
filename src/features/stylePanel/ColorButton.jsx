@@ -13,8 +13,8 @@ const StyledColorButton = styled.button`
   background-color: ${(props) => props.$color};
   border: none;
 
-  width: ${(props) => (props.$isActive ? `1.7rem` : "1.5rem")};
-  height: ${(props) => (props.$isActive ? `1.7rem` : "1.5rem")};
+  width: ${(props) => (props.$isActive ? `1.7rem` : "1.6rem")};
+  height: ${(props) => (props.$isActive ? `1.7rem` : "1.6rem")};
 
   &:hover {
     cursor: pointer;

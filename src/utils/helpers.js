@@ -81,3 +81,32 @@ export function getCenter(point1, point2) {
     y: (point1.y + point2.y) / 2,
   };
 }
+
+export function downloadURI(uri, name) {
+  var link = document.createElement("a");
+  link.download = name;
+  link.href = uri;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// https://natclark.com/tutorials/javascript-lighten-darken-hex-color/
+export function darkenColor(hexColor, magnitude) {
+  hexColor = hexColor.replace(`#`, ``);
+  if (hexColor.length === 6) {
+    const decimalColor = parseInt(hexColor, 16);
+    let r = (decimalColor >> 16) + magnitude;
+    r > 255 && (r = 255);
+    r < 0 && (r = 0);
+    let g = (decimalColor & 0x0000ff) + magnitude;
+    g > 255 && (g = 255);
+    g < 0 && (g = 0);
+    let b = ((decimalColor >> 8) & 0x00ff) + magnitude;
+    b > 255 && (b = 255);
+    b < 0 && (b = 0);
+    return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
+  } else {
+    return hexColor;
+  }
+}

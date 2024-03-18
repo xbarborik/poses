@@ -1,29 +1,25 @@
 import { useEffect, useRef, useState } from "react";
-import { Circle, Circle as CircleKonva, Group, Line, Text } from "react-konva";
-import CustomTransformer from "../transformers/CustomTransformer";
+import { Circle as CircleKonva, Group, Text } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  deselectObject,
   getObjects,
-  removeObject,
+  getOpacityLowered,
   setIsDragging,
-  updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import { getNewPoints } from "./circleUtils";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
-import {
-  HIT_DETECTION_MULTIPLIER,
-  HIT_FUNC_MULTIPLIER,
-} from "../../utils/constants";
+import { LOWERED_ALPHA } from "../../utils/constants";
 
 function Comment({ comment, isDraggable, onSelect, isSelected }) {
   const dispatch = useDispatch();
   const groupRef = useRef();
   const objects = useSelector(getObjects);
   const [number, setNumber] = useState(0);
+  const isOpacityLowered = useSelector(getOpacityLowered);
 
   const radius = 16;
+
+  useAdjustColorAndWidth(comment, isSelected);
 
   useEffect(() => {
     function getNextValue() {
@@ -73,6 +69,7 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
       draggable={isDraggable}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
     >
       <CircleKonva
         listening={false}
@@ -97,6 +94,7 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
         opacity={0.8}
       />
       <Text
+        listening={false}
         id={comment.id}
         x={comment.points[0] - radius / 2}
         y={comment.points[1] - radius / 2}

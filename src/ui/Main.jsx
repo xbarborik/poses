@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   deselectObject,
+  getImagesCount,
   getIsDragging,
   getSelectedObject,
   getStagePos,
@@ -54,6 +55,8 @@ const DoneButton = styled.button`
   padding: 0.4rem;
   color: white;
   border-radius: 5px;
+  display: flex;
+  justify-content: center;
 `;
 
 const ShapeOptions = styled.div`
@@ -105,7 +108,7 @@ function Main({ children, stageRef }) {
 
     if (object?.type === "comment") {
       setText(object.text);
-      element.focus();
+      if (object.text.length == 0) element.focus();
       element.selectionStart = element.value.length;
     }
 
@@ -121,11 +124,14 @@ function Main({ children, stageRef }) {
       // no need to adjust, because clientRect already has scales applied
       const shapeOptionsWidth = shapeOptionsRef.current.offsetWidth;
 
-      const x = boundingBox.x + boundingBox.width / 2 - shapeOptionsWidth / 2;
+      let x = boundingBox.x + boundingBox.width / 2 - shapeOptionsWidth / 2;
       const offset = 45;
       let y = boundingBox.y - offset;
 
-      if (y < 25) {
+      if (object?.type === "comment" && y < 25) {
+        x = boundingBox.x + boundingBox.width / 2 + offset;
+        y = boundingBox.y + boundingBox.width / 2 - shapeOptionsWidth / 2;
+      } else if (y < 25) {
         y = boundingBox.y + boundingBox.height + offset / 2;
       }
 

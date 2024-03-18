@@ -37,7 +37,7 @@ const PaletteContainer = styled.div`
   border-radius: 20px 20px 0px 0px;
   width: auto;
   background: ${(props) =>
-    props.$isHighlighted ? "rgba(0,0,0, 0.2)" : "rgba(0,0,0, 0.2)"};
+    props.$isHighlighted ? "rgba(41, 41, 41, 0.3)" : "rgba(0,0,0, 0.3)"};
   // visibility: ${(props) => (props.$isDrawing ? "hidden" : "visible")};
 
   // @media only screen and (max-width: 768px) {
@@ -80,7 +80,7 @@ function Palette() {
         (selectedTool && selectedTool === "style") ||
         (selectedObject &&
           selectedObject.id !== null &&
-          selectedObject.type !== "comment")
+          selectedObject.type !== "")
     );
   }, [selectedObject, selectedTool, isDrawing, showStyling]);
 

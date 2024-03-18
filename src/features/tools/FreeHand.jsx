@@ -1,22 +1,25 @@
 import { Line } from "react-konva";
-import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
+import { HIT_DETECTION_MULTIPLIER, LOWERED_ALPHA } from "../../utils/constants";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CustomTransformer from "../transformers/CustomTransformer";
 import { getNewPoints } from "./freeHandUtils";
 import {
+  getOpacityLowered,
   removeObject,
   setIsDragging,
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import { darkenColor } from "../../utils/helpers";
 
 function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
   // const trRef = useRef();
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
+  const isOpacityLowered = useSelector(getOpacityLowered);
 
   useAdjustColorAndWidth(line, isSelected);
 
@@ -78,10 +81,22 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
 
   return (
     <>
+      {/* <Line
+        listening={false}
+        ref={shapeRef}
+        points={points}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
+        stroke={"black"}
+        strokeWidth={line.strokeWidth * 1.5}
+        tension={0.7}
+        lineCap="round"
+        lineJoin="round"
+      /> */}
       <Line
         id={line.id}
         ref={shapeRef}
         points={points}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
         stroke={line.color}
         strokeWidth={line.strokeWidth}
         hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
@@ -103,6 +118,9 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
         }}
         onTap={onSelect}
         onClick={onSelect}
+        shadowColor={darkenColor(line.color, -14)}
+        shadowBlur={5}
+        shadowOpacity={1}
       />
       {/* {isSelected && (
         <CustomTransformer

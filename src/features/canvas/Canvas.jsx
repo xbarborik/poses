@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Stage, Layer } from "react-konva";
+import { Stage, Layer, Text, FastLayer } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deselectObject,
@@ -53,6 +53,7 @@ import FreeHandArrow from "../tools/FreeHandArrow";
 import Angle from "../tools/Angle";
 import { updateAngle } from "../tools/angleUtils";
 import Comment from "../tools/Comment";
+import CommentContent from "../tools/CommentContent";
 
 const StyledCanvas = styled.div`
   display: flex;
@@ -69,7 +70,7 @@ const StyledCanvas = styled.div`
   // justify-content: center;
 `;
 
-function Canvas({ stageRef }) {
+function Canvas({ stageRef, setImageSize }) {
   const canvasRef = useRef(null);
   const dispatch = useDispatch();
   const isLoading = useSelector(getIsLoading);
@@ -82,8 +83,7 @@ function Canvas({ stageRef }) {
   const imageIndex = useSelector(getCurrentImageIndx);
 
   const [newObjectId, setNewObjectId] = useState("");
-  const [dimensions, setDimensions] = useDimensions(canvasRef);
-  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [dimensions] = useDimensions(canvasRef);
   const [isPinching, setIsPinching] = useState(false);
 
   // const [dimensions, setDimensions] = useState({ width: 500, height: 500 });
@@ -128,7 +128,7 @@ function Canvas({ stageRef }) {
       stage.scale({ x: 1, y: 1 });
       stage.position({ x: 0, y: 0 });
     }
-  }, [imageIndex, dispatch]);
+  }, [imageIndex, dispatch, stageRef]);
 
   //https://konvajs.org/docs/react/Transformer.html
   function checkDeselect(e) {
@@ -303,6 +303,8 @@ function Canvas({ stageRef }) {
       return;
     }
 
+    dispatch(selectObject(newObjectId));
+
     // if (selectedTool === "freeHand" || selectedTool === "freeHandArrow") {
     //   smoothLine({
     //     objects,
@@ -314,145 +316,166 @@ function Canvas({ stageRef }) {
   }
 
   function handleSelect(object) {
-    if (object.type !== "comment") {
+    if (object.type !== "disabled") {
       dispatch(selectColor(object.color));
       dispatch(setStrokeWidth(object.strokeWidth));
     }
     dispatch(selectObject(object.id));
   }
 
-  const [stageSize, setSize] = useState({
-    width: dimensions.width,
-    height: dimensions.height,
-  });
+  // const [stageSize, setSize] = useState({
+  //   width: dimensions.width,
+  //   height: dimensions.height,
+  // });
+  useEffect(() => {
+    console.log(canvasRef);
+  }, []);
 
   return (
     <StyledCanvas ref={canvasRef} id="canvas">
-      {!isLoading && objects && (
-        <Stage
-          ref={stageRef}
-          width={dimensions.width}
-          height={dimensions.height}
-          // width={imageSize.width}
-          // height={imageSize.height}
-          onWheel={(e) => {
-            handleWheel(e);
-            dispatch(deselectObject());
-          }}
-          onMouseDown={(e) => {
-            if (e.evt.button === 0) handleStart(e);
-          }}
-          onMousemove={(e) => handleMove(e)}
-          onMouseup={(e) => handleEnd(e)}
-          onTouchStart={(e) => {
-            handleStart(e);
-          }}
-          onTouchMove={(e) => {
-            if (e.evt.touches.length === 2) {
+      {!isLoading &&
+        objects &&
+        dimensions.width > 0 &&
+        dimensions.height > 0 && (
+          <Stage
+            ref={stageRef}
+            width={dimensions.width}
+            height={dimensions.height}
+            // width={imageSize.width}
+            // height={imageSize.height}
+
+            onWheel={(e) => {
+              handleWheel(e);
               dispatch(deselectObject());
-              handleMultiTouchMove(e);
-            } else handleMove(e);
-          }}
-          onTouchEnd={(e) => {
-            handleMultiTouchEnd();
-            handleEnd(e);
-          }}
-          onClick={(e) => checkDeselect(e)}
-          onTap={(e) => checkDeselect(e)}
-          // draggable={selectedTool === "none"  }
-        >
-          <Layer>
-            <PoseImage dimensions={dimensions} setImageSize={setImageSize} />
-            {Object.values(objects).map((object) => {
-              if (notLongEnoughToDraw(object, strokeWidth)) return null;
-              if (object.type === "freeHand") {
-                return (
-                  <FreeHand
-                    key={object.id}
-                    line={object}
-                    isDraggable={selectedObjectId === object.id}
-                    isSelected={selectedObjectId === object.id}
-                    onSelect={() => handleSelect(object)}
-                    stageRef={stageRef}
-                  />
-                );
-              } else if (object.type === "freeHandArrow") {
-                return (
-                  <FreeHandArrow
-                    key={object.id}
-                    line={object}
-                    isDraggable={selectedObjectId === object.id}
-                    isSelected={selectedObjectId === object.id}
-                    onSelect={() => handleSelect(object)}
-                    stageRef={stageRef}
-                  />
-                );
-              } else if (object.type === "line") {
-                return (
-                  <Line
-                    key={object.id}
-                    line={object}
-                    isDraggable={selectedObjectId === object.id}
-                    isSelected={selectedObjectId === object.id}
-                    onSelect={() => handleSelect(object)}
-                  />
-                );
-              } else if (object.type === "arrow") {
-                return (
-                  <Arrow
-                    key={object.id}
-                    arrow={object}
-                    isDraggable={selectedObjectId === object.id}
-                    isSelected={selectedObjectId === object.id}
-                    onSelect={() => handleSelect(object)}
-                  />
-                );
-              } else if (object.type === "circle") {
-                return (
-                  <Circle
-                    key={object.id}
-                    circle={object}
-                    isDraggable={selectedObjectId === object.id}
-                    isSelected={selectedObjectId === object.id}
-                    onSelect={() => handleSelect(object)}
-                    stageRef={stageRef}
-                  />
-                );
-              } else if (object.type === "angle") {
-                return (
-                  <Angle
-                    key={object.id}
-                    angleObject={object}
-                    isDraggable={selectedObjectId === object.id}
-                    isSelected={selectedObjectId === object.id}
-                    onSelect={() => handleSelect(object)}
-                  />
-                );
-              } else {
-                return null;
-              }
-            })}
-            {/* <CircleRotator x={500} y={600} arrowLength={40} /> */}
-          </Layer>
-          <Layer>
-            {Object.values(objects).map((object) => {
-              if (object.type === "comment") {
-                return (
-                  <Comment
-                    key={object.id}
-                    comment={object}
-                    isDraggable={selectedObjectId === object.id}
-                    isSelected={selectedObjectId === object.id}
-                    onSelect={() => handleSelect(object)}
-                  />
-                );
-              } else {
-                return null;
-              }
-            })}
-          </Layer>
-        </Stage>
-      )}
+            }}
+            onMouseDown={(e) => {
+              if (e.evt.button === 0) handleStart(e);
+            }}
+            onMousemove={(e) => handleMove(e)}
+            onMouseup={(e) => handleEnd(e)}
+            onTouchStart={(e) => {
+              handleStart(e);
+            }}
+            onTouchMove={(e) => {
+              if (e.evt.touches.length === 2) {
+                dispatch(deselectObject());
+                handleMultiTouchMove(e);
+              } else handleMove(e);
+            }}
+            onTouchEnd={(e) => {
+              handleMultiTouchEnd();
+              handleEnd(e);
+            }}
+            onClick={(e) => checkDeselect(e)}
+            onTap={(e) => checkDeselect(e)}
+            // draggable={selectedTool === "none"  }
+          >
+            <FastLayer>
+              <PoseImage dimensions={dimensions} setImageSize={setImageSize} />
+            </FastLayer>
+            <Layer>
+              {Object.values(objects).map((object) => {
+                if (notLongEnoughToDraw(object, strokeWidth)) return null;
+                if (object.type === "freeHand") {
+                  return (
+                    <FreeHand
+                      key={object.id}
+                      line={object}
+                      isDraggable={selectedObjectId === object.id}
+                      isSelected={selectedObjectId === object.id}
+                      onSelect={() => handleSelect(object)}
+                      stageRef={stageRef}
+                    />
+                  );
+                } else if (object.type === "freeHandArrow") {
+                  return (
+                    <FreeHandArrow
+                      key={object.id}
+                      line={object}
+                      isDraggable={selectedObjectId === object.id}
+                      isSelected={selectedObjectId === object.id}
+                      onSelect={() => handleSelect(object)}
+                      stageRef={stageRef}
+                    />
+                  );
+                } else if (object.type === "line") {
+                  return (
+                    <Line
+                      key={object.id}
+                      line={object}
+                      isDraggable={selectedObjectId === object.id}
+                      isSelected={selectedObjectId === object.id}
+                      onSelect={() => handleSelect(object)}
+                    />
+                  );
+                } else if (object.type === "arrow") {
+                  return (
+                    <Arrow
+                      key={object.id}
+                      arrow={object}
+                      isDraggable={selectedObjectId === object.id}
+                      isSelected={selectedObjectId === object.id}
+                      onSelect={() => handleSelect(object)}
+                    />
+                  );
+                } else if (object.type === "circle") {
+                  return (
+                    <Circle
+                      key={object.id}
+                      circle={object}
+                      isDraggable={selectedObjectId === object.id}
+                      isSelected={selectedObjectId === object.id}
+                      onSelect={() => handleSelect(object)}
+                      stageRef={stageRef}
+                    />
+                  );
+                } else if (object.type === "angle") {
+                  return (
+                    <Angle
+                      key={object.id}
+                      angleObject={object}
+                      isDraggable={selectedObjectId === object.id}
+                      isSelected={selectedObjectId === object.id}
+                      onSelect={() => handleSelect(object)}
+                    />
+                  );
+                } else {
+                  return null;
+                }
+              })}
+              {/* <CircleRotator x={500} y={600} arrowLength={40} /> */}
+            </Layer>
+            <Layer>
+              {Object.values(objects).map((object) => {
+                if (object.type === "comment") {
+                  return (
+                    <>
+                      <Comment
+                        key={object.id}
+                        comment={object}
+                        isDraggable={selectedObjectId === object.id}
+                        isSelected={selectedObjectId === object.id}
+                        onSelect={() => handleSelect(object)}
+                      />
+                      {/* <CommentContent
+                        key={"content" + object.id}
+                        comment={{
+                          ...object,
+                          points: [200, dimensions.height + 200],
+                        }}
+                        isDraggable={selectedObjectId === object.id}
+                        isSelected={selectedObjectId === object.id}
+                        onSelect={() => handleSelect(object)}
+                      /> */}
+                    </>
+                  );
+                } else {
+                  return null;
+                }
+              })}
+            </Layer>
+          </Stage>
+        )}
     </StyledCanvas>
   );
 }

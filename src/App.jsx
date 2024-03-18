@@ -5,67 +5,47 @@ import AppLayout from "./ui/AppLayout";
 import TopBar from "./ui/TopBar";
 import Main from "./ui/Main";
 import BottomBar from "./ui/BottomBar";
-import Navigation from "./features/navigation/Navigation";
 import UndoRedo from "./features/history/UndoRedo";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getCurrentImage,
-  getImagesCount,
-  getIsLoading,
-  setImages,
-} from "./features/canvas/canvasSlice";
+import { getImagesCount, getIsLoading } from "./features/canvas/canvasSlice";
 import Upload from "./ui/Upload";
-import Button from "./ui/Button";
-import Options from "./features/navigation/Options";
+
 import Menu from "./ui/Menu";
+import Opacity from "./ui/Opacity";
+import Focus from "./features/tools/Focus";
+import CompleteMenu from "./ui/CompleteMenu";
 
 function App() {
-  const dispatch = useDispatch();
   const isImageSet = useSelector(getImagesCount);
   const isLoading = useSelector(getIsLoading);
   const stageRef = useRef(null);
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch("/poses/images.json");
-  //       const data = await response.json();
-  //       dispatch(setImages(data));
-  //     } catch (error) {
-  //       console.error("Error fetching or parsing JSON:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [dispatch]);
-
-  // if (!isImageSet) return
   return (
     <AppLayout>
       <TopBar>
         <Palette />
-        {/* <Button>Options</Button> */}
       </TopBar>
 
       <Main stageRef={stageRef}>
         {!isImageSet ? (
           <Upload />
         ) : (
-          <>{!isLoading && <Canvas stageRef={stageRef} />}</>
+          !isLoading && (
+            <Canvas stageRef={stageRef} setImageSize={setImageSize} />
+          )
         )}
         <Toolbar>
           <UndoRedo />
         </Toolbar>
       </Main>
 
-      {false && isImageSet ? (
-        <BottomBar>
-          {/* <Navigation /> */}
-          <Options />
-        </BottomBar>
-      ) : null}
-      <Menu />
+      {isImageSet ? <BottomBar>{/* <Navigation /> */}</BottomBar> : null}
+      <Menu stageRef={stageRef} imageSize={imageSize} />
+      <Opacity />
+      <Focus />
+      <CompleteMenu />
     </AppLayout>
   );
 }

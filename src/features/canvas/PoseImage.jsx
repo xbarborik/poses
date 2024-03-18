@@ -4,15 +4,25 @@ import { useSelector } from "react-redux";
 import useImage from "use-image";
 import { getCurrentImage } from "./canvasSlice";
 
-// import warrior from ;
-
 function PoseImage({ dimensions, setImageSize }) {
   const imageData = useSelector(getCurrentImage);
   // const [image] = useImage("/poses/images/" + imageData?.path);
-  const [image] = useImage(imageData?.path);
+  const [image, setImage] = useState(null);
+  // const [image] = useImage(imageData?.path);
   const [scaledDimensions, setScaledDimensions] = useState({
     dimensions,
   });
+
+  useEffect(() => {
+    if (imageData?.path) {
+      const img = new window.Image();
+      img.crossOrigin = "anonymous";
+      img.src = imageData.path;
+      img.onload = () => {
+        setImage(img);
+      };
+    }
+  }, [imageData]);
 
   useEffect(() => {
     function calcSize() {
@@ -38,12 +48,14 @@ function PoseImage({ dimensions, setImageSize }) {
 
   return (
     <Image
+      imageRef
       image={image}
       x={dimensions.width / 2 - scaledDimensions.width / 2}
       y={dimensions.height / 2 - scaledDimensions.height / 2}
       width={scaledDimensions.width}
       height={scaledDimensions.height}
       listening={false}
+      name="poseImage"
       // preventDefault={false} set false to allow scroll/zoom
     />
   );

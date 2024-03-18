@@ -2,8 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: false,
-  images: [], // {id: null, path: [] , past: objects: {}, futre: []}
+  images: [], // {id: null, path: [] , past: objects: {}, future: [], size:}
   currentImageIndx: 0,
+  isOpacityLowered: false,
 
   stageScale: 1,
   stagePos: { x: 0, y: 0 },
@@ -16,6 +17,9 @@ const canvasSlice = createSlice({
   name: "canvas",
   initialState,
   reducers: {
+    toggleOpacityLowered(state) {
+      state.isOpacityLowered = !state.isOpacityLowered;
+    },
     setIsLoading(state) {
       state.isLoading = true;
     },
@@ -26,8 +30,8 @@ const canvasSlice = createSlice({
       state.images = action.payload.map((image) => ({
         ...image,
         pastObjects: [],
-        objects: {},
         futureObjects: [],
+        size: { width: 0, height: 0 },
       }));
       state.isLoading = false;
     },
@@ -102,6 +106,7 @@ export const {
   setIsLoading,
   setImages,
   setCurrentImageIndx,
+  toggleOpacityLowered,
   setStageScale,
   setStagePos,
   updateWithObject,
@@ -120,6 +125,8 @@ export const {
 export default canvasSlice.reducer;
 
 export const getIsLoading = (state) => state.canvas.isLoading;
+
+export const getOpacityLowered = (state) => state.canvas.isOpacityLowered;
 
 export const getImagesCount = (state) => state.canvas.images.length;
 

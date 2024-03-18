@@ -1,19 +1,22 @@
 import { Line as LineKonva } from "react-konva";
 import LineTransformer from "../transformers/LineTransformer";
-import { HIT_DETECTION_MULTIPLIER } from "../../utils/constants";
+import { HIT_DETECTION_MULTIPLIER, LOWERED_ALPHA } from "../../utils/constants";
 import {
+  getOpacityLowered,
   removeObject,
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import { darkenColor } from "../../utils/helpers";
 
 // https://jsbin.com/wahetunepa/edit?html,js,output
 function Line({ line, isDraggable, isSelected, onSelect }) {
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
+  const isOpacityLowered = useSelector(getOpacityLowered);
 
   useAdjustColorAndWidth(line, isSelected);
 
@@ -45,6 +48,7 @@ function Line({ line, isDraggable, isSelected, onSelect }) {
       <LineKonva
         id={line.id}
         points={points}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
         stroke={line.color}
         strokeWidth={line.strokeWidth}
         hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
