@@ -32,7 +32,7 @@ export async function uploadImage(file_path, file) {
     console.log("Upload success", data);
   }
 
-  return data;
+  return { data, error };
 }
 
 export async function fetchPoseById(id) {
@@ -94,23 +94,18 @@ export async function loadFromId(id) {
 
 export async function uploadImageAndPose(image) {
   let imagePath = `${image.id}.png`;
-  const existingImage = getPoseImageUrl(imagePath) !== null;
 
-  if (!existingImage) {
-    const { data: imageData, error: imageError } = await uploadImage(
-      imagePath,
-      image.file
-    );
-    if (imageError) {
-      alert("Image upload failed");
-    }
-  } else {
-    console.log(existingImage);
+  const { data: imageData, error: imageError } = await uploadImage(
+    imagePath,
+    image.file
+  );
+  if (imageError) {
+    console.log("Image upload failed");
   }
 
   const { data, error } = uploadPose(image.id, imagePath, image.objects);
   if (error) {
-    alert("Upload failed");
+    console.log("Upload failed");
   } else {
     alert("Upload success");
   }

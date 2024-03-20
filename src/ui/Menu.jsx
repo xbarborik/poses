@@ -169,14 +169,16 @@ function Menu({ stageRef }) {
       </MenuButton>
       {isOpen && (
         <MenuList>
-          <MenuItem
-            onClick={() => {
-              dispatch(setImages([]));
-              toggleMenu();
-            }}
-          >
-            <IoArrowBackSharp /> Zpět
-          </MenuItem>
+          {disabled && (
+            <MenuItem
+              onClick={() => {
+                dispatch(setImages([]));
+                toggleMenu();
+              }}
+            >
+              <IoArrowBackSharp /> Zpět
+            </MenuItem>
+          )}
           <MenuItem
             onClick={() => {
               handleUploadButtonClick();
@@ -200,6 +202,7 @@ function Menu({ stageRef }) {
               handleUploadToCloud();
               handleShare(image.id);
             }}
+            disabled={disabled}
           >
             <CiShare2 /> Sdílet
           </MenuItem>
