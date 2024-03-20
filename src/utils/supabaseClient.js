@@ -104,6 +104,9 @@ export async function uploadImageAndPose(image) {
   }
 
   const { data, error } = uploadPose(image.id, imagePath, image.objects);
-  if (error) console.log("Upload failed");
+  if (error) {
+    console.log("Upload failed");
+    return false;
+  }
   return true;
 }

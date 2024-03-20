@@ -33,20 +33,27 @@ export const manifestForPlugIn = {
         purpose: "any maskable",
       },
     ],
-    share_target: {
-      action: "/share",
-      method: "GET",
-      params: {
-        title: "title",
-        text: "text",
-        url: "url",
-      },
-    },
     theme_color: "#171717",
     background_color: "#f0e7db",
     display: "standalone",
     scope: "/poses/",
     start_url: "/poses/",
     orientation: "portrait",
+    share_target: {
+      action: "/shared",
+      method: "POST",
+      enctype: "multipart/form-data",
+      params: {
+        title: "title",
+        text: "text",
+        url: "url",
+        files: [
+          {
+            name: "image",
+            accept: ["image/png", "image/jpeg"],
+          },
+        ],
+      },
+    },
   },
 };

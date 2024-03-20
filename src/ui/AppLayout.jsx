@@ -1,3 +1,4 @@
+import { Outlet } from "react-router";
 import styled from "styled-components";
 
 const StyledAppLayout = styled.div`
@@ -13,8 +14,12 @@ const StyledAppLayout = styled.div`
   max-width: 1250px;
 `;
 
-function AppLayout({ children }) {
-  return <StyledAppLayout>{children}</StyledAppLayout>;
+function AppLayout() {
+  return (
+    <StyledAppLayout>
+      <Outlet />
+    </StyledAppLayout>
+  );
 }
 
 export default AppLayout;

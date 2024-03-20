@@ -1,1 +1,1 @@
-export const BACKGROUND = "#ffffffd9";
+export const themes = { primary: "#5897ee", background: "#ffffffd9" };

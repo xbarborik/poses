@@ -5,7 +5,6 @@ import {
   deselectObject,
   getCurrentImageIndx,
   getIsDrawing,
-  getIsLoading,
   getObjects,
   getSelectedObjectId,
   redo,
@@ -70,10 +69,9 @@ const StyledCanvas = styled.div`
   // justify-content: center;
 `;
 
-function Canvas({ stageRef, setImageSize }) {
+function Canvas({ stageRef, setImageSize, isLoading }) {
   const canvasRef = useRef(null);
   const dispatch = useDispatch();
-  const isLoading = useSelector(getIsLoading);
   const objects = useSelector(getObjects);
   const isDrawing = useSelector(getIsDrawing);
   const strokeWidth = useSelector(getStrokeWidth);

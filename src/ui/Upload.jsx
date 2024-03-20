@@ -1,10 +1,12 @@
 import { useDispatch } from "react-redux";
 import { setImages } from "../features/canvas/canvasSlice";
 import styled from "styled-components";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import UploadIcon from "../assets/uploadIcon";
 import { setShowStyling } from "../features/stylePanel/styleSlice";
 import { idFromDate } from "../utils/helpers";
+import { useNavigate } from "react-router";
+import { BASE } from "../utils/constants";
 
 const ImageInput = styled.input`
   display: none;
@@ -44,6 +46,7 @@ const Text = styled.h3`
 function Upload({ showText = true }) {
   const dispatch = useDispatch();
   const inputRef = useRef();
+  const navigate = useNavigate();
 
   return (
     <StyledUpload>
@@ -58,8 +61,10 @@ function Upload({ showText = true }) {
         type="file"
         name="myImage"
         onChange={(e) => {
+          const newId = idFromDate();
+
           const filesArray = Array.from(e.target.files).map((file) => ({
-            id: idFromDate(),
+            id: newId,
             objects: {},
             path: URL.createObjectURL(file),
             file: file,
@@ -67,6 +72,7 @@ function Upload({ showText = true }) {
 
           dispatch(setImages(filesArray));
           dispatch(setShowStyling(true));
+          navigate(`${BASE}${newId}`);
         }}
       />
     </StyledUpload>

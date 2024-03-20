@@ -1,10 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getImagesCount,
-  getIsLoading,
-  setImages,
-} from "../features/canvas/canvasSlice";
+import { getImagesCount, setImages } from "../features/canvas/canvasSlice";
 import Upload from "../ui/Upload";
 import Menu from "../ui/Menu";
 import Opacity from "../ui/Opacity";
@@ -19,10 +15,11 @@ import UndoRedo from "../features/history/UndoRedo";
 import { useParams } from "react-router";
 import { setShowStyling } from "../features/stylePanel/styleSlice";
 import { loadFromId } from "../utils/supabaseClient";
+import Loader from "../ui/Loader";
 
 function Tool() {
   const isImageSet = useSelector(getImagesCount);
-  const isLoading = useSelector(getIsLoading);
+  const [isLoading, setIsLoading] = useState(false);
   const stageRef = useRef(null);
   const dispatch = useDispatch();
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
@@ -30,14 +27,15 @@ function Tool() {
 
   useEffect(() => {
     async function load() {
+      setIsLoading(true);
       const pose = await loadFromId(id);
       if (pose === null) {
         console.log("failed");
-        return;
       } else {
         dispatch(setImages(pose));
         dispatch(setShowStyling(true));
       }
+      setIsLoading(false);
     }
 
     if (id) load();
@@ -52,10 +50,10 @@ function Tool() {
       <Main stageRef={stageRef}>
         {!isImageSet ? (
           <Upload />
+        ) : !isLoading ? (
+          <Canvas stageRef={stageRef} setImageSize={setImageSize} />
         ) : (
-          !isLoading && (
-            <Canvas stageRef={stageRef} setImageSize={setImageSize} />
-          )
+          <Loader />
         )}
         <Toolbar>
           <UndoRedo />

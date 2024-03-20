@@ -13,6 +13,9 @@ import { CiExport } from "react-icons/ci";
 import { downloadURI, idFromDate } from "../utils/helpers";
 import { uploadImageAndPose } from "../utils/supabaseClient";
 import { BASE } from "../utils/constants";
+import { useNavigate } from "react-router";
+import { LuSave } from "react-icons/lu";
+import { toast } from "react-toastify";
 
 const MenuButton = styled.button`
   display: flex;
@@ -85,6 +88,7 @@ function Menu({ stageRef }) {
   const inputRef = useRef();
   const disabled = useSelector(getImagesCount) == 0;
   const image = useSelector(getCurrentImage);
+  const navigate = useNavigate();
 
   const handleExport = () => {
     const stage = stageRef.current;
@@ -130,24 +134,32 @@ function Menu({ stageRef }) {
     }
   };
 
-  const handleUploadButtonClick = () => {
+  const handleUploadFromGallery = () => {
     inputRef.current.click();
   };
 
   const handleUploadToCloud = async () => {
-    uploadImageAndPose(image);
+    const isSuccess = uploadImageAndPose(image);
+    if (isSuccess) {
+      toast.success("Zmeny úšpešne uložené");
+    } else {
+      toast.error("Vyžaduje sa pripojenie k internetu");
+    }
+
+    return isSuccess;
   };
 
   const handleImageUpload = (e) => {
-    console.log(idFromDate());
+    const newId = idFromDate();
     const filesArray = Array.from(e.target.files).map((file) => ({
-      id: idFromDate(),
+      id: newId,
       objects: {},
       path: URL.createObjectURL(file),
       file: file,
     }));
 
     dispatch(setImages(filesArray));
+    navigate(`${BASE}${newId}`);
   };
 
   const toggleMenu = () => {
@@ -169,11 +181,12 @@ function Menu({ stageRef }) {
       </MenuButton>
       {isOpen && (
         <MenuList>
-          {disabled && (
+          {!disabled && (
             <MenuItem
               onClick={() => {
                 dispatch(setImages([]));
                 toggleMenu();
+                navigate(BASE);
               }}
             >
               <IoArrowBackSharp /> Zpět
@@ -181,7 +194,7 @@ function Menu({ stageRef }) {
           )}
           <MenuItem
             onClick={() => {
-              handleUploadButtonClick();
+              handleUploadFromGallery();
               toggleMenu();
             }}
           >
@@ -213,7 +226,7 @@ function Menu({ stageRef }) {
             }}
             disabled={disabled}
           >
-            Nahrát
+            <LuSave /> Uložiť zmeny
           </MenuItem>
         </MenuList>
       )}
