@@ -92,10 +92,10 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         x={(points[0] + points[2]) / 2}
         y={(points[1] + points[3]) / 2}
         radius={radius / 2}
-        stroke={"white"}
-        shadowColor={circle.color}
-        shadowBlur={8}
-        shadowOpacity={1}
+        stroke={circle.color}
+        // shadowColor={circle.color}
+        // shadowBlur={8}
+        // shadowOpacity={1}
         strokeWidth={circle.strokeWidth}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}

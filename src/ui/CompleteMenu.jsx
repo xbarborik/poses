@@ -1,5 +1,4 @@
 import { FaCheck } from "react-icons/fa6";
-import { IoMenu } from "react-icons/io5";
 import styled from "styled-components";
 
 const MenuButton = styled.button`

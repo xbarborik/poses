@@ -110,3 +110,8 @@ export function darkenColor(hexColor, magnitude) {
     return hexColor;
   }
 }
+
+export function idFromDate() {
+  const datetimeString = new Date().toISOString().slice(0, 19);
+  return Math.round(Date.parse(datetimeString) / 1000);
+}

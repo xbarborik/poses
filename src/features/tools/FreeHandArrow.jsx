@@ -133,7 +133,7 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         }}
         onTap={onSelect}
         onClick={onSelect}
-        opacity={isOpacityLowered ? LOWERED_ALPHA : 0.8}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
 
       {/* {isSelected && (

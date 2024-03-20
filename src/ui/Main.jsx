@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   deselectObject,
-  getImagesCount,
   getIsDragging,
   getSelectedObject,
   getStagePos,
@@ -13,7 +12,6 @@ import {
 import { useEffect, useRef, useState } from "react";
 import useAutosizeTextArea from "../hooks/useAutosizeTextArea";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { Rect } from "react-konva";
 import { FaCheck } from "react-icons/fa";
 
 const StyledMain = styled.div`

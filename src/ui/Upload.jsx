@@ -1,12 +1,10 @@
 import { useDispatch } from "react-redux";
 import { setImages } from "../features/canvas/canvasSlice";
 import styled from "styled-components";
-import { TfiGallery } from "react-icons/tfi";
-import { GrYoga } from "react-icons/gr";
-
 import { useRef } from "react";
 import UploadIcon from "../assets/uploadIcon";
 import { setShowStyling } from "../features/stylePanel/styleSlice";
+import { idFromDate } from "../utils/helpers";
 
 const ImageInput = styled.input`
   display: none;
@@ -60,8 +58,8 @@ function Upload({ showText = true }) {
         type="file"
         name="myImage"
         onChange={(e) => {
-          const filesArray = Array.from(e.target.files).map((file, index) => ({
-            id: index,
+          const filesArray = Array.from(e.target.files).map((file) => ({
+            id: idFromDate(),
             objects: {},
             path: URL.createObjectURL(file),
             file: file,

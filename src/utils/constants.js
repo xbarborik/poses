@@ -11,3 +11,5 @@ export const ARROW_POINTER_SCALE = 1.5;
 export const ANCHOR_SHADOW_WIDTH = 3;
 
 export const LOWERED_ALPHA = 0.4;
+
+export const BASE = "/poses/";

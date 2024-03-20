@@ -15,6 +15,7 @@ function CustomArrow({
   onTap,
   onClick,
   pointerAtBeginning = false,
+  opacity,
 }) {
   const shapeRef = useRef();
 
@@ -70,7 +71,7 @@ function CustomArrow({
   };
 
   return (
-    <Group>
+    <Group opacity={opacity}>
       <Shape
         x={offsetX}
         y={offsetY}

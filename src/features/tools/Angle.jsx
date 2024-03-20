@@ -109,6 +109,7 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         globalCompositeOperation={"source-over"}
         onTap={onSelect}
         onClick={onSelect}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
       <LineKonva
         id={angleObject.id}
@@ -121,6 +122,7 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         globalCompositeOperation={"source-over"}
         onTap={() => onSelect()}
         onClick={() => onSelect()}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
       <Arc
         id={angleObject.id}
@@ -138,6 +140,7 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         onTap={() => onSelect()}
         onClick={() => onSelect()}
         closed={false}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
 
       <Text

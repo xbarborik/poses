@@ -1,11 +1,9 @@
-import { IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   getImagesCount,
   toggleOpacityLowered,
 } from "../features/canvas/canvasSlice";
-import { GrFormViewHide } from "react-icons/gr";
 import { CgEditHighlight } from "react-icons/cg";
 
 const OpacityButton = styled.button`

@@ -44,6 +44,7 @@ export async function fetchPoseById(id) {
 
   if (error) {
     console.error("Error fetching data:", error.message);
+    return null;
   }
 
   return data;
@@ -64,6 +65,53 @@ export async function fetchLatestPose() {
 }
 
 export function getPoseImageUrl(image) {
-  const imageUrl = `${supabaseUrl}/storage/v1/object/public/poses/public/${image}`;
-  return imageUrl;
+  const { data, error } = supabase.storage
+    .from("poses")
+    .getPublicUrl(`public/${image}`);
+
+  if (error) {
+    console.log("Image exists");
+    return null;
+  }
+  return data.publicUrl;
+}
+
+export async function loadFromId(id) {
+  const result = await fetchPoseById(id);
+  if (result === null) return result;
+
+  const pose = [
+    {
+      id: result.id,
+      objects: result.objects,
+      path: getPoseImageUrl(result.image),
+      file: null,
+    },
+  ];
+
+  return pose;
+}
+
+export async function uploadImageAndPose(image) {
+  let imagePath = `${image.id}.png`;
+  const existingImage = getPoseImageUrl(imagePath) !== null;
+
+  if (!existingImage) {
+    const { data: imageData, error: imageError } = await uploadImage(
+      imagePath,
+      image.file
+    );
+    if (imageError) {
+      alert("Image upload failed");
+    }
+  } else {
+    console.log(existingImage);
+  }
+
+  const { data, error } = uploadPose(image.id, imagePath, image.objects);
+  if (error) {
+    alert("Upload failed");
+  } else {
+    alert("Upload success");
+  }
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { IoArrowBackSharp, IoMenu } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -10,16 +10,9 @@ import {
 import { RiImageAddFill } from "react-icons/ri";
 import { CiShare2 } from "react-icons/ci";
 import { CiExport } from "react-icons/ci";
-import UploadIcon from "../assets/uploadIcon";
 import { downloadURI } from "../utils/helpers";
-import {
-  uploadPose,
-  uploadImage,
-  fetchPoseById,
-  getPoseImageUrl,
-  fetchLatestPose,
-} from "../utils/supabaseClient";
-import { setShowStyling } from "../features/stylePanel/styleSlice";
+import { uploadImageAndPose } from "../utils/supabaseClient";
+import { BASE } from "../utils/constants";
 
 const MenuButton = styled.button`
   display: flex;
@@ -119,17 +112,16 @@ function Menu({ stageRef }) {
       stage.scale(currentScale);
       stage.position(currentPosition);
       stage.size(stageSize);
-      console.log(image);
     }
   };
 
-  const handleShare = async () => {
+  const handleShare = async (id) => {
     if (navigator.share) {
       navigator
         .share({
-          title: "Example Title",
-          text: "Example text to share.",
-          url: "https://xbarborik.github.io/poses/",
+          title: "Zobraziť popis",
+          text: "",
+          url: `https://xbarborik.github.io${BASE}${id}`,
         })
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
@@ -143,42 +135,19 @@ function Menu({ stageRef }) {
   };
 
   const handleUploadToCloud = async () => {
-    // const { data, error } = await uploadImage("test.png", image.file);
-
-    // console.log(data);
-    const path = "test.png";
-    const { data, error } = uploadPose(image.id, path, image.objects);
-    if (error) {
-      alert("Upload failed");
-    } else {
-      alert("Upload success");
-    }
+    uploadImageAndPose(image);
   };
 
   const handleImageUpload = (e) => {
-    const filesArray = Array.from(e.target.files).map((file, index) => ({
-      id: index,
+    console.log(image.id);
+    const filesArray = Array.from(e.target.files).map((file) => ({
+      id: image.id,
       objects: {},
       path: URL.createObjectURL(file),
       file: file,
     }));
 
     dispatch(setImages(filesArray));
-  };
-
-  const handleLoad = async (id) => {
-    // const result = await fetchPoseById(id);
-    const result = await fetchLatestPose();
-    const pose = [
-      {
-        id: result.id,
-        objects: result.objects,
-        path: getPoseImageUrl(result.image),
-        file: null,
-      },
-    ];
-    dispatch(setImages(pose));
-    dispatch(setShowStyling(true));
   };
 
   const toggleMenu = () => {
@@ -228,12 +197,13 @@ function Menu({ stageRef }) {
           <MenuItem
             onClick={() => {
               toggleMenu();
-              handleShare();
+              handleUploadToCloud();
+              handleShare(image.id);
             }}
           >
             <CiShare2 /> Sdílet
           </MenuItem>
-          {/* <MenuItem
+          <MenuItem
             onClick={() => {
               toggleMenu();
               handleUploadToCloud();
@@ -242,13 +212,6 @@ function Menu({ stageRef }) {
           >
             Nahrát
           </MenuItem>
-          <MenuItem
-            onClick={() => {
-              toggleMenu(), handleLoad();
-            }}
-          >
-            Načíst
-          </MenuItem> */}
         </MenuList>
       )}
     </>
