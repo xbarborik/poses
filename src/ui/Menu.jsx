@@ -10,7 +10,7 @@ import {
 import { RiImageAddFill } from "react-icons/ri";
 import { CiShare2 } from "react-icons/ci";
 import { CiExport } from "react-icons/ci";
-import { downloadURI } from "../utils/helpers";
+import { downloadURI, idFromDate } from "../utils/helpers";
 import { uploadImageAndPose } from "../utils/supabaseClient";
 import { BASE } from "../utils/constants";
 
@@ -139,9 +139,9 @@ function Menu({ stageRef }) {
   };
 
   const handleImageUpload = (e) => {
-    console.log(image.id);
+    console.log(idFromDate());
     const filesArray = Array.from(e.target.files).map((file) => ({
-      id: image.id,
+      id: idFromDate(),
       objects: {},
       path: URL.createObjectURL(file),
       file: file,
