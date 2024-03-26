@@ -31,7 +31,6 @@ const canvasSlice = createSlice({
         ...image,
         pastObjects: [],
         futureObjects: [],
-        size: { width: 0, height: 0 },
       }));
       state.isLoading = false;
     },
@@ -41,6 +40,9 @@ const canvasSlice = createSlice({
     },
     setStagePos(state, action) {
       state.stagePos = action.payload;
+    },
+    setOrignalSize(state, action) {
+      state.images[state.currentImageIndx].originalSize = action.payload;
     },
     updateWithObject(state, action) {
       state.images[state.currentImageIndx].objects[action.payload.id] =
@@ -109,6 +111,7 @@ export const {
   toggleOpacityLowered,
   setStageScale,
   setStagePos,
+  setOrignalSize,
   updateWithObject,
   updateHistory,
   removeObject,
@@ -116,7 +119,6 @@ export const {
   undo,
   redo,
   clearObjects,
-  setStageSize,
   selectObject,
   deselectObject,
   setIsDrawing,
@@ -145,6 +147,9 @@ export const getIsDragging = (state) => state.canvas.isDragging;
 export const getStageScale = (state) => state.canvas.stageScale;
 
 export const getStagePos = (state) => state.canvas.stagePos;
+
+export const getOriginalSize = (state) =>
+  state.canvas.images[state.canvas.currentImageIndx]?.originalSize;
 
 export const getSelectedObjectId = (state) => state.canvas.selectedObjectId;
 

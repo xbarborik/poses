@@ -7,7 +7,7 @@ import Opacity from "../ui/Opacity";
 import Focus from "../features/tools/Focus";
 import Canvas from "../features/canvas/Canvas";
 import Palette from "../features/stylePanel/Palette";
-import Toolbar from "../features/tools/Toolbar";
+import Toolbar from "../features/toolbar/Toolbar";
 import TopBar from "../ui/TopBar";
 import Main from "../ui/Main";
 import BottomBar from "../ui/BottomBar";
@@ -28,11 +28,35 @@ function Tool() {
   useEffect(() => {
     async function load() {
       setIsLoading(true);
-      const pose = await loadFromId(id);
-      if (pose === null) {
+      const poses = await loadFromId(id);
+
+      if (poses === null) {
         console.log("failed");
       } else {
-        dispatch(setImages(pose));
+        const pose = poses[0];
+
+        const objectsWithRelativePoints = Object.entries(pose.objects).reduce(
+          (acc, [key, object]) => {
+            const adjustedPoints = object.points.map((point, index) =>
+              index % 2 === 0
+                ? point / pose.originalSize.width
+                : point / pose.originalSize.height
+            );
+
+            acc[key] = { ...object, points: adjustedPoints };
+
+            return acc;
+          },
+          {}
+        );
+
+        const withRelativePoints = {
+          ...pose,
+          objects: objectsWithRelativePoints,
+        };
+
+        // console.log(withRelativePoints);
+        dispatch(setImages([pose]));
         dispatch(setShowStyling(true));
       }
       setIsLoading(false);

@@ -18,6 +18,7 @@ import {
 } from "../canvas/canvasSlice";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 import CustomArrow from "../customShapes/CustomArrow";
+import { themes } from "../../utils/themes";
 
 function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
@@ -97,6 +98,30 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   const arrowHeadPoints = [prevX, prevY, lastX, lastY];
   return (
     <>
+      {/* Border */}
+      <CustomArrow
+        points={arrowHeadPoints}
+        stroke={themes.shapeBorder}
+        fill={line.color}
+        strokeWidth={line.strokeWidth * 0.9 * themes.shapeBorderSize}
+        pointerWidth={line.strokeWidth * 2 * ARROW_POINTER_SCALE}
+        pointerLength={line.strokeWidth * 2}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
+        listening={false}
+      />
+
+      <Line
+        listening={false}
+        points={points}
+        stroke={themes.shapeBorder}
+        strokeWidth={line.strokeWidth * themes.shapeBorderSize}
+        tension={0.7}
+        lineCap="round"
+        lineJoin="round"
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
+      />
+
+      {/* Shape */}
       <CustomArrow
         points={arrowHeadPoints}
         stroke={line.color}
@@ -120,9 +145,9 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         globalCompositeOperation={"source-over"}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
-        onTransform={(e) => handleTransform(e)}
+        onTransform={handleTransform}
         onTransformEnd={handleTransformEnd}
-        onDragMove={(e) => handleDragMove(e)}
+        onDragMove={handleDragMove}
         onDragStart={() => {
           dispatch(updateHistory());
           dispatch(setIsDragging(true));

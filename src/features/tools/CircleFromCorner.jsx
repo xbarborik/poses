@@ -15,6 +15,7 @@ import {
   HIT_FUNC_MULTIPLIER,
   LOWERED_ALPHA,
 } from "../../utils/constants";
+import { themes } from "../../utils/themes";
 
 function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
   const shapeRef = useRef();
@@ -73,11 +74,15 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
     dispatch(updateWithObject(newCircle));
   }
 
-  function handleDragEnd(e) {
+  function handleDragMove(e) {
+    setPoints(getNewPoints(e, circle.points));
+  }
+
+  function handleDragEnd() {
     dispatch(
       updateWithObject({
         ...circle,
-        points: getNewPoints(e, circle.points),
+        points: points,
       })
     );
   }
@@ -86,6 +91,19 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
 
   return (
     <>
+      {/* Border */}
+      <CircleKonva
+        listening={false}
+        x={(points[0] + points[2]) / 2}
+        y={(points[1] + points[3]) / 2}
+        radius={radius / 2}
+        stroke={themes.shapeBorder}
+        strokeWidth={circle.strokeWidth * themes.shapeBorderSize}
+        draggable={isDraggable}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
+      />
+
+      {/* Shape */}
       <CircleKonva
         id={circle.id}
         ref={shapeRef}
@@ -93,16 +111,14 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         y={(points[1] + points[3]) / 2}
         radius={radius / 2}
         stroke={circle.color}
-        // shadowColor={circle.color}
-        // shadowBlur={8}
-        // shadowOpacity={1}
         strokeWidth={circle.strokeWidth}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
-        onTransform={(e) => handleTransform(e)}
+        onTransform={handleTransform}
         onTransformEnd={handleTransformEnd}
         onDragStart={() => dispatch(updateHistory())}
-        onDragEnd={(e) => handleDragEnd(e)}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEnd}
         onTap={onSelect}
         onClick={onSelect}
         hitStrokeWidth={circle.strokeWidth * HIT_DETECTION_MULTIPLIER * 100}

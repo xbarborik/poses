@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 import { darkenColor } from "../../utils/helpers";
+import { themes } from "../../utils/themes";
 
 // https://jsbin.com/wahetunepa/edit?html,js,output
 function Line({ line, isDraggable, isSelected, onSelect }) {
@@ -45,6 +46,18 @@ function Line({ line, isDraggable, isSelected, onSelect }) {
       onDragEnd={handleChangeEnd}
       onRemove={() => dispatch(removeObject(line.id))}
     >
+      {/* Border */}
+      <LineKonva
+        listening={false}
+        points={points}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
+        stroke={themes.shapeBorder}
+        strokeWidth={line.strokeWidth * themes.shapeBorderSize}
+        hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
+        lineCap="round"
+      />
+
+      {/* Shape */}
       <LineKonva
         id={line.id}
         points={points}

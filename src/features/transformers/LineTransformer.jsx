@@ -96,7 +96,7 @@ function LineTransformer({
       ref={groupRef}
       draggable={isDraggable}
       onDragStart={handleGroupDragStart}
-      onDragEnd={(e) => handleGroupDragEnd(e)}
+      onDragEnd={handleGroupDragEnd}
     >
       {children}
 
@@ -124,10 +124,8 @@ function LineTransformer({
             strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
             stroke="#b5b5b5" // border color
             draggable
-            onDragMove={(e) => handleAnchorDragMove(e)}
-            // onDragEnd={(e) => handleAnchorDragEnd(e)}
+            onDragMove={handleAnchorDragMove}
             hitFunc={circleHitFunc}
-            // opacity={showAnchors}
             onMouseEnter={(e) => {
               const container = e.target.getStage().container();
               container.style.cursor = "pointer";
@@ -148,10 +146,8 @@ function LineTransformer({
             strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
             stroke="#b5b5b5" // border color
             draggable
-            onDragMove={(e) => handleAnchorDragMove(e)}
-            // onDragEnd={(e) => handleAnchorDragEnd(e)}
+            onDragMove={handleAnchorDragMove}
             hitFunc={circleHitFunc}
-            // opacity={showAnchors}
             onMouseEnter={(e) => {
               const container = e.target.getStage().container();
               container.style.cursor = "pointer";

@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 import AngleTransformer from "../transformers/AngleTransformer";
 import { calcAngle, calcLength } from "../../utils/helpers";
+import { themes } from "../../utils/themes";
 
 function calcLinesAngle(line1, line2) {
   // Create vectors
@@ -98,6 +99,44 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
       onDragEnd={handleChangeEnd}
       onRemove={() => dispatch(removeObject(angleObject.id))}
     >
+      {/* Border */}
+      <LineKonva
+        listening={false}
+        points={primaryLinePoints}
+        stroke={themes.shapeBorder}
+        strokeWidth={angleObject.strokeWidth * themes.shapeBorderSize}
+        hitStrokeWidth={angleObject.strokeWidth * HIT_DETECTION_MULTIPLIER}
+        tension={0.7}
+        lineCap="round"
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
+      />
+      <LineKonva
+        listening={false}
+        points={secondaryLinePoints}
+        stroke={themes.shapeBorder}
+        strokeWidth={angleObject.strokeWidth * themes.shapeBorderSize}
+        hitStrokeWidth={angleObject.strokeWidth * HIT_DETECTION_MULTIPLIER}
+        tension={0.7}
+        lineCap="round"
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
+      />
+      <Arc
+        listening={false}
+        x={primaryLinePoints[0]}
+        y={primaryLinePoints[1]}
+        stroke={themes.shapeBorder}
+        strokeWidth={angleObject.strokeWidth * themes.shapeBorderSize}
+        hitStrokeWidth={angleObject.strokeWidth * HIT_DETECTION_MULTIPLIER}
+        angle={angle}
+        rotation={rotationAngle}
+        lineJoin="round"
+        innerRadius={arcLength}
+        outerRadius={arcLength}
+        closed={false}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
+      />
+
+      {/* Shape */}
       <LineKonva
         id={angleObject.id}
         points={primaryLinePoints}
@@ -106,7 +145,6 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         hitStrokeWidth={angleObject.strokeWidth * HIT_DETECTION_MULTIPLIER}
         tension={0.7}
         lineCap="round"
-        globalCompositeOperation={"source-over"}
         onTap={onSelect}
         onClick={onSelect}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
@@ -119,7 +157,6 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         hitStrokeWidth={angleObject.strokeWidth * HIT_DETECTION_MULTIPLIER}
         tension={0.7}
         lineCap="round"
-        globalCompositeOperation={"source-over"}
         onTap={() => onSelect()}
         onClick={() => onSelect()}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
@@ -134,8 +171,7 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
         angle={angle}
         rotation={rotationAngle}
         lineJoin="round"
-        dash={[10, 5]}
-        innerRadius={0}
+        innerRadius={arcLength}
         outerRadius={arcLength}
         onTap={() => onSelect()}
         onClick={() => onSelect()}

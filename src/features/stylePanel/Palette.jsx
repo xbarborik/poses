@@ -10,7 +10,7 @@ import {
 } from "../canvas/canvasSlice";
 import { useEffect, useState } from "react";
 import { getColor, getShowStyling } from "./styleSlice";
-import { getSelectedTool } from "../tools/toolbarSlice";
+import { getSelectedTool } from "../toolbar/toolbarSlice";
 
 const StyledPalette = styled.div`
   display: flex;

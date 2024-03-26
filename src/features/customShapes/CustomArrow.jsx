@@ -16,6 +16,7 @@ function CustomArrow({
   onClick,
   pointerAtBeginning = false,
   opacity,
+  listening,
 }) {
   const shapeRef = useRef();
 
@@ -88,18 +89,17 @@ function CustomArrow({
         pointerLength={pointerLength}
         pointerWidth={pointerWidth}
         listening={false}
-        // visible={false}
       />
       <Arrow
         className="customShape"
         id={objectId}
         points={points}
         stroke="rgba(0,0,0,0)"
-        // stroke="black"
         strokeWidth={strokeWidth}
         onTap={onTap}
         onClick={onClick}
         hitStrokeWidth={hitStrokeWidth}
+        listening={listening}
       />
     </Group>
   );

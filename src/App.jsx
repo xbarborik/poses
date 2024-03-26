@@ -7,6 +7,7 @@ import { BASE } from "./utils/constants";
 import Gallery from "./pages/Gallery";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Share from "./pages/Share";
 
 function App() {
   const router = createBrowserRouter([
@@ -14,8 +15,9 @@ function App() {
       path: `${BASE}`,
       element: <AppLayout />,
       children: [
-        { path: ":id", element: <Tool /> },
+        { path: ":id?", element: <Tool /> },
         { path: "gallery", element: <Gallery /> },
+        { path: "share", element: <Share /> },
       ],
     },
   ]);

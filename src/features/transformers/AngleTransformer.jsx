@@ -132,7 +132,7 @@ function AngleTransformer({
       ref={groupRef}
       draggable={isDraggable}
       onDragStart={handleGroupDragStart}
-      onDragEnd={(e) => handleGroupDragEnd(e)}
+      onDragEnd={handleGroupDragEnd}
     >
       {children}
 
@@ -149,8 +149,7 @@ function AngleTransformer({
             strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
             stroke="#b5b5b5" // border color
             draggable
-            onDragMove={(e) => handlePrimaryAnchorDragMove(e)}
-            // onDragEnd={(e) => handleAnchorDragEnd(e)}
+            onDragMove={handlePrimaryAnchorDragMove}
             hitFunc={circleHitFunc}
             onMouseEnter={(e) => {
               const container = e.target.getStage().container();
@@ -172,8 +171,7 @@ function AngleTransformer({
             strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
             stroke="#b5b5b5" // border color
             draggable
-            onDragMove={(e) => handleSecondaryAnchorDragMove(e)}
-            // onDragEnd={(e) => handleAnchorDragEnd(e)}
+            onDragMove={handleSecondaryAnchorDragMove}
             hitFunc={circleHitFunc}
             onMouseEnter={(e) => {
               const container = e.target.getStage().container();

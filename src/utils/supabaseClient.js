@@ -6,10 +6,10 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const bucket_name = "poses";
 
-export async function uploadPose(id, image, objects) {
+export async function uploadPose(id, image, objects, originalSize) {
   const { data, error } = await supabase
     .from("pose")
-    .upsert({ id, image, objects })
+    .upsert({ id, image, objects, original_size: originalSize })
     .select();
 
   if (error) {
@@ -85,6 +85,7 @@ export async function loadFromId(id) {
       id: result.id,
       objects: result.objects,
       path: getPoseImageUrl(result.image),
+      originalSize: result.original_size,
       file: null,
     },
   ];
@@ -103,7 +104,12 @@ export async function uploadImageAndPose(image) {
     console.log("Image upload failed");
   }
 
-  const { data, error } = uploadPose(image.id, imagePath, image.objects);
+  const { data, error } = uploadPose(
+    image.id,
+    imagePath,
+    image.objects,
+    image.originalSize
+  );
   if (error) {
     console.log("Upload failed");
     return false;

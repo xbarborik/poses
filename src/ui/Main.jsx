@@ -133,8 +133,6 @@ function Main({ children, stageRef }) {
         y = boundingBox.y + boundingBox.height + offset / 2;
       }
 
-      console.log(x, y);
-
       setShapeOptionsPosition({ x, y });
     }
 

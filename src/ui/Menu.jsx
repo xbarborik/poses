@@ -139,7 +139,12 @@ function Menu({ stageRef }) {
   };
 
   const handleUploadToCloud = async () => {
-    const isSuccess = uploadImageAndPose(image);
+    const stage = stageRef.current;
+
+    const isSuccess = uploadImageAndPose({
+      ...image,
+      originalSize: stage.size(),
+    });
     if (isSuccess) {
       toast.success("Zmeny úšpešne uložené");
     } else {

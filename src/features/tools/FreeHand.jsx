@@ -1,4 +1,4 @@
-import { Line } from "react-konva";
+import { Group, Line } from "react-konva";
 import { HIT_DETECTION_MULTIPLIER, LOWERED_ALPHA } from "../../utils/constants";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,15 +6,22 @@ import CustomTransformer from "../transformers/CustomTransformer";
 import { getNewPoints } from "./freeHandUtils";
 import {
   getOpacityLowered,
-  removeObject,
   setIsDragging,
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 import { darkenColor } from "../../utils/helpers";
+import { themes } from "../../utils/themes";
 
-function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
+function FreeHand({
+  line,
+  isDraggable,
+  isSelected,
+  onSelect,
+  stageRef,
+  listening = true,
+}) {
   const shapeRef = useRef();
   // const trRef = useRef();
   const dispatch = useDispatch();
@@ -64,15 +71,21 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
     dispatch(updateWithObject(newLine));
   }
 
-  function handleDragEnd(e) {
+  function handleDragMove(e) {
     const newPoints = getNewPoints(e, line.points);
     setPoints(newPoints);
+    shapeRef.current.position({ x: 0, y: 0 });
+  }
+
+  function handleDragEnd(e) {
+    const newPoints = getNewPoints(e, line.points);
+    // setPoints(newPoints);
     shapeRef.current.position({ x: 0, y: 0 });
 
     dispatch(
       updateWithObject({
         ...line,
-        points: newPoints,
+        points: points,
       })
     );
   }
@@ -81,17 +94,17 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
 
   return (
     <>
-      {/* <Line
-        listening={false}
-        ref={shapeRef}
+      {/* Border */}
+      <Line
         points={points}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
-        stroke={"black"}
-        strokeWidth={line.strokeWidth * 1.5}
-        tension={0.7}
+        stroke={themes.shapeBorder}
+        strokeWidth={line.strokeWidth * themes.shapeBorderSize}
         lineCap="round"
         lineJoin="round"
-      /> */}
+      />
+
+      {/* Shape */}
       <Line
         id={line.id}
         ref={shapeRef}
@@ -100,37 +113,24 @@ function FreeHand({ line, isDraggable, isSelected, onSelect, stageRef }) {
         stroke={line.color}
         strokeWidth={line.strokeWidth}
         hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
-        tension={0.7}
         lineCap="round"
         lineJoin="round"
-        globalCompositeOperation={"source-over"}
         draggable={isDraggable}
         onTransformStart={() => dispatch(updateHistory())}
-        onTransform={(e) => handleTransform(e)}
+        onTransform={handleTransform}
         onTransformEnd={handleTransformEnd}
+        onTap={onSelect}
+        onClick={onSelect}
         onDragStart={() => {
           dispatch(updateHistory());
           dispatch(setIsDragging(true));
         }}
-        onDragEnd={(e) => {
-          handleDragEnd(e);
+        onDragMove={handleDragMove}
+        onDragEnd={() => {
+          handleDragEnd();
           dispatch(setIsDragging(false));
         }}
-        onTap={onSelect}
-        onClick={onSelect}
-        shadowColor={darkenColor(line.color, -14)}
-        shadowBlur={5}
-        shadowOpacity={1}
       />
-      {/* {isSelected && (
-        <CustomTransformer
-          trRef={trRef}
-          objectId={line.id}
-          centeredScaling={false}
-          onRemove={() => dispatch(removeObject(line.id))}
-          stageRef={stageRef}
-        />
-      )} */}
     </>
   );
 }

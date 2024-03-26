@@ -1,5 +1,5 @@
 import { GoHorizontalRule } from "react-icons/go";
-import { BsCircle, BsArrowUp } from "react-icons/bs";
+import { BsCircle } from "react-icons/bs";
 import ToolButton from "./ToolButton";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
@@ -13,13 +13,8 @@ import Button from "../../ui/Button";
 import angleIcon from "../../assets/ang.svg";
 import freehandArrowIcon from "../../assets/fr-ar.svg";
 import freehandIcon from "../../assets/fr.svg";
-import { TfiArrowsVertical } from "react-icons/tfi";
-import { FaArrowUp } from "react-icons/fa6";
-
-import { PiArrowsVerticalFill } from "react-icons/pi";
 import { LuMoveVertical } from "react-icons/lu";
 import { getColor } from "../stylePanel/styleSlice";
-import { MdOutlineMoving } from "react-icons/md";
 
 const StyledToolBar = styled.div`
   display: flex;
@@ -94,12 +89,9 @@ function Toolbar({ children }) {
             <GoHorizontalRule style={{ transform: "rotate(90deg)" }} />
           </ToolButton>
           <ToolButton type={"freeHandArrow"}>
-            {/* <FaArrowUp /> */}
             <IconImg src={freehandArrowIcon} $color={color} />
           </ToolButton>
           <ToolButton type={"arrow"}>
-            {/* <BsArrowUp /> */}
-            {/* <PiArrowsVerticalFill /> */}
             <LuMoveVertical />
           </ToolButton>
           <ToolButton type={"circle"}>
@@ -111,12 +103,6 @@ function Toolbar({ children }) {
           <ToolButton type={"comment"}>
             <IconText>Aa</IconText>
           </ToolButton>
-          {/* <ToolButton type={"style"}>
-            <IconText>col</IconText>
-          </ToolButton> */}
-          {/* <ToolButton type={"eraser"}>
-          <FaEraser />
-        </ToolButton> */}
         </StyledToolBar>
       }
     </ToolbarContainer>

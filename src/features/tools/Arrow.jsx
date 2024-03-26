@@ -16,6 +16,7 @@ import {
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 import CustomArrow from "../customShapes/CustomArrow";
 import { darkenColor } from "../../utils/helpers";
+import { themes } from "../../utils/themes";
 
 function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
   const dispatch = useDispatch();
@@ -45,13 +46,13 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
       onDragEnd={handleChangeEnd}
       onRemove={() => dispatch(removeObject(arrow.id))}
     >
-      {/* TODO remove if not good */}
+      {/* Border */}
       <CustomArrow
         listening={false}
         objectId={arrow.id}
         points={points}
-        stroke={darkenColor(arrow.color, -14)}
-        strokeWidth={arrow.strokeWidth * 1.6}
+        stroke={themes.shapeBorder}
+        strokeWidth={arrow.strokeWidth * themes.shapeBorderSize}
         fill={arrow.color}
         lineCap="round"
         pointerLength={2 * arrow.strokeWidth}
@@ -60,6 +61,8 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
         pointerAtBeginning={true}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
+
+      {/* Shape */}
       <CustomArrow
         objectId={arrow.id}
         points={points}

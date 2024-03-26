@@ -17,3 +17,5 @@ function Share() {
 
   return <>{url}</>;
 }
+
+export default Share;

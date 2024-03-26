@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import canvasReducer from "./features/canvas/canvasSlice";
-import toolbarReducer from "./features/tools/toolbarSlice";
+import toolbarReducer from "./features/toolbar/toolbarSlice";
 import styleReducer from "./features/stylePanel/styleSlice";
 
 const store = configureStore({

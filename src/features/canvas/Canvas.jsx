@@ -6,6 +6,7 @@ import {
   getCurrentImageIndx,
   getIsDrawing,
   getObjects,
+  getOriginalSize,
   getSelectedObjectId,
   redo,
   removeInvalidObject,
@@ -23,7 +24,7 @@ import {
   setShowStyling,
   setStrokeWidth,
 } from "../stylePanel/styleSlice";
-import { getSelectedTool, selectTool } from "../tools/toolbarSlice";
+import { getSelectedTool, selectTool } from "../toolbar/toolbarSlice";
 import { useEffect, useRef, useState } from "react";
 import {
   smoothLine,
@@ -34,18 +35,16 @@ import {
 import FreeHand from "../tools/FreeHand";
 import { updateFreeHand } from "../tools/freeHandUtils";
 import Arrow from "../tools/Arrow";
-import Line from "../tools/line";
+import Line from "../tools/Line";
 import { updateLine } from "../tools/lineUtils";
 import PoseImage from "./PoseImage";
 // import CircleRotator from "../customShapes/circleRotator";
 import { updateCircle } from "../tools/circleUtils";
 import { useDimensions } from "./useDimensions";
 import useClickOutsideContainer from "../../hooks/useClickOutsideContainer";
-
 import Circle from "../tools/CircleFromCorner";
 import { getColor } from "../stylePanel/styleSlice";
 import useCtrlAndKeyDown from "../../hooks/useCtrlAndKeyDown";
-
 import { useMultiTouchScale } from "./useMultiTouchZoom";
 import { useWheelAndTouchpadZoom } from "./useWheelAndTouchpadZoom";
 import FreeHandArrow from "../tools/FreeHandArrow";
@@ -53,6 +52,7 @@ import Angle from "../tools/Angle";
 import { updateAngle } from "../tools/angleUtils";
 import Comment from "../tools/Comment";
 import CommentContent from "../tools/CommentContent";
+import { themes } from "../../utils/themes";
 
 const StyledCanvas = styled.div`
   display: flex;
@@ -79,12 +79,11 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
   const selectedTool = useSelector(getSelectedTool);
   const selectedObjectId = useSelector(getSelectedObjectId);
   const imageIndex = useSelector(getCurrentImageIndx);
+  const originalSize = useSelector(getOriginalSize);
 
   const [newObjectId, setNewObjectId] = useState("");
   const [dimensions] = useDimensions(canvasRef);
-  const [isPinching, setIsPinching] = useState(false);
-
-  // const [dimensions, setDimensions] = useState({ width: 500, height: 500 });
+  const [adjustedObjects, setAdjustedObjects] = useState({});
 
   const {
     scale: scaleAfterMultitouch,
@@ -107,6 +106,30 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
   );
   useCtrlAndKeyDown("z", () => dispatch(undo()));
   useCtrlAndKeyDown("y", () => dispatch(redo()));
+
+  useEffect(() => {
+    const withAdjustedPoints = Object.entries(objects).reduce(
+      (acc, [key, object]) => {
+        const adjustedPoints = object.points.map((point, index) =>
+          Math.round(
+            index % 2 === 0
+              ? point > 0 && point < 1
+                ? point * dimensions.width
+                : point
+              : point > 0 && point < 1
+              ? point * dimensions.height
+              : point
+          )
+        );
+
+        acc[key] = { ...object, points: adjustedPoints };
+        return acc;
+      },
+      {}
+    );
+
+    setAdjustedObjects(withAdjustedPoints);
+  }, [objects, dimensions]);
 
   useEffect(() => {
     dispatch(setStagePos(posAfterWheel));
@@ -321,27 +344,16 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
     dispatch(selectObject(object.id));
   }
 
-  // const [stageSize, setSize] = useState({
-  //   width: dimensions.width,
-  //   height: dimensions.height,
-  // });
-  useEffect(() => {
-    console.log(canvasRef);
-  }, []);
-
   return (
     <StyledCanvas ref={canvasRef} id="canvas">
       {!isLoading &&
         objects &&
         dimensions.width > 0 &&
-        dimensions.height > 0 && (
+        originalSize !== null && (
           <Stage
             ref={stageRef}
             width={dimensions.width}
             height={dimensions.height}
-            // width={imageSize.width}
-            // height={imageSize.height}
-
             onWheel={(e) => {
               handleWheel(e);
               dispatch(deselectObject());
@@ -349,11 +361,9 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
             onMouseDown={(e) => {
               if (e.evt.button === 0) handleStart(e);
             }}
-            onMousemove={(e) => handleMove(e)}
-            onMouseup={(e) => handleEnd(e)}
-            onTouchStart={(e) => {
-              handleStart(e);
-            }}
+            onMousemove={handleMove}
+            onMouseup={handleEnd}
+            onTouchStart={handleStart}
             onTouchMove={(e) => {
               if (e.evt.touches.length === 2) {
                 dispatch(deselectObject());
@@ -364,9 +374,8 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
               handleMultiTouchEnd();
               handleEnd(e);
             }}
-            onClick={(e) => checkDeselect(e)}
-            onTap={(e) => checkDeselect(e)}
-            // draggable={selectedTool === "none"  }
+            onClick={checkDeselect}
+            onTap={checkDeselect}
           >
             <FastLayer>
               <PoseImage dimensions={dimensions} setImageSize={setImageSize} />
@@ -441,7 +450,6 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
                   return null;
                 }
               })}
-              {/* <CircleRotator x={500} y={600} arrowLength={40} /> */}
             </Layer>
             <Layer>
               {Object.values(objects).map((object) => {
