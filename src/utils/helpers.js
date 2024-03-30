@@ -45,7 +45,7 @@ export function calcLength(points) {
   return Math.sqrt(dx * dx + dy * dy);
 }
 
-export function notLongEnoughToDraw(object, pad) {
+export function notLongEnoughToDraw(object) {
   return (
     (object.type.includes("freeHand") &&
       object.points.length <= MINIMUM_OBJECT_LENGTH) ||
@@ -89,6 +89,24 @@ export function downloadURI(uri, name) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+export function convertRelativeToAbsolute(objects, dimensions) {
+  // console.log(dimensions);
+  return Object.entries(objects).reduce((acc, [key, object]) => {
+    const adjustedPoints = object.points.map((point, index) =>
+      index % 2 === 0
+        ? point > 0 && point < 1
+          ? point * dimensions.width
+          : point
+        : point > 0 && point < 1
+        ? point * dimensions.height
+        : point
+    );
+
+    acc[key] = { ...object, points: adjustedPoints };
+    return acc;
+  }, {});
 }
 
 // https://natclark.com/tutorials/javascript-lighten-darken-hex-color/

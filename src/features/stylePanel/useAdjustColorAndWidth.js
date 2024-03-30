@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getStrokeWidth, getColor } from "./styleSlice";
-import { updateWithObject } from "../canvas/canvasSlice";
+import { getSelectedObject, updateWithObject } from "../canvas/canvasSlice";
 
 // Works but currently also changes color of any clicked object
 
@@ -11,6 +11,7 @@ function useAdjustColorAndWidth(object, isSelected) {
   const selectedStrokeWidth = useSelector(getStrokeWidth);
 
   useEffect(() => {
+    // console.log("test", selectedObject);
     if (
       isSelected &&
       ((object.color !== selectedColor && selectedColor !== null) ||

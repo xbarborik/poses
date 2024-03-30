@@ -10,7 +10,11 @@ import {
 import { RiImageAddFill } from "react-icons/ri";
 import { CiShare2 } from "react-icons/ci";
 import { CiExport } from "react-icons/ci";
-import { downloadURI, idFromDate } from "../utils/helpers";
+import {
+  convertRelativeToAbsolute,
+  downloadURI,
+  idFromDate,
+} from "../utils/helpers";
 import { uploadImageAndPose } from "../utils/supabaseClient";
 import { BASE } from "../utils/constants";
 import { useNavigate } from "react-router";
@@ -140,9 +144,10 @@ function Menu({ stageRef }) {
 
   const handleUploadToCloud = async () => {
     const stage = stageRef.current;
-
+    console.log(stage);
     const isSuccess = uploadImageAndPose({
       ...image,
+      objects: convertRelativeToAbsolute(image.objects, stage.size()),
       originalSize: stage.size(),
     });
     if (isSuccess) {

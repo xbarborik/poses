@@ -19,14 +19,14 @@ const OpacityButton = styled.button`
   border: none;
   pointer-events: auto;
   background-color: ${(props) =>
-    props.isActive ? " #fff;" : "rgba(255, 255, 255, 0.5)"}
+    props.$isActive ? " #fff;" : "rgba(255, 255, 255, 0.5)"}
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   transition: 0.15s;
   position: absolute;
   top: 3.5rem;
   left: 10px;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
-  transform:  ${(props) => (props.isActive ? "scale(1.05)" : "scale(1)")};
+  transform:  ${(props) => (props.$isActive ? "scale(1.05)" : "scale(1)")};
 
 
   &:hover {
@@ -50,7 +50,7 @@ function Opacity() {
       <OpacityButton
         onClick={handleClick}
         disabled={disabled}
-        isActive={isActive}
+        $isActive={isActive}
       >
         <CgEditHighlight />
       </OpacityButton>

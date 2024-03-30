@@ -89,6 +89,7 @@ function Main({ children, stageRef }) {
   const offset = useSelector(getStagePos);
   const scale = useSelector(getStageScale);
   const isDragging = useSelector(getIsDragging);
+  const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState("");
   const [showText, setShowText] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -111,8 +112,10 @@ function Main({ children, stageRef }) {
     }
 
     if (stageRef.current !== null && object) {
-      const shapeNode = stageRef.current.findOne(`#${object.id}`);
-      const groupNode = shapeNode.getParent();
+      const shapeNode = stageRef.current?.findOne(`#${object.id}`);
+      // console.log(shapeNode);
+      const groupNode = shapeNode?.getParent();
+      // console.log(groupNode);
 
       const boundingBox =
         groupNode.getClassName() === "Group"
@@ -198,12 +201,20 @@ function Main({ children, stageRef }) {
             value={text}
             onKeyDown={handleKeyPress}
             onChange={onChange}
+            onFocus={() => setIsEditing(true)}
             spellCheck="false"
             $isVisible={!isLoading}
           />
-          <DoneButton onClick={() => dispatch(deselectObject())}>
-            <FaCheck />
-          </DoneButton>
+          {isEditing && (
+            <DoneButton
+              onClick={() => {
+                dispatch(deselectObject());
+                setIsEditing(false);
+              }}
+            >
+              <FaCheck />
+            </DoneButton>
+          )}
         </InputContainer>
       )}
 

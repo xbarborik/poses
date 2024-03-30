@@ -77,11 +77,8 @@ function FreeHand({
     shapeRef.current.position({ x: 0, y: 0 });
   }
 
-  function handleDragEnd(e) {
-    const newPoints = getNewPoints(e, line.points);
-    // setPoints(newPoints);
+  function handleDragEnd() {
     shapeRef.current.position({ x: 0, y: 0 });
-
     dispatch(
       updateWithObject({
         ...line,
@@ -102,6 +99,7 @@ function FreeHand({
         strokeWidth={line.strokeWidth * themes.shapeBorderSize}
         lineCap="round"
         lineJoin="round"
+        tension={0.4}
       />
 
       {/* Shape */}
@@ -121,6 +119,7 @@ function FreeHand({
         onTransformEnd={handleTransformEnd}
         onTap={onSelect}
         onClick={onSelect}
+        tension={0.4}
         onDragStart={() => {
           dispatch(updateHistory());
           dispatch(setIsDragging(true));

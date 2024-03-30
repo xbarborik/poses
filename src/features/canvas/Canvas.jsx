@@ -31,6 +31,7 @@ import {
   outOfBounds,
   notLongEnoughToDraw,
   getRelativePointerPosition,
+  convertRelativeToAbsolute,
 } from "../../utils/helpers";
 import FreeHand from "../tools/FreeHand";
 import { updateFreeHand } from "../tools/freeHandUtils";
@@ -108,26 +109,10 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
   useCtrlAndKeyDown("y", () => dispatch(redo()));
 
   useEffect(() => {
-    const withAdjustedPoints = Object.entries(objects).reduce(
-      (acc, [key, object]) => {
-        const adjustedPoints = object.points.map((point, index) =>
-          Math.round(
-            index % 2 === 0
-              ? point > 0 && point < 1
-                ? point * dimensions.width
-                : point
-              : point > 0 && point < 1
-              ? point * dimensions.height
-              : point
-          )
-        );
+    const withAdjustedPoints = convertRelativeToAbsolute(objects, dimensions);
 
-        acc[key] = { ...object, points: adjustedPoints };
-        return acc;
-      },
-      {}
-    );
-
+    // console.log("1", objects);
+    // console.log("2", withAdjustedPoints);
     setAdjustedObjects(withAdjustedPoints);
   }, [objects, dimensions]);
 
@@ -319,21 +304,21 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
 
     if (!objects) return;
 
-    if (notLongEnoughToDraw(objects[newObjectId], strokeWidth)) {
+    if (notLongEnoughToDraw(objects[newObjectId])) {
       dispatch(removeInvalidObject(newObjectId));
       return;
     }
 
     dispatch(selectObject(newObjectId));
 
-    // if (selectedTool === "freeHand" || selectedTool === "freeHandArrow") {
-    //   smoothLine({
-    //     objects,
-    //     updateWithObject: (object) => dispatch(updateWithObject(object)),
-    //     id: newObjectId,
-    //     step: 2,
-    //   });
-    // }
+    if (selectedTool === "freeHand" || selectedTool === "freeHandArrow") {
+      smoothLine({
+        objects,
+        updateWithObject: (object) => dispatch(updateWithObject(object)),
+        id: newObjectId,
+        step: 2,
+      });
+    }
   }
 
   function handleSelect(object) {
@@ -381,7 +366,7 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
               <PoseImage dimensions={dimensions} setImageSize={setImageSize} />
             </FastLayer>
             <Layer>
-              {Object.values(objects).map((object) => {
+              {Object.values(adjustedObjects).map((object) => {
                 if (notLongEnoughToDraw(object, strokeWidth)) return null;
                 if (object.type === "freeHand") {
                   return (

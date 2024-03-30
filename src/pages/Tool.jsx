@@ -44,7 +44,6 @@ function Tool() {
             );
 
             acc[key] = { ...object, points: adjustedPoints };
-
             return acc;
           },
           {}
@@ -55,8 +54,10 @@ function Tool() {
           objects: objectsWithRelativePoints,
         };
 
-        // console.log(withRelativePoints);
-        dispatch(setImages([pose]));
+        // console.log(withRelativePoints.objects);
+        // console.log(pose.objects);
+        // dispatch(setImages([pose]));
+        dispatch(setImages([withRelativePoints]));
         dispatch(setShowStyling(true));
       }
       setIsLoading(false);

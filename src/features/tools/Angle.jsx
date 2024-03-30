@@ -14,6 +14,7 @@ import AngleTransformer from "../transformers/AngleTransformer";
 import { calcAngle, calcLength } from "../../utils/helpers";
 import { themes } from "../../utils/themes";
 
+//TODO add source
 function calcLinesAngle(line1, line2) {
   // Create vectors
   let a = { x: line1[2] - line1[0], y: line1[3] - line1[1] };

@@ -10,7 +10,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
-import { darkenColor } from "../../utils/helpers";
 import { themes } from "../../utils/themes";
 
 // https://jsbin.com/wahetunepa/edit?html,js,output
@@ -19,15 +18,11 @@ function Line({ line, isDraggable, isSelected, onSelect }) {
   const [points, setPoints] = useState([]);
   const isOpacityLowered = useSelector(getOpacityLowered);
 
-  useAdjustColorAndWidth(line, isSelected);
-
   useEffect(() => {
     setPoints(line.points);
   }, [line.points]);
 
-  useEffect(() => {
-    //console.log(JSON.stringify(points));
-  }, [points]);
+  useAdjustColorAndWidth(line, isSelected);
 
   function handleChangeEnd(newPoints) {
     dispatch(updateHistory());

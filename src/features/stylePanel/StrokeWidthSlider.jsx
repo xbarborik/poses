@@ -19,14 +19,6 @@ function StrokeWidthSlider({ defaultValue, ...props }) {
   const changedWidth = useSelector(getStrokeWidth);
 
   useEffect(() => {
-    function initialStrokeWidth() {
-      dispatch(setStrokeWidth(defaultValue));
-    }
-
-    initialStrokeWidth();
-  }, [dispatch, defaultValue]);
-
-  useEffect(() => {
     function updateWidth() {
       if (changedWidth > 0) {
         setValue(changedWidth);
