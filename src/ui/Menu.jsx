@@ -171,7 +171,7 @@ function Menu({ stageRef }) {
     }));
 
     dispatch(setImages(filesArray));
-    navigate(`${BASE}${newId}`);
+    navigate(`${BASE}image/${newId}`);
   };
 
   const toggleMenu = () => {
@@ -205,13 +205,6 @@ function Menu({ stageRef }) {
               <IoArrowBackSharp /> Zpět
             </MenuItem>
           )}
-          <MenuItem
-            onClick={() => {
-              navigate(`${BASE}gallery`);
-            }}
-          >
-            <GrGallery /> Moje rady
-          </MenuItem>
           <MenuItem
             onClick={() => {
               handleUploadFromGallery();

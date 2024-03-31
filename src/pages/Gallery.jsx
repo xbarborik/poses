@@ -3,6 +3,8 @@ import { IoArrowBackSharp } from "react-icons/io5";
 import { BASE } from "../utils/constants";
 import { useNavigate } from "react-router";
 import GalleryList from "../features/gallery/GalleryList";
+import Upload from "../ui/Upload";
+import { themes } from "../utils/themes";
 
 const BackButton = styled.button`
 display: flex;
@@ -25,21 +27,25 @@ opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 
 &:hover {
   transform: scale(1.05);
-  background-color: #fff;
+  background-color: #ffffffd9;
   cursor: pointer;
 }
 `;
 
-function Gallery() {
-  const navigate = useNavigate();
+const GalleryContainer = styled.div`
+  overflow-y: auto;
+  height: 100%;
+  background-color: ${themes.background};
+  display: flex;
+  flex-direction: column;
+`;
 
+function Gallery() {
   return (
-    <>
-      <BackButton onClick={() => navigate(BASE)}>
-        <IoArrowBackSharp />
-      </BackButton>
+    <GalleryContainer>
+      <Upload />
       <GalleryList />
-    </>
+    </GalleryContainer>
   );
 }
 

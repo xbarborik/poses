@@ -437,7 +437,7 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
               })}
             </Layer>
             <Layer>
-              {Object.values(objects).map((object) => {
+              {Object.values(adjustedObjects).map((object) => {
                 if (object.type === "comment") {
                   return (
                     <>

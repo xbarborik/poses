@@ -28,9 +28,7 @@ const Icon = styled.div`
 `;
 
 const StyledUpload = styled.div`
-  height: 100%;
-  width: 100%;
-  background-color: #ffffffd9;
+  flex: 3;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -72,7 +70,7 @@ function Upload({ showText = true }) {
 
           dispatch(setImages(filesArray));
           dispatch(setShowStyling(true));
-          navigate(`${BASE}${newId}`);
+          navigate(`${BASE}image/${newId}`);
         }}
       />
     </StyledUpload>

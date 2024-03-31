@@ -15,8 +15,8 @@ function App() {
       path: `${BASE}`,
       element: <AppLayout />,
       children: [
-        { path: ":id?", element: <Tool /> },
-        { path: "gallery", element: <Gallery /> },
+        { path: "", element: <Gallery /> },
+        { path: "image/:id?", element: <Tool /> },
         { path: "share", element: <Share /> },
       ],
     },

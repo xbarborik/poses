@@ -3,26 +3,32 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { fetchAllPoses } from "../../utils/supabaseClient";
 import { BASE } from "../../utils/constants";
+import { themes } from "../../utils/themes";
 
 const StyledGalleryList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: left;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
   gap: 10px;
-  overflow-y: auto;
   padding: 1rem;
-  margin-top: 3rem;
+  background-color: ${themes.background};
+  border-radius: 15px 15px 0 0;
+  flex: 5;
 `;
 
 const Card = styled.div`
   flex-basis: auto;
+  height: 12rem;
+  width: 10rem;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Image = styled.img`
-  max-width: 100%;
   object-fit: cover;
-  height: 12rem;
-  width: 10rem;
+  height: 100%;
+  width: 100%;
   border-radius: 5px;
 `;
 
@@ -40,7 +46,7 @@ function GalleryList() {
   }, []);
 
   function handleOpen(id) {
-    navigate(`${BASE}${id}`);
+    navigate(`${BASE}image/${id}`);
   }
 
   return (
