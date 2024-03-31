@@ -20,6 +20,8 @@ import { BASE } from "../utils/constants";
 import { useNavigate } from "react-router";
 import { LuSave } from "react-icons/lu";
 import { toast } from "react-toastify";
+import { GrGallery } from "react-icons/gr";
+import { setShowStyling } from "../features/stylePanel/styleSlice";
 
 const MenuButton = styled.button`
   display: flex;
@@ -115,7 +117,7 @@ function Menu({ stageRef }) {
           width: image.width(),
           pixelRatio: 2,
         }),
-        "stage.png"
+        `${image.id}.png`
       );
       stage.scale(currentScale);
       stage.position(currentPosition);
@@ -174,6 +176,7 @@ function Menu({ stageRef }) {
 
   const toggleMenu = () => {
     setIsOpen((isOpen) => !isOpen);
+    dispatch(setShowStyling(false));
   };
 
   return (
@@ -202,6 +205,13 @@ function Menu({ stageRef }) {
               <IoArrowBackSharp /> Zpět
             </MenuItem>
           )}
+          <MenuItem
+            onClick={() => {
+              navigate(`${BASE}gallery`);
+            }}
+          >
+            <GrGallery /> Moje rady
+          </MenuItem>
           <MenuItem
             onClick={() => {
               handleUploadFromGallery();
@@ -236,7 +246,7 @@ function Menu({ stageRef }) {
             }}
             disabled={disabled}
           >
-            <LuSave /> Uložiť zmeny
+            <LuSave /> Uložit změny
           </MenuItem>
         </MenuList>
       )}

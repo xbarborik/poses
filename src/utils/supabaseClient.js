@@ -116,3 +116,21 @@ export async function uploadImageAndPose(image) {
   }
   return true;
 }
+
+export async function fetchAllPoses() {
+  let { data: poses, error } = await supabase
+    .from("pose")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.log("Failed to fecth poses");
+    return [];
+  }
+
+  const posesWithPathToStorage = poses.map((pose) => {
+    return { ...pose, path: getPoseImageUrl(pose.id) };
+  });
+
+  return posesWithPathToStorage;
+}
