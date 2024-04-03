@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
-  getImagesCount,
+  getIsImageSet,
   getOpacityLowered,
   toggleOpacityLowered,
 } from "../features/canvas/canvasSlice";
@@ -38,7 +38,7 @@ const OpacityButton = styled.button`
 
 function Opacity() {
   const dispatch = useDispatch();
-  const disabled = useSelector(getImagesCount) == 0;
+  const disabled = useSelector(getIsImageSet) === false;
   const isActive = useSelector(getOpacityLowered);
 
   function handleClick() {

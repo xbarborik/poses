@@ -3,7 +3,7 @@ import { FaCheck, FaRegEye } from "react-icons/fa";
 import { useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useSelector } from "react-redux";
-import { getImagesCount } from "../canvas/canvasSlice";
+import { getIsImageSet } from "../canvas/canvasSlice";
 import eyebrows from "../../assets/eyebrows.png";
 import nose from "../../assets/nose.png";
 import belly from "../../assets/belly.png";
@@ -14,7 +14,6 @@ import none from "../../assets/none.png";
 import up from "../../assets/up.png";
 import left from "../../assets/left.png";
 import right from "../../assets/right.png";
-import { FaArrowLeft, FaArrowRight, FaArrowUp } from "react-icons/fa6";
 
 const Container = styled.div`
   display: flex;
@@ -142,7 +141,7 @@ function Focus() {
   const [show, setShow] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState("nose");
-  const disabled = useSelector(getImagesCount) == 0;
+  const disabled = useSelector(getIsImageSet) === false;
 
   function handleSelect(option) {
     setSelectedItem(option);

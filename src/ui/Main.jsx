@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import useAutosizeTextArea from "../hooks/useAutosizeTextArea";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
+import { themes } from "../utils/themes";
 
 const StyledMain = styled.div`
   display: flex;
@@ -21,6 +22,7 @@ const StyledMain = styled.div`
   height: 100%;
   // flex-grow: 0.8;
   position: relative;
+  background-color: ${themes.background};
 `;
 
 const InputContainer = styled.div`
@@ -105,6 +107,8 @@ function Main({ children, stageRef }) {
   useEffect(() => {
     const element = inputRef.current;
 
+    if (element === null) return;
+
     if (object?.type === "comment") {
       setText(object.text);
       if (object.text.length == 0) element.focus();
@@ -113,17 +117,15 @@ function Main({ children, stageRef }) {
 
     if (stageRef.current !== null && object) {
       const shapeNode = stageRef.current?.findOne(`#${object.id}`);
-      // console.log(shapeNode);
       const groupNode = shapeNode?.getParent();
-      // console.log(groupNode);
-
+      if (!groupNode) return;
       const boundingBox =
         groupNode.getClassName() === "Group"
           ? groupNode.getClientRect()
           : shapeNode.getClientRect();
 
       // no need to adjust, because clientRect already has scales applied
-      const shapeOptionsWidth = shapeOptionsRef.current.offsetWidth;
+      const shapeOptionsWidth = shapeOptionsRef.current?.offsetWidth;
 
       let x = boundingBox.x + boundingBox.width / 2 - shapeOptionsWidth / 2;
       const offset = 45;
@@ -141,10 +143,6 @@ function Main({ children, stageRef }) {
 
     setIsLoading(false);
   }, [object, offset, scale, stageRef]);
-
-  // useEffect(() => {
-  //   setIsLoading(true);
-  // }, [object?.id]);
 
   useEffect(() => {
     if (isDragging) setIsLoading(true);
@@ -170,7 +168,11 @@ function Main({ children, stageRef }) {
   function adjustX() {
     if (!object || isLoading) return 0;
 
-    let x = object?.points[0] * scale + offset.x - 100;
+    let x =
+      object?.points[0] > 0 && object?.points[0] < 1
+        ? object?.points[0] * stageRef.current?.width()
+        : object?.points[0];
+    x = x * scale + offset.x - 100;
 
     const windowWidth = window.innerWidth;
 
@@ -185,15 +187,21 @@ function Main({ children, stageRef }) {
     return x;
   }
 
+  function adjustY() {
+    return object?.points[1] * scale + offset.y + 32;
+
+    const y =
+      object?.points[1] > 0 && object?.points[1] < 1
+        ? object?.points[1] * stageRef.current?.height()
+        : object?.points[1];
+    return y * scale + offset.y + 32;
+  }
+
   return (
     <StyledMain id="main">
       {children}
       {object?.type === "comment" && (
-        <InputContainer
-          x={adjustX()}
-          y={object?.points[1] * scale + offset.y + 32}
-          $isVisible={!isLoading}
-        >
+        <InputContainer x={adjustX()} y={adjustY()} $isVisible={!isLoading}>
           <Input
             ref={inputRef}
             name="adjust"
@@ -218,7 +226,7 @@ function Main({ children, stageRef }) {
         </InputContainer>
       )}
 
-      {object?.id && (
+      {object?.id && !isDragging && (
         <ShapeOptions
           x={shapeOptionsPosition.x}
           y={shapeOptionsPosition.y}

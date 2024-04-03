@@ -36,8 +36,6 @@ const GalleryContainer = styled.div`
   overflow-y: auto;
   height: 100%;
   background-color: ${themes.background};
-  display: flex;
-  flex-direction: column;
 `;
 
 function Gallery() {

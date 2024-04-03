@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import {
   getCurrentImage,
-  getImagesCount,
-  setImages,
+  getIsImageSet,
+  setImage,
 } from "../features/canvas/canvasSlice";
 import { RiImageAddFill } from "react-icons/ri";
 import { CiShare2 } from "react-icons/ci";
@@ -92,7 +92,7 @@ function Menu({ stageRef }) {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const inputRef = useRef();
-  const disabled = useSelector(getImagesCount) == 0;
+  const disabled = useSelector(getIsImageSet) === false;
   const image = useSelector(getCurrentImage);
   const navigate = useNavigate();
 
@@ -170,7 +170,7 @@ function Menu({ stageRef }) {
       file: file,
     }));
 
-    dispatch(setImages(filesArray));
+    dispatch(setImage(filesArray[0]));
     navigate(`${BASE}image/${newId}`);
   };
 
@@ -197,9 +197,9 @@ function Menu({ stageRef }) {
           {!disabled && (
             <MenuItem
               onClick={() => {
-                dispatch(setImages([]));
-                toggleMenu();
                 navigate(BASE);
+                dispatch(setImage({}));
+                toggleMenu();
               }}
             >
               <IoArrowBackSharp /> Zpět

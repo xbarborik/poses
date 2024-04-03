@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { getSelectedTool, selectTool } from "./toolbarSlice";
 import { getColor, setShowStyling } from "../stylePanel/styleSlice";
-import { getImagesCount } from "../canvas/canvasSlice";
+import { getIsImageSet } from "../canvas/canvasSlice";
 
 const StyledToolButton = styled.button`
   display: flex;
@@ -55,7 +55,7 @@ const StyledToolButton = styled.button`
 function ToolButton({ children, type, preventEvents }) {
   const dispatch = useDispatch();
   const selectedToolType = useSelector(getSelectedTool);
-  const disabled = useSelector(getImagesCount) == 0;
+  const disabled = useSelector(getIsImageSet) === false;
   const color = useSelector(getColor);
   const isActive = selectedToolType === type;
 

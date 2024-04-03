@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getImagesCount, setImages } from "../features/canvas/canvasSlice";
-import Upload from "../ui/Upload";
+import { getIsImageSet, setImage } from "../features/canvas/canvasSlice";
 import Menu from "../ui/Menu";
 import Opacity from "../ui/Opacity";
 import Focus from "../features/tools/Focus";
@@ -18,7 +17,7 @@ import { loadFromId } from "../utils/supabaseClient";
 import Loader from "../ui/Loader";
 
 function Tool() {
-  const isImageSet = useSelector(getImagesCount);
+  const isImageSet = useSelector(getIsImageSet);
   const [isLoading, setIsLoading] = useState(false);
   const stageRef = useRef(null);
   const dispatch = useDispatch();
@@ -54,10 +53,10 @@ function Tool() {
           objects: objectsWithRelativePoints,
         };
 
-        // console.log(withRelativePoints.objects);
+        console.log(withRelativePoints);
         // console.log(pose.objects);
-        // dispatch(setImages([pose]));
-        dispatch(setImages([withRelativePoints]));
+        // dispatch(setImage(pose));
+        dispatch(setImage(withRelativePoints));
         dispatch(setShowStyling(true));
       }
       setIsLoading(false);
@@ -73,12 +72,10 @@ function Tool() {
       </TopBar>
 
       <Main stageRef={stageRef}>
-        {!isImageSet ? (
-          <Upload />
-        ) : !isLoading ? (
-          <Canvas stageRef={stageRef} setImageSize={setImageSize} />
-        ) : (
+        {!isImageSet || isLoading ? (
           <Loader />
+        ) : (
+          <Canvas stageRef={stageRef} setImageSize={setImageSize} />
         )}
         <Toolbar>
           <UndoRedo />

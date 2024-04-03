@@ -68,7 +68,6 @@ const ToggleButton = styled.button`
 function Palette() {
   const selectedObject = useSelector(getSelectedObject);
   const selectedTool = useSelector(getSelectedTool);
-  const selectedColor = useSelector(getColor);
   const isDrawing = useSelector(getIsDrawing);
   const isDragging = useSelector(getIsDragging);
   const showStyling = useSelector(getShowStyling);
@@ -103,11 +102,6 @@ function Palette() {
           <ColorButton color={"#FFDF07"} />
           <ColorButton color={"#62e22b"} />
         </StyledPalette>
-
-        {/* <ToggleButton
-          $color={selectedColor}
-          onClick={() => setShow((show) => !show)}
-        /> */}
       </PaletteContainer>
     </>
   );

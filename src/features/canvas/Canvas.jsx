@@ -1,9 +1,8 @@
 import styled from "styled-components";
-import { Stage, Layer, Text, FastLayer } from "react-konva";
+import { Stage, Layer, FastLayer } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deselectObject,
-  getCurrentImageIndx,
   getIsDrawing,
   getObjects,
   getOriginalSize,
@@ -39,7 +38,6 @@ import Arrow from "../tools/Arrow";
 import Line from "../tools/Line";
 import { updateLine } from "../tools/lineUtils";
 import PoseImage from "./PoseImage";
-// import CircleRotator from "../customShapes/circleRotator";
 import { updateCircle } from "../tools/circleUtils";
 import { useDimensions } from "./useDimensions";
 import useClickOutsideContainer from "../../hooks/useClickOutsideContainer";
@@ -52,8 +50,6 @@ import FreeHandArrow from "../tools/FreeHandArrow";
 import Angle from "../tools/Angle";
 import { updateAngle } from "../tools/angleUtils";
 import Comment from "../tools/Comment";
-import CommentContent from "../tools/CommentContent";
-import { themes } from "../../utils/themes";
 
 const StyledCanvas = styled.div`
   display: flex;
@@ -79,7 +75,6 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
   const selectedColor = useSelector(getColor);
   const selectedTool = useSelector(getSelectedTool);
   const selectedObjectId = useSelector(getSelectedObjectId);
-  const imageIndex = useSelector(getCurrentImageIndx);
   const originalSize = useSelector(getOriginalSize);
 
   const [newObjectId, setNewObjectId] = useState("");
@@ -110,9 +105,6 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
 
   useEffect(() => {
     const withAdjustedPoints = convertRelativeToAbsolute(objects, dimensions);
-
-    // console.log("1", objects);
-    // console.log("2", withAdjustedPoints);
     setAdjustedObjects(withAdjustedPoints);
   }, [objects, dimensions]);
 
@@ -134,7 +126,7 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
       stage.scale({ x: 1, y: 1 });
       stage.position({ x: 0, y: 0 });
     }
-  }, [imageIndex, dispatch, stageRef]);
+  }, [dispatch, stageRef]);
 
   //https://konvajs.org/docs/react/Transformer.html
   function checkDeselect(e) {

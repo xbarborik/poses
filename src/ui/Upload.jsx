@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
-import { setImages } from "../features/canvas/canvasSlice";
+import { setImage } from "../features/canvas/canvasSlice";
 import styled from "styled-components";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import UploadIcon from "../assets/uploadIcon";
 import { setShowStyling } from "../features/stylePanel/styleSlice";
 import { idFromDate } from "../utils/helpers";
@@ -28,7 +28,7 @@ const Icon = styled.div`
 `;
 
 const StyledUpload = styled.div`
-  flex: 3;
+  height: 30vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -68,7 +68,7 @@ function Upload({ showText = true }) {
             file: file,
           }));
 
-          dispatch(setImages(filesArray));
+          dispatch(setImage(filesArray[0]));
           dispatch(setShowStyling(true));
           navigate(`${BASE}image/${newId}`);
         }}

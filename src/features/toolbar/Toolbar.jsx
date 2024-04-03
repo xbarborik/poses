@@ -4,7 +4,7 @@ import ToolButton from "./ToolButton";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import {
-  getImagesCount,
+  getIsImageSet,
   getIsDragging,
   getIsDrawing,
 } from "../canvas/canvasSlice";
@@ -62,7 +62,7 @@ function Toolbar({ children }) {
   const isDragging = useSelector(getIsDragging);
   const color = useSelector(getColor);
   const [showToolbar, setShowToolbar] = useState(true);
-  const disabled = useSelector(getImagesCount) == 0;
+  const disabled = useSelector(getIsImageSet) === false;
 
   if (isDrawing || isDragging) return null;
 

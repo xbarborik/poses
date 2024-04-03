@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { fetchAllPoses } from "../../utils/supabaseClient";
 import { BASE } from "../../utils/constants";
 import { themes } from "../../utils/themes";
+import Loader from "../../ui/Loader";
 
 const StyledGalleryList = styled.div`
   display: grid;
@@ -12,12 +13,10 @@ const StyledGalleryList = styled.div`
   padding: 1rem;
   background-color: ${themes.background};
   border-radius: 15px 15px 0 0;
-  flex: 5;
 `;
 
 const Card = styled.div`
-  flex-basis: auto;
-  height: 12rem;
+  height: 10rem;
   width: 10rem;
 
   &:hover {
@@ -34,12 +33,15 @@ const Image = styled.img`
 
 function GalleryList() {
   const [poses, setPoses] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchPoses() {
+      setIsLoading(true);
       const result = await fetchAllPoses();
       setPoses(result);
+      setIsLoading(false);
     }
 
     fetchPoses();
@@ -51,13 +53,17 @@ function GalleryList() {
 
   return (
     <StyledGalleryList>
-      {poses.map((pose) => {
-        return (
-          <Card key={pose.id} onClick={() => handleOpen(pose.id)}>
-            <Image src={pose.path + ".png"} />
-          </Card>
-        );
-      })}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        poses.map((pose) => {
+          return (
+            <Card key={pose.id} onClick={() => handleOpen(pose.id)}>
+              <Image src={pose.path + ".png"} />
+            </Card>
+          );
+        })
+      )}
     </StyledGalleryList>
   );
 }
