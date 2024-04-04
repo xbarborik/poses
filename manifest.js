@@ -40,17 +40,14 @@ export const manifestForPlugIn = {
     start_url: "/poses/",
     orientation: "portrait",
     share_target: {
-      action: "/shared",
+      action: "/share",
       method: "POST",
       enctype: "multipart/form-data",
       params: {
-        title: "title",
-        text: "text",
-        url: "url",
         files: [
           {
             name: "image",
-            accept: ["image/png", "image/jpeg"],
+            accept: ["image/*"],
           },
         ],
       },

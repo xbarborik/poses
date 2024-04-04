@@ -72,7 +72,7 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
       opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
     >
       <CircleKonva
-        listening={false}
+        id={comment.id}
         x={comment.points[0]}
         y={comment.points[1]}
         radius={radius * 1.35}
@@ -82,7 +82,7 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
         opacity={0.4}
       />
       <CircleKonva
-        id={comment.id}
+        listening={false}
         x={comment.points[0]}
         y={comment.points[1]}
         radius={radius + 2}
@@ -95,7 +95,6 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
       />
       <Text
         listening={false}
-        id={comment.id}
         x={comment.points[0] - radius / 2}
         y={comment.points[1] - radius / 2}
         width={radius}

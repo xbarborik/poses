@@ -122,7 +122,7 @@ export const getIsLoading = (state) => state.canvas.isLoading;
 
 export const getOpacityLowered = (state) => state.canvas.isOpacityLowered;
 
-export const getIsImageSet = (state) => state.canvas.image?.id;
+export const getIsImageSet = (state) => state.canvas.image.id !== null;
 
 export const getCurrentImage = (state) => state.canvas.image;
 

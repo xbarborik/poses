@@ -22,6 +22,7 @@ import { LuSave } from "react-icons/lu";
 import { toast } from "react-toastify";
 import { GrGallery } from "react-icons/gr";
 import { setShowStyling } from "../features/stylePanel/styleSlice";
+import { themes } from "../utils/themes";
 
 const MenuButton = styled.button`
   display: flex;
@@ -39,7 +40,7 @@ const MenuButton = styled.button`
   transition: 0.15s;
   position: absolute;
   top: 10px;
-  left: 10px;
+  right: 10px;
   opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 
   &:hover {
@@ -56,7 +57,7 @@ const MenuItem = styled.button`
   gap: 5px;
   padding: 0.5rem 1rem;
   margin: 0.2rem 0;
-  background-color: rgba(255, 255, 255, 1);
+  background-color: ${themes.primary};
   border: none;
   border-radius: 5px;
   margin: 2px
@@ -80,7 +81,10 @@ const MenuList = styled.div`
   flex-direction: column;
   position: absolute;
   top: 55px;
-  left: 10px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 5px;
+  border-radius: 5px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `;
 
@@ -194,17 +198,6 @@ function Menu({ stageRef }) {
       </MenuButton>
       {isOpen && (
         <MenuList>
-          {!disabled && (
-            <MenuItem
-              onClick={() => {
-                navigate(BASE);
-                dispatch(setImage({}));
-                toggleMenu();
-              }}
-            >
-              <IoArrowBackSharp /> Zpět
-            </MenuItem>
-          )}
           <MenuItem
             onClick={() => {
               handleUploadFromGallery();

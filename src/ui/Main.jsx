@@ -112,10 +112,15 @@ function Main({ children, stageRef }) {
     if (object?.type === "comment") {
       setText(object.text);
       if (object.text.length == 0) element.focus();
-      element.selectionStart = element.value.length;
     }
+  }, [object]);
 
-    if (stageRef.current !== null && object) {
+  useEffect(() => {
+    if (
+      stageRef.current !== null &&
+      shapeOptionsRef.current !== null &&
+      object
+    ) {
       const shapeNode = stageRef.current?.findOne(`#${object.id}`);
       const groupNode = shapeNode?.getParent();
       if (!groupNode) return;
@@ -125,7 +130,7 @@ function Main({ children, stageRef }) {
           : shapeNode.getClientRect();
 
       // no need to adjust, because clientRect already has scales applied
-      const shapeOptionsWidth = shapeOptionsRef.current?.offsetWidth;
+      const shapeOptionsWidth = shapeOptionsRef.current.offsetWidth;
 
       let x = boundingBox.x + boundingBox.width / 2 - shapeOptionsWidth / 2;
       const offset = 45;
@@ -137,15 +142,17 @@ function Main({ children, stageRef }) {
       } else if (y < 25) {
         y = boundingBox.y + boundingBox.height + offset / 2;
       }
-
+      console.log(x, y);
+      console.log(object.points);
       setShapeOptionsPosition({ x, y });
     }
 
     setIsLoading(false);
-  }, [object, offset, scale, stageRef]);
+  }, [object, offset, scale, stageRef, isDragging]);
 
   useEffect(() => {
     if (isDragging) setIsLoading(true);
+    console.log(isDragging);
   }, [isDragging]);
 
   useEffect(() => {
@@ -188,8 +195,6 @@ function Main({ children, stageRef }) {
   }
 
   function adjustY() {
-    return object?.points[1] * scale + offset.y + 32;
-
     const y =
       object?.points[1] > 0 && object?.points[1] < 1
         ? object?.points[1] * stageRef.current?.height()

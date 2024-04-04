@@ -17,7 +17,7 @@ function App() {
       children: [
         { path: "", element: <Gallery /> },
         { path: "image/:id?", element: <Tool /> },
-        { path: "share", element: <Share /> },
+        { path: "share/", element: <Share /> },
       ],
     },
   ]);
