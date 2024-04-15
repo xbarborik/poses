@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: false,
-  image: { id: null, objects: {} }, // {id: null, path: [] , past: objects: {}, future: [], size:}
+  image: { id: null, objects: {}, pastObjects: [], futureObjects: [] },
   currentImageIndx: 0,
   isOpacityLowered: false,
 

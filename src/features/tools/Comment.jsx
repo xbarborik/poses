@@ -5,6 +5,7 @@ import {
   getObjects,
   getOpacityLowered,
   setIsDragging,
+  updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
@@ -38,6 +39,7 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
   }, [objects, comment.id]);
 
   function handleDragStart() {
+    dispatch(updateHistory());
     dispatch(setIsDragging(true));
   }
 
@@ -76,10 +78,12 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
         x={comment.points[0]}
         y={comment.points[1]}
         radius={radius * 1.35}
+        stroke={comment.color}
+        strokeWidth={isSelected ? 2.8 : 0}
         fill="#b5b5b5"
         onClick={onSelect}
         onTap={onSelect}
-        opacity={0.4}
+        opacity={isSelected ? 0.8 : 0.6}
       />
       <CircleKonva
         listening={false}
@@ -87,7 +91,7 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
         y={comment.points[1]}
         radius={radius + 2}
         stroke={comment.color}
-        strokeWidth={2}
+        strokeWidth={isSelected ? 0 : 2.8}
         fill="#fff"
         onClick={onSelect}
         onTap={onSelect}

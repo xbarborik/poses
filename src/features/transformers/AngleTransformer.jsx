@@ -33,7 +33,7 @@ function AngleTransformer({
 
   const anchorScale = stageScale / 0.9;
   const anchorSize = 16 / anchorScale;
-  const anchorOffsetDistance = 30 / anchorScale; // distance from line object
+  const anchorOffsetDistance = 40 / anchorScale; // distance from line object
   const removeButtonOffsetDistance = 40;
 
   // Use latter for simpler transformer

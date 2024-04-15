@@ -50,23 +50,22 @@ import FreeHandArrow from "../tools/FreeHandArrow";
 import Angle from "../tools/Angle";
 import { updateAngle } from "../tools/angleUtils";
 import Comment from "../tools/Comment";
+import CommentContent from "../tools/CommentContent";
+import FocusArrow from "../tools/FocusArrow";
 
 const StyledCanvas = styled.div`
   display: flex;
-  outline: 2px solid orange;
-  outline-offset: -1px;
   flex-grow: 1;
   position: relative;
   box-sizing: border-box;
   height: 100%;
   width: 100%;
   overscroll-behavior: none;
-  background-color: #ffffffd9;
+  background-color: #d9d9d9;
   zoom: 1;
-  // justify-content: center;
 `;
 
-function Canvas({ stageRef, setImageSize, isLoading }) {
+function Canvas({ stageRef, setImageSize, isLoading, viewOnly }) {
   const canvasRef = useRef(null);
   const dispatch = useDispatch();
   const objects = useSelector(getObjects);
@@ -92,7 +91,7 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
     scale: scaleAfterWheel,
     handleWheel,
     pos: posAfterWheel,
-  } = useWheelAndTouchpadZoom(stageRef);
+  } = useWheelAndTouchpadZoom(stageRef, dimensions);
 
   const outsideClickException = "adjust";
   useClickOutsideContainer(
@@ -128,17 +127,9 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
     }
   }, [dispatch, stageRef]);
 
-  //https://konvajs.org/docs/react/Transformer.html
-  function checkDeselect(e) {
-    if (selectedObjectId === null) return;
-    if (e.target === e.target.getStage()) {
-      dispatch(deselectObject());
-    }
-  }
-
   function isButtonOrAnchor(e) {
     const name = e?.target?.attrs?.name;
-    return name?.includes("anchor") || name?.includes("removeButton");
+    return name?.includes("anchor");
   }
 
   function handleStart(e) {
@@ -150,7 +141,7 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
       // Block draw with mouse wheel press
       e.evt.button === 1 ||
       selectedTool === "none" ||
-      // Don't draw when scaling with anchor or clicking button
+      // Don't draw when scaling with anchor
       isButtonOrAnchor(e) ||
       outOfBounds({
         position,
@@ -239,8 +230,6 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
   function handleMove(e) {
     e.evt.preventDefault();
     if (!isDrawing || selectedTool === "none") return;
-
-    if (selectedObjectId != null) dispatch(deselectObject());
 
     const position = getRelativePointerPosition(e);
     if (
@@ -343,7 +332,7 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
             onTouchStart={handleStart}
             onTouchMove={(e) => {
               if (e.evt.touches.length === 2) {
-                dispatch(deselectObject());
+                // dispatch(deselectObject());
                 handleMultiTouchMove(e);
               } else handleMove(e);
             }}
@@ -351,8 +340,6 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
               handleMultiTouchEnd();
               handleEnd(e);
             }}
-            onClick={checkDeselect}
-            onTap={checkDeselect}
           >
             <FastLayer>
               <PoseImage dimensions={dimensions} setImageSize={setImageSize} />
@@ -446,9 +433,6 @@ function Canvas({ stageRef, setImageSize, isLoading }) {
                           ...object,
                           points: [200, dimensions.height + 200],
                         }}
-                        isDraggable={selectedObjectId === object.id}
-                        isSelected={selectedObjectId === object.id}
-                        onSelect={() => handleSelect(object)}
                       /> */}
                     </>
                   );

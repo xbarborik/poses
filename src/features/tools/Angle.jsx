@@ -1,5 +1,4 @@
-import { Arc, Circle, Line as LineKonva, Text } from "react-konva";
-import LineTransformer from "../transformers/LineTransformer";
+import { Arc, Line as LineKonva, Text } from "react-konva";
 import { HIT_DETECTION_MULTIPLIER, LOWERED_ALPHA } from "../../utils/constants";
 import {
   getOpacityLowered,

@@ -68,10 +68,6 @@ function LineTransformer({
     setPoints(newPoints);
   }
 
-  function handleAnchorDragEnd() {
-    onTransformEnd(points);
-  }
-
   function handleGroupDragStart() {
     dispatch(setIsDragging(true));
   }

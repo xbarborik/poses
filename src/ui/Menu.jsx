@@ -8,7 +8,7 @@ import {
   setImage,
 } from "../features/canvas/canvasSlice";
 import { RiImageAddFill } from "react-icons/ri";
-import { CiShare2 } from "react-icons/ci";
+import { CiSaveDown2, CiShare2 } from "react-icons/ci";
 import { CiExport } from "react-icons/ci";
 import {
   convertRelativeToAbsolute,
@@ -57,7 +57,7 @@ const MenuItem = styled.button`
   gap: 5px;
   padding: 0.5rem 1rem;
   margin: 0.2rem 0;
-  background-color: ${themes.primary};
+  background-color: ${themes.background};
   border: none;
   border-radius: 5px;
   margin: 2px
@@ -67,10 +67,10 @@ const MenuItem = styled.button`
   transition: 0.15s;
   font-family: "Raleway";
   font-size: 1.1rem;
-  color: #393d47
+  // color: white
 
   &:hover {
-    background-color: #fff;
+    // background-color: #fff;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   }
 `;
@@ -92,7 +92,7 @@ const ImageInput = styled.input`
   display: none;
 `;
 
-function Menu({ stageRef }) {
+function Menu({ stageRef, imageFile, setImageFile }) {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const inputRef = useRef();
@@ -100,11 +100,11 @@ function Menu({ stageRef }) {
   const image = useSelector(getCurrentImage);
   const navigate = useNavigate();
 
-  const handleExport = () => {
+  const handleDownload = () => {
     const stage = stageRef.current;
 
     if (stage != null) {
-      const image = stage.findOne(".poseImage");
+      const canvasImage = stage.findOne(".poseImage");
       const currentScale = { x: stage.scaleX(), y: stage.scaleY() };
       const currentPosition = { x: stage.x(), y: stage.y() };
       const stageSize = { width: stage.width(), height: stage.height() };
@@ -112,13 +112,13 @@ function Menu({ stageRef }) {
       stage.scale({ x: 1, y: 1 });
       stage.position({ x: 0, y: 0 });
       stage.size({ height: stageSize.height + 400, width: stageSize.width });
-
+      console.log(image);
       downloadURI(
         stageRef.current.toDataURL({
-          x: image.x(),
-          y: image.y(),
-          height: image.height(),
-          width: image.width(),
+          x: canvasImage.x(),
+          y: canvasImage.y(),
+          height: canvasImage.height(),
+          width: canvasImage.width(),
           pixelRatio: 2,
         }),
         `${image.id}.png`
@@ -135,7 +135,7 @@ function Menu({ stageRef }) {
         .share({
           title: "Zobraziť popis",
           text: "",
-          url: `https://xbarborik.github.io${BASE}${id}`,
+          url: `https://xbarborik.github.io${BASE}image/${id}?viewOnly=true`,
         })
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
@@ -150,16 +150,18 @@ function Menu({ stageRef }) {
 
   const handleUploadToCloud = async () => {
     const stage = stageRef.current;
-    console.log(stage);
-    const isSuccess = uploadImageAndPose({
-      ...image,
-      objects: convertRelativeToAbsolute(image.objects, stage.size()),
-      originalSize: stage.size(),
-    });
+    const isSuccess = uploadImageAndPose(
+      {
+        ...image,
+        objects: convertRelativeToAbsolute(image.objects, stage.size()),
+        originalSize: stage.size(),
+      },
+      imageFile
+    );
     if (isSuccess) {
-      toast.success("Zmeny úšpešne uložené");
+      toast.success("Změny úspěšně uloženy");
     } else {
-      toast.error("Vyžaduje sa pripojenie k internetu");
+      toast.error("Vyžaduje se připojení k internetu");
     }
 
     return isSuccess;
@@ -167,14 +169,17 @@ function Menu({ stageRef }) {
 
   const handleImageUpload = (e) => {
     const newId = idFromDate();
-    const filesArray = Array.from(e.target.files).map((file) => ({
-      id: newId,
-      objects: {},
-      path: URL.createObjectURL(file),
-      file: file,
-    }));
+    const file = e.target.files[0];
 
-    dispatch(setImage(filesArray[0]));
+    setImageFile(file);
+    dispatch(
+      setImage({
+        id: newId,
+        objects: {},
+        path: URL.createObjectURL(file),
+      })
+    );
+    dispatch(setShowStyling(true));
     navigate(`${BASE}image/${newId}`);
   };
 
@@ -208,12 +213,12 @@ function Menu({ stageRef }) {
           </MenuItem>
           <MenuItem
             onClick={() => {
-              handleExport();
+              handleDownload();
               toggleMenu();
             }}
             disabled={disabled}
           >
-            <CiExport /> Exportovat
+            <CiSaveDown2 /> Stáhnout
           </MenuItem>
           <MenuItem
             onClick={() => {

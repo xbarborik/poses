@@ -12,12 +12,20 @@ const StyledGalleryList = styled.div`
   gap: 10px;
   padding: 1rem;
   background-color: ${themes.background};
-  border-radius: 15px 15px 0 0;
+  border-radius: 15px;
+  grid-auto-rows: 1fr;
 `;
 
+//https://css-tricks.com/a-grid-of-logos-in-squares/
 const Card = styled.div`
-  height: 10rem;
-  width: 10rem;
+  &:before {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+  }
+
+  position: relative;
+  width: 100%;
 
   &:hover {
     cursor: pointer;
@@ -25,6 +33,9 @@ const Card = styled.div`
 `;
 
 const Image = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
   object-fit: cover;
   height: 100%;
   width: 100%;

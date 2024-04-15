@@ -15,12 +15,13 @@ import freehandArrowIcon from "../../assets/fr-ar.svg";
 import freehandIcon from "../../assets/fr.svg";
 import { LuMoveVertical } from "react-icons/lu";
 import { getColor } from "../stylePanel/styleSlice";
+import { FaRegEye } from "react-icons/fa";
 
 const StyledToolBar = styled.div`
   display: flex;
   flex-direction: column;
   width: fit-content;
-  gap: 1rem;
+  gap: 0.8rem;
   pointer-events: none;
 `;
 
@@ -35,6 +36,7 @@ const ToolbarContainer = styled.div`
   position: absolute;
   right: 0;
   top: 50%;
+  // bottom: 1rem;
   transform: translateY(-50%);
 
   opacity: ${(props) => (props.$disabled ? 0.5 : 1)};
@@ -69,11 +71,11 @@ function Toolbar({ children }) {
   return (
     <ToolbarContainer $disabled={disabled}>
       {/* <HideBarButton
-          size={"smallEven"}
-          onClick={() => setShowToolbar((showToolbar) => !showToolbar)}
-        >
-          {showToolbar ? <MdArrowRight /> : <MdArrowLeft />}
-        </HideBarButton> */}
+        size={"smallEven"}
+        onClick={() => setShowToolbar((showToolbar) => !showToolbar)}
+      >
+        {showToolbar ? "<" : ">"}
+      </HideBarButton> */}
       {children}
       {
         <StyledToolBar
@@ -102,6 +104,9 @@ function Toolbar({ children }) {
           </ToolButton>
           <ToolButton type={"comment"}>
             <IconText>Aa</IconText>
+          </ToolButton>
+          <ToolButton type={"focus"} showStyling={false}>
+            <FaRegEye />
           </ToolButton>
         </StyledToolBar>
       }

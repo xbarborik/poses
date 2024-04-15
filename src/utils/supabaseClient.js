@@ -93,12 +93,12 @@ export async function loadFromId(id) {
   return pose;
 }
 
-export async function uploadImageAndPose(image) {
+export async function uploadImageAndPose(image, file) {
   let imagePath = `${image.id}.png`;
 
   const { data: imageData, error: imageError } = await uploadImage(
     imagePath,
-    image.file
+    file
   );
   if (imageError) {
     console.log("Image upload failed");

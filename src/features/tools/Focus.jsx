@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { FaCheck, FaRegEye } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getIsImageSet } from "../canvas/canvasSlice";
 import eyebrows from "../../assets/eyebrows.png";
 import nose from "../../assets/nose.png";
@@ -14,16 +14,18 @@ import none from "../../assets/none.png";
 import up from "../../assets/up.png";
 import left from "../../assets/left.png";
 import right from "../../assets/right.png";
+import ControlButton from "../../ui/ControlButton";
+import { selectTool } from "../toolbar/toolbarSlice";
 
 const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   position: absolute;
-  top: 20%;
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 15px;
   gap: 1rem;
   background-color: white;
@@ -44,7 +46,7 @@ const DropdownButton = styled.div`
   background-color: #f0f0f0;
   cursor: pointer;
   border-radius: 5px;
-  width: 4rem;
+  width: 3.5rem;
   font-size: 2rem;
 `;
 
@@ -54,7 +56,7 @@ const DropdownContent = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #f9f9f9;
-  padding: 0.5rem;
+  padding: 0.4rem;
   border-radius: 5px;
   width: 3rem;
 `;
@@ -80,30 +82,9 @@ const PrimaryIcon = styled.span`
   justify-content: center;
 `;
 
-const FocusToggleButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  border-radius: 50%;
-  color: #393d47
-  width: 2.4rem;
-  height: 2.4rem;
-  border: none;
-  pointer-events: auto;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  transition: 0.15s;
-  position: absolute;
+const FocusToggleButton = styled(ControlButton)`
   top: 6.5rem;
   left: 10px;
-  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
-
-  &:hover {
-    transform: scale(1.05);
-    background-color: #fff;
-    cursor: pointer;
-  }
 `;
 
 const DoneButton = styled.button`
@@ -115,6 +96,22 @@ const DoneButton = styled.button`
   border-radius: 5px;
   display: flex;
   justify-content: center;
+  cursor: pointer;
+`;
+
+const Watermark = styled.div`
+  position: absolute;
+  top: 1rem;
+  left: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  gap: 0.5rem;
+  pointer-events: none;
+  background-color: rgba(255, 255, 255, 0.65);
+  padding: 0.4rem 0.5rem 0.4rem 0.8rem;
+  border-radius: 10px;
 `;
 
 const Icon = styled.img`
@@ -137,27 +134,34 @@ const gazes = {
   right: right,
 };
 
-function Focus() {
-  const [show, setShow] = useState(false);
+function Focus({ show }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState("nose");
+  const [selectedItem, setSelectedItem] = useState("none");
   const disabled = useSelector(getIsImageSet) === false;
+  const dispatch = useDispatch();
 
   function handleSelect(option) {
     setSelectedItem(option);
     setIsMenuOpen(false);
   }
 
-  function handleToggle() {
-    setShow((show) => !show);
+  useEffect(() => {
     setIsMenuOpen(false);
-  }
+  }, [show]);
 
   return (
     <>
-      <FocusToggleButton onClick={handleToggle} disabled={disabled}>
+      {/* <FocusToggleButton onClick={handleToggle} disabled={disabled}>
         <FaRegEye />
-      </FocusToggleButton>
+      </FocusToggleButton> */}
+      {selectedItem !== "none" && (
+        <Watermark>
+          <PrimaryIcon>
+            <FaRegEye />
+          </PrimaryIcon>
+          <SelectedIcon src={gazes[selectedItem]} />
+        </Watermark>
+      )}
       {show && (
         <Container>
           <PrimaryIcon>
@@ -170,9 +174,9 @@ function Focus() {
             </DropdownButton>
             {isMenuOpen && (
               <DropdownContent>
-                {/* <DropdownItem onClick={() => handleSelect("none")}>
+                <DropdownItem onClick={() => handleSelect("none")}>
                   <Icon src={none} />
-                </DropdownItem> */}
+                </DropdownItem>
                 <DropdownItem onClick={() => handleSelect("nose")}>
                   <Icon src={nose} />
                 </DropdownItem>
@@ -203,7 +207,7 @@ function Focus() {
               </DropdownContent>
             )}
           </DropdownMenu>
-          <DoneButton onClick={handleToggle}>
+          <DoneButton onClick={() => dispatch(selectTool("none"))}>
             <FaCheck />
           </DoneButton>
         </Container>

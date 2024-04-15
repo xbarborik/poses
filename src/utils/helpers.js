@@ -38,6 +38,15 @@ export function calcAngle(points) {
   return angleDegrees;
 }
 
+//https://gist.github.com/ashblue/3860114
+export function movePointAtAngle(point, angle, distance) {
+  const angleRadians = (angle * Math.PI) / 180;
+  return [
+    point[0] + Math.cos(angleRadians) * distance,
+    point[1] + Math.sin(angleRadians) * distance,
+  ];
+}
+
 export function calcLength(points) {
   const dx = points[2] - points[0];
   const dy = points[3] - points[1];

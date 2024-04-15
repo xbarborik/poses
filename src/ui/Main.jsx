@@ -70,6 +70,7 @@ const ShapeOptions = styled.div`
   align-items: center;
   justify-content: center;
   background-color: rgba(255, 255, 255, 1);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   border-radius: 5px;
   transition: 0s;
   opacity: ${(props) => (props.$isVisible ? 1 : 0)};
@@ -142,18 +143,18 @@ function Main({ children, stageRef }) {
       } else if (y < 25) {
         y = boundingBox.y + boundingBox.height + offset / 2;
       }
-      console.log(x, y);
-      console.log(object.points);
+      // console.log(x, y);
+      // console.log(object.points);
       setShapeOptionsPosition({ x, y });
     }
 
     setIsLoading(false);
   }, [object, offset, scale, stageRef, isDragging]);
 
-  useEffect(() => {
-    if (isDragging) setIsLoading(true);
-    console.log(isDragging);
-  }, [isDragging]);
+  // useEffect(() => {
+  //   if (isDragging) setIsLoading(true);
+  //   // console.log(isDragging);
+  // }, [isDragging]);
 
   useEffect(() => {
     setShowText(object?.type === "comment");

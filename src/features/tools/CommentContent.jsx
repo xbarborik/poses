@@ -1,14 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Circle as CircleKonva, Group, Text } from "react-konva";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getObjects,
-  setIsDragging,
-  updateWithObject,
-} from "../canvas/canvasSlice";
+import { useSelector } from "react-redux";
+import { getObjects } from "../canvas/canvasSlice";
 
 function CommentContent({ comment }) {
-  const groupRef = useRef();
   const objects = useSelector(getObjects);
   const [number, setNumber] = useState(0);
 
@@ -33,7 +28,7 @@ function CommentContent({ comment }) {
   if (!comment?.points.length) return;
 
   return (
-    <Group ref={groupRef}>
+    <Group>
       <CircleKonva
         id={"conent" + comment.id}
         x={comment.points[0]}

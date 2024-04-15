@@ -11,13 +11,8 @@ const StyledTopBar = styled.div`
 
   position: absolute;
 
-  bottom: 0;
+  top: 0;
   pointer-events: none;
-
-  @media only screen and (max-width: 768px) {
-    /* flex-direction: column; */
-    // background: rgba(255, 255, 255, 0.2);
-  }
 `;
 
 function TopBar({ children }) {

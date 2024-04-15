@@ -8,19 +8,26 @@ import Gallery from "./pages/Gallery";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Share from "./pages/Share";
+import { useState } from "react";
 
 function App() {
+  const [imageFile, setImageFile] = useState();
+
   const router = createBrowserRouter([
     {
       path: `${BASE}`,
       element: <AppLayout />,
       children: [
-        { path: "", element: <Gallery /> },
-        { path: "image/:id?", element: <Tool /> },
+        { path: "", element: <Gallery setImageFile={setImageFile} /> },
+        {
+          path: "image/:id?",
+          element: <Tool imageFile={imageFile} setImageFile={setImageFile} />,
+        },
         { path: "share/", element: <Share /> },
       ],
     },
   ]);
+
   return (
     <>
       <ToastContainer

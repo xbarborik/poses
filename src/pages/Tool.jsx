@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getIsImageSet, setImage } from "../features/canvas/canvasSlice";
+import {
+  getIsDragging,
+  getIsDrawing,
+  getIsImageSet,
+  setImage,
+} from "../features/canvas/canvasSlice";
 import Menu from "../ui/Menu";
 import Opacity from "../ui/Opacity";
 import Focus from "../features/tools/Focus";
@@ -18,40 +23,29 @@ import Loader from "../ui/Loader";
 import { BASE } from "../utils/constants";
 import { IoArrowBackSharp } from "react-icons/io5";
 import styled from "styled-components";
+import { useSearchParams } from "react-router-dom";
+import ViewOnlyOptions from "../ui/ViewOnlyOptions";
+import ControlButton from "../ui/ControlButton";
+import { getSelectedTool } from "../features/toolbar/toolbarSlice";
 
-const BackButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  border-radius: 50%;
-  color: #393d47
-  width: 2.4rem;
-  height: 2.4rem;
-  border: none;
-  pointer-events: auto;
-  background-color: rgba(255, 255, 255, 0.5);
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  transition: 0.15s;
-  position: absolute;
+const BackButton = styled(ControlButton)`
   top: 10px;
   left: 10px;
-
-  &:hover {
-    transform: scale(1.05);
-    background-color: #fff;
-    cursor: pointer;
-  }
 `;
 
-function Tool() {
-  const isImageSet = useSelector(getIsImageSet);
+function Tool(imageFile, setImageFile) {
   const [isLoading, setIsLoading] = useState(false);
   const stageRef = useRef(null);
   const dispatch = useDispatch();
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const viewOnly = searchParams.get("viewOnly");
+  const isDrawing = useSelector(getIsDrawing);
+  const isImageSet = useSelector(getIsImageSet);
+  const isDragging = useSelector(getIsDragging);
+  const selectedTool = useSelector(getSelectedTool);
 
   useEffect(() => {
     async function load() {
@@ -94,12 +88,26 @@ function Tool() {
     if (id) load();
   }, [id, dispatch]);
 
+  if (viewOnly === "true")
+    return (
+      <>
+        <Main stageRef={stageRef}>
+          {!isImageSet || isLoading ? (
+            <Loader />
+          ) : (
+            <Canvas
+              stageRef={stageRef}
+              setImageSize={setImageSize}
+              viewOnly={true}
+            />
+          )}
+        </Main>
+        <ViewOnlyOptions stageRef={stageRef} />
+      </>
+    );
+
   return (
     <>
-      <TopBar>
-        <Palette />
-      </TopBar>
-
       <Main stageRef={stageRef}>
         {!isImageSet || isLoading ? (
           <Loader />
@@ -110,19 +118,30 @@ function Tool() {
           <UndoRedo />
         </Toolbar>
       </Main>
+      <BottomBar>
+        <Palette />
+      </BottomBar>
 
-      {isImageSet ? <BottomBar>{/* <Navigation /> */}</BottomBar> : null}
-      <Menu stageRef={stageRef} imageSize={imageSize} />
-      <Opacity />
-      <Focus />
+      {!isDrawing && !isDragging && (
+        <>
+          <Menu
+            stageRef={stageRef}
+            imageSize={imageSize}
+            imageFile={imageFile}
+            setImageFile={setImageFile}
+          />
+          <Opacity />
+          <Focus show={selectedTool === "focus"} />
+          <BackButton
+            onClick={() => {
+              navigate(BASE);
+            }}
+          >
+            <IoArrowBackSharp />
+          </BackButton>
+        </>
+      )}
       {/* <CompleteMenu /> */}
-      <BackButton
-        onClick={() => {
-          navigate(BASE);
-        }}
-      >
-        <IoArrowBackSharp />
-      </BackButton>
     </>
   );
 }

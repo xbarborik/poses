@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ARROW_POINTER_SCALE,
@@ -15,11 +15,14 @@ import {
 import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
 import CustomArrow from "../customShapes/CustomArrow";
 import { themes } from "../../utils/themes";
+import { Shape } from "react-konva";
+import { calcAngle, movePointAtAngle } from "../../utils/helpers";
 
-function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
+function FocusArrow({ arrow, isDraggable, isSelected, onSelect }) {
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
   const isOpacityLowered = useSelector(getOpacityLowered);
+  const eyeRef = useRef();
 
   useAdjustColorAndWidth(arrow, isSelected);
 
@@ -32,6 +35,28 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
     dispatch(updateWithObject({ ...arrow, points: newPoints }));
   }
 
+  function moveArrowStart() {
+    const angle = calcAngle(points);
+    const movedStartPoints = movePointAtAngle(
+      points.slice(0, 2),
+      angle,
+      arrow.strokeWidth * 6
+    ).concat(points.slice(2));
+    return movedStartPoints;
+  }
+
+  function drawEyeShape(context, shape, size) {
+    context.beginPath();
+    context.ellipse(0, 0, size, size / 2, 0, 0, Math.PI * 2);
+    context.fillStrokeShape(shape);
+
+    context.beginPath();
+    context.arc(0, 0, size / 4, 0, Math.PI * 2);
+    context.closePath();
+    context.fillStrokeShape(shape);
+  }
+
+  const movedStartPoints = moveArrowStart();
   if (!points.length) return;
 
   return (
@@ -45,10 +70,23 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
       onRemove={() => dispatch(removeObject(arrow.id))}
     >
       {/* Border */}
+      <Shape
+        ref={eyeRef}
+        onTap={onSelect}
+        onClick={onSelect}
+        x={points[0]}
+        y={points[1]}
+        stroke={themes.shapeBorder}
+        strokeWidth={((arrow.strokeWidth * 2) / 3) * themes.shapeBorderSize}
+        hitStrokeWidth={arrow.strokeWidth * HIT_DETECTION_MULTIPLIER * 2}
+        sceneFunc={(context, shape) =>
+          drawEyeShape(context, shape, arrow.strokeWidth * 4)
+        }
+      />
       <CustomArrow
         listening={false}
         objectId={arrow.id}
-        points={points}
+        points={movedStartPoints}
         stroke={themes.shapeBorder}
         strokeWidth={arrow.strokeWidth * themes.shapeBorderSize}
         fill={arrow.color}
@@ -56,14 +94,25 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
         pointerLength={2 * arrow.strokeWidth}
         pointerWidth={2 * arrow.strokeWidth * ARROW_POINTER_SCALE}
         hitStrokeWidth={arrow.strokeWidth * HIT_DETECTION_MULTIPLIER}
-        pointerAtBeginning={true}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
 
       {/* Shape */}
+      <Shape
+        ref={eyeRef}
+        onTap={onSelect}
+        onClick={onSelect}
+        x={points[0]}
+        y={points[1]}
+        stroke={arrow.color}
+        strokeWidth={(arrow.strokeWidth * 2) / 3}
+        sceneFunc={(context, shape) =>
+          drawEyeShape(context, shape, arrow.strokeWidth * 4)
+        }
+      />
       <CustomArrow
         objectId={arrow.id}
-        points={points}
+        points={movedStartPoints}
         stroke={arrow.color}
         strokeWidth={arrow.strokeWidth}
         fill={arrow.color}
@@ -73,11 +122,10 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
         hitStrokeWidth={arrow.strokeWidth * HIT_DETECTION_MULTIPLIER}
         onTap={onSelect}
         onClick={onSelect}
-        pointerAtBeginning={true}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
     </LineTransformer>
   );
 }
 
-export default Arrow;
+export default FocusArrow;

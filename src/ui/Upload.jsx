@@ -41,7 +41,7 @@ const Text = styled.h3`
   font-size: 1.5rem;
 `;
 
-function Upload({ showText = true }) {
+function Upload({ showText = true, setImageFile }) {
   const dispatch = useDispatch();
   const inputRef = useRef();
   const navigate = useNavigate();
@@ -60,15 +60,16 @@ function Upload({ showText = true }) {
         name="myImage"
         onChange={(e) => {
           const newId = idFromDate();
+          const file = e.target.files[0];
 
-          const filesArray = Array.from(e.target.files).map((file) => ({
-            id: newId,
-            objects: {},
-            path: URL.createObjectURL(file),
-            file: file,
-          }));
-
-          dispatch(setImage(filesArray[0]));
+          setImageFile(file);
+          dispatch(
+            setImage({
+              id: newId,
+              objects: {},
+              path: URL.createObjectURL(file),
+            })
+          );
           dispatch(setShowStyling(true));
           navigate(`${BASE}image/${newId}`);
         }}

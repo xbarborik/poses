@@ -10,12 +10,12 @@ const StyledToolButton = styled.button`
   justify-content: center;
   font-size: 1.8rem;
   border-radius: 50%;
-  width: 2.4rem;
-  height: 2.4rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border: none;
   pointer-events: auto;
   background-color: ${(props) =>
-    props.$isActive ? "#fff" : "rgba(255, 255, 255, 0.5)"};
+    props.$isActive ? "#fff" : "rgba(255, 255, 255, 0.6)"};
   outline: ${(props) =>
     props.$isActive ? `3px solid ${props.$color}` : "0px"};
   outline-offset: 2px;
@@ -52,7 +52,7 @@ const StyledToolButton = styled.button`
   } */
 `;
 
-function ToolButton({ children, type, preventEvents }) {
+function ToolButton({ children, type, preventEvents, showStyling = true }) {
   const dispatch = useDispatch();
   const selectedToolType = useSelector(getSelectedTool);
   const disabled = useSelector(getIsImageSet) === false;
@@ -60,13 +60,8 @@ function ToolButton({ children, type, preventEvents }) {
   const isActive = selectedToolType === type;
 
   function handleClick() {
-    if (isActive) {
-      dispatch(selectTool(type));
-      dispatch(setShowStyling(true));
-    } else {
-      dispatch(selectTool(type));
-      dispatch(setShowStyling(true));
-    }
+    dispatch(selectTool(type));
+    dispatch(setShowStyling(showStyling));
   }
 
   return (
