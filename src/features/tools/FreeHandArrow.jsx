@@ -91,11 +91,8 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
 
   if (!points.length) return;
 
-  const [lastX, lastY] = points.slice(-2);
-  const prevX = points[points.length - 8];
-  const prevY = points[points.length - 7];
-
-  const arrowHeadPoints = [prevX, prevY, lastX, lastY];
+  const arrowHeadPoints = points.slice(-4);
+  const linePoints = points.slice(0, -2);
   return (
     <>
       {/* Border */}
@@ -112,7 +109,7 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
 
       <Line
         listening={false}
-        points={points}
+        points={linePoints}
         stroke={themes.shapeBorder}
         strokeWidth={line.strokeWidth * themes.shapeBorderSize}
         tension={0.7}
@@ -122,20 +119,11 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
       />
 
       {/* Shape */}
-      <CustomArrow
-        points={arrowHeadPoints}
-        stroke={line.color}
-        fill={line.color}
-        strokeWidth={line.strokeWidth * 0.9}
-        pointerWidth={line.strokeWidth * 2 * ARROW_POINTER_SCALE}
-        pointerLength={line.strokeWidth * 2}
-        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
-      />
 
       <Line
         id={line.id}
         ref={shapeRef}
-        points={points}
+        points={linePoints}
         stroke={line.color}
         strokeWidth={line.strokeWidth}
         hitStrokeWidth={line.strokeWidth * HIT_DETECTION_MULTIPLIER}
@@ -158,6 +146,16 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         }}
         onTap={onSelect}
         onClick={onSelect}
+        opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
+      />
+
+      <CustomArrow
+        points={arrowHeadPoints}
+        stroke={line.color}
+        fill={line.color}
+        strokeWidth={line.strokeWidth * 0.9}
+        pointerWidth={line.strokeWidth * 2 * ARROW_POINTER_SCALE}
+        pointerLength={line.strokeWidth * 2}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
 
