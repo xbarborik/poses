@@ -24,7 +24,9 @@ export async function uploadPose(id, image, objects, originalSize) {
 export async function uploadImage(file_path, file) {
   const { data, error } = await supabase.storage
     .from(bucket_name)
-    .upload(`public/${file_path}`, file);
+    .upload(`public/${file_path}`, file, {
+      contentType: file.type,
+    });
 
   if (error) {
     console.error("Upload failed:", error.message, error.details, error.hint);

@@ -112,7 +112,6 @@ function Menu({ stageRef, imageFile, setImageFile }) {
       stage.scale({ x: 1, y: 1 });
       stage.position({ x: 0, y: 0 });
       stage.size({ height: stageSize.height + 400, width: stageSize.width });
-      console.log(image);
       downloadURI(
         stageRef.current.toDataURL({
           x: canvasImage.x(),

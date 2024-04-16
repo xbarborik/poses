@@ -38,6 +38,16 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
     setNumber(getNextValue());
   }, [objects, comment.id]);
 
+  const [pulseScale, setPulseScale] = useState(1);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setPulseScale((oldScale) => (oldScale >= 1.1 ? 1 : oldScale + 0.02));
+  //   }, 250);
+
+  //   return () => clearInterval(interval);
+  // }, []);
+
   function handleDragStart() {
     dispatch(updateHistory());
     dispatch(setIsDragging(true));
@@ -84,6 +94,8 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
         onClick={onSelect}
         onTap={onSelect}
         opacity={isSelected ? 0.8 : 0.6}
+        scaleX={isSelected ? 1 : pulseScale}
+        scaleY={isSelected ? 1 : pulseScale}
       />
       <CircleKonva
         listening={false}

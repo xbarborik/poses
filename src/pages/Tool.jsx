@@ -33,7 +33,7 @@ const BackButton = styled(ControlButton)`
   left: 10px;
 `;
 
-function Tool(imageFile, setImageFile) {
+function Tool({ imageFile, setImageFile }) {
   const [isLoading, setIsLoading] = useState(false);
   const stageRef = useRef(null);
   const dispatch = useDispatch();
