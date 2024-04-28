@@ -1,8 +1,10 @@
+import { BASE } from "../src/utils/constants";
+
 // serviceWorker.js
 self.addEventListener("fetch", (event) => {
   if (
     event.request.method === "POST" &&
-    new URL(event.request.url).pathname === "/share"
+    new URL(event.request.url).pathname === `${BASE}share`
   ) {
     event.respondWith(
       (async () => {
@@ -17,7 +19,7 @@ self.addEventListener("fetch", (event) => {
           client.postMessage({ imageUrl });
         }
 
-        return Response.redirect("/share", 303);
+        return Response.redirect(`${BASE}share`, 303);
       })()
     );
   }
