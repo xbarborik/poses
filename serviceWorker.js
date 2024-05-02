@@ -1,4 +1,4 @@
-import { BASE } from "../src/utils/constants";
+const BASE = "/poses/#/";
 
 // serviceWorker.js
 self.addEventListener("fetch", (event) => {
