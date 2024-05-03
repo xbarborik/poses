@@ -1,11 +1,9 @@
-const BASE = "/poses"; // Set this to the base path without the hash
+const BASE = "/poses";
 
 self.addEventListener("fetch", (event) => {
-  // Check for the path without the hash
-  if (
-    event.request.method === "POST" &&
-    new URL(event.request.url).pathname === `${BASE}/share`
-  ) {
+  const requestPath = new URL(event.request.url).pathname;
+
+  if (event.request.method === "POST" && requestPath === `${BASE}/share`) {
     event.respondWith(
       (async () => {
         const formData = await event.request.formData();
@@ -19,7 +17,8 @@ self.addEventListener("fetch", (event) => {
           client.postMessage({ imageUrl });
         }
 
-        return Response.redirect(`${BASE}/share`, 303);
+        // Handle the navigation using hash routing in the client
+        return Response.redirect(`${BASE}/#/share`, 303);
       })()
     );
   }
