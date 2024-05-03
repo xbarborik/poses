@@ -1,5 +1,6 @@
 const BASE = "/poses";
 
+//https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/How_to/Share_data_between_apps
 self.addEventListener("fetch", (event) => {
   const requestPath = new URL(event.request.url).pathname;
 
@@ -17,7 +18,6 @@ self.addEventListener("fetch", (event) => {
           client.postMessage({ imageUrl });
         }
 
-        // Handle the navigation using hash routing in the client
         return Response.redirect(`${BASE}/#/share`, 303);
       })()
     );
