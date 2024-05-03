@@ -1,10 +1,10 @@
-const BASE = "/poses/#/";
+const BASE = "/poses"; // Set this to the base path without the hash
 
-// serviceWorker.js
 self.addEventListener("fetch", (event) => {
+  // Check for the path without the hash
   if (
     event.request.method === "POST" &&
-    new URL(event.request.url).pathname === `${BASE}share`
+    new URL(event.request.url).pathname === `${BASE}/share`
   ) {
     event.respondWith(
       (async () => {
@@ -19,7 +19,7 @@ self.addEventListener("fetch", (event) => {
           client.postMessage({ imageUrl });
         }
 
-        return Response.redirect(`${BASE}share`, 303);
+        return Response.redirect(`${BASE}/share`, 303);
       })()
     );
   }
