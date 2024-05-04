@@ -1,19 +1,24 @@
-async function storeBlob(blob) {
-  const dbRequest = indexedDB.open("sharedBlobsDB", 1);
+//https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
+async function storeSharedImageBlob(blob) {
+  const dbRequest = indexedDB.open("sharedImagesDB", 1);
 
   dbRequest.onupgradeneeded = (event) => {
     const db = event.target.result;
-    if (!db.objectStoreNames.contains("blobs")) {
-      db.createObjectStore("blobs", { keyPath: "id", autoIncrement: true });
+    if (!db.objectStoreNames.contains("sharedImages")) {
+      db.createObjectStore("sharedImages", {
+        keyPath: "id",
+      });
     }
   };
 
   dbRequest.onsuccess = (event) => {
     const db = event.target.result;
-    const transaction = db.transaction("blobs", "readwrite");
-    const store = transaction.objectStore("blobs");
-    store.add({ blob, timestamp: Date.now() });
-    console.log("Blob stored successfully");
+    const store = db
+      .transaction("sharedImages", "readwrite")
+      .objectStore("sharedImages");
+
+    const sharedImage = { id: "sharedImage", blob };
+    store.put(sharedImage);
   };
 
   dbRequest.onerror = (event) => {
@@ -21,6 +26,7 @@ async function storeBlob(blob) {
   };
 }
 
+// handling fetch for shared images to app by extending vitePWAplugin sw.js
 self.addEventListener("fetch", (event) => {
   if (
     event.request.method === "POST" &&
@@ -31,14 +37,13 @@ self.addEventListener("fetch", (event) => {
         try {
           const formData = await event.request.formData();
           const imageFile = formData.get("images");
+
           if (imageFile) {
-            const arrayBuffer = await imageFile.arrayBuffer();
-            const blob = new Blob([arrayBuffer], { type: imageFile.type });
-            await storeBlob(blob);
-            console.log("Redirecting to", "/poses/#/share");
+            const blob = new Blob([imageFile], { type: imageFile.type });
+
+            await storeSharedImageBlob(blob);
             return Response.redirect("/poses/#/share", 303);
           } else {
-            console.warn("No image file found in form data");
             return Response.redirect("/poses/#/", 500);
           }
         } catch (error) {
