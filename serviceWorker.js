@@ -30,7 +30,9 @@ self.addEventListener("fetch", (event) => {
             );
             let client;
             if (event.clientId) client = await self.clients.get(event.clientId);
-            else client = await self.clients.get(event.resultingClientId);
+            else if (event.resultingClientId)
+              client = await self.clients.get(event.resultingClientId);
+            else console.log("no client id");
             console.log("Client:", client);
 
             if (client) {
