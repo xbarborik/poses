@@ -28,6 +28,9 @@ self.addEventListener("fetch", (event) => {
               "Clientid:",
               event.clientId
             );
+
+            const allClients = await self.clients.matchAll({ type: "window" });
+            console.log("All controlled clients:", allClients);
             let client;
             if (event.clientId) client = await self.clients.get(event.clientId);
             else if (event.resultingClientId)
