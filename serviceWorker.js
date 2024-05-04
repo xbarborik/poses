@@ -38,8 +38,8 @@ self.addEventListener("fetch", (event) => {
           console.log("Redirecting to", "/poses/#/share");
           return Response.redirect("/poses/#/share", 303);
         } catch (error) {
-          console.error("Error in fetch handler:", error); // Log any errors that occur
-          return new Response("Error processing request", { status: 500 });
+          console.error("Error in fetch handler:", error);
+          return Response.redirect("/poses/#/", 500);
         }
       })()
     );
