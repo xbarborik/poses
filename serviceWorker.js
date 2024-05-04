@@ -15,6 +15,7 @@ self.addEventListener("fetch", (event) => {
           const imageFile = formData.get("images");
           console.log("Image file:", imageFile); // Log the image file
 
+          console.log("before if"); // Log the client
           if (imageFile) {
             // const arrayBuffer = await imageFile.arrayBuffer();
             // console.log("Array buffer:", arrayBuffer); // Log the array buffer size
@@ -22,7 +23,6 @@ self.addEventListener("fetch", (event) => {
             // const blob = new Blob([arrayBuffer], { type: imageFile.type });
             // console.log("Blob:", blob); // Log the blob size and type
 
-            console.log("Client: before"); // Log the client
             const client = await self.clients.get(
               event.resultingClientId || event.clientId
             );
