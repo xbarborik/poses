@@ -22,6 +22,7 @@ self.addEventListener("fetch", (event) => {
             // const blob = new Blob([arrayBuffer], { type: imageFile.type });
             // console.log("Blob:", blob); // Log the blob size and type
 
+            console.log("Client: before"); // Log the client
             const client = await self.clients.get(
               event.resultingClientId || event.clientId
             );
