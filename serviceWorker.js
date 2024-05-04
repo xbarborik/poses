@@ -16,11 +16,11 @@ self.addEventListener("fetch", (event) => {
           console.log("Image file:", imageFile); // Log the image file
 
           if (imageFile) {
-            const arrayBuffer = await imageFile.arrayBuffer();
-            console.log("Array buffer:", arrayBuffer); // Log the array buffer size
+            // const arrayBuffer = await imageFile.arrayBuffer();
+            // console.log("Array buffer:", arrayBuffer); // Log the array buffer size
 
-            const blob = new Blob([arrayBuffer], { type: imageFile.type });
-            console.log("Blob:", blob); // Log the blob size and type
+            // const blob = new Blob([arrayBuffer], { type: imageFile.type });
+            // console.log("Blob:", blob); // Log the blob size and type
 
             const client = await self.clients.get(
               event.resultingClientId || event.clientId
@@ -28,7 +28,7 @@ self.addEventListener("fetch", (event) => {
             console.log("Client:", client); // Log the client
 
             if (client) {
-              client.postMessage({ blob });
+              client.postMessage({ blob: "test" });
               console.log("Posted message to client with blob");
             }
           } else {
