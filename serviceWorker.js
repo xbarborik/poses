@@ -10,21 +10,28 @@ self.addEventListener("fetch", (event) => {
       (async () => {
         try {
           const formData = await event.request.formData();
-          console.log("Form data:", [...formData.entries()]); // Log all form data entries
+          console.log("Form data:", [...formData.entries()]);
 
           const imageFile = formData.get("images");
-          console.log("Image file:", imageFile); // Log the image file
+          console.log("Image file:", imageFile);
 
-          console.log("before if"); // Log the client
           if (imageFile) {
             const arrayBuffer = await imageFile.arrayBuffer();
-            console.log("Array buffer:", arrayBuffer); // Log the array buffer size
+            console.log("Array buffer:", arrayBuffer);
 
             const blob = new Blob([arrayBuffer], { type: imageFile.type });
-            console.log("Blob:", blob); // Log the blob size and type
-            console.log("Client:", event.resultingClientId, event.clientId);
-            const client = await self.clients.get(event.clientId);
-            console.log("Client:", client); // Log the client
+            console.log("Blob:", blob);
+
+            console.log(
+              "resClient:",
+              event.resultingClientId,
+              "Clientid:",
+              event.clientId
+            );
+            let client;
+            if (event.clientId) client = await self.clients.get(event.clientId);
+            else client = await self.clients.get(event.resultingClientId);
+            console.log("Client:", client);
 
             if (client) {
               client.postMessage({ blob });
