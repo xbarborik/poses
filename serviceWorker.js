@@ -1,4 +1,4 @@
-//https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
+// Source: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
 async function storeSharedImageBlob(blob) {
   const dbRequest = indexedDB.open("sharedImagesDB", 1);
 
