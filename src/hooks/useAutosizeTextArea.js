@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 
-// https://medium.com/@oherterich/creating-a-textarea-with-dynamic-height-using-react-and-typescript-5ed2d78d9848
-
+// Hook taken from:
+// Author Owen Herterich
+// Source: https://medium.com/@oherterich/creating-a-textarea-with-dynamic-height-using-react-and-typescript-5ed2d78d9848
 // Updates the height of a <textarea> when the value changes.
-const useAutosizeTextArea = (textAreaRef, value, show) => {
+
+const useAutosizeTextArea = (textAreaRef, value, object) => {
   useEffect(() => {
     const element = textAreaRef.current;
 
@@ -14,7 +16,7 @@ const useAutosizeTextArea = (textAreaRef, value, show) => {
 
       element.style.height = `${scrollHeight}px`;
     }
-  }, [textAreaRef, value, show]);
+  }, [textAreaRef, value, object]);
 };
 
 export default useAutosizeTextArea;

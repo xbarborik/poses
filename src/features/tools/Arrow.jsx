@@ -1,3 +1,12 @@
+/**
+ * File: Arrow.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Render arrow shape and add transformer.
+ */
+
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,11 +21,17 @@ import {
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import useAdjustColorAndWidth from "../stylePalette/useAdjustColorAndWidth";
 import CustomArrow from "../customShapes/CustomArrow";
 import { themes } from "../../utils/themes";
 
-function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
+function Arrow({
+  object: arrow,
+  isDraggable,
+  isSelected,
+  onSelect,
+  doubleSided = false,
+}) {
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
   const isOpacityLowered = useSelector(getOpacityLowered);
@@ -56,7 +71,7 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
         pointerLength={2 * arrow.strokeWidth}
         pointerWidth={2 * arrow.strokeWidth * ARROW_POINTER_SCALE}
         hitStrokeWidth={arrow.strokeWidth * HIT_DETECTION_MULTIPLIER}
-        pointerAtBeginning={true}
+        pointerAtBeginning={doubleSided}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
 
@@ -73,7 +88,7 @@ function Arrow({ arrow, isDraggable, isSelected, onSelect }) {
         hitStrokeWidth={arrow.strokeWidth * HIT_DETECTION_MULTIPLIER}
         onTap={onSelect}
         onClick={onSelect}
-        pointerAtBeginning={true}
+        pointerAtBeginning={doubleSided}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
     </LineTransformer>

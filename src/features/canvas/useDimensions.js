@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
-//https://stackoverflow.com/questions/43817118/how-to-get-the-width-of-a-react-element
+/*
+  Hook is provided by
+  Authors: meesern, Kkkev
+  Source: https://stackoverflow.com/questions/43817118/how-to-get-the-width-of-a-react-element
+*/
 function useDimensions(ref) {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -10,13 +14,8 @@ function useDimensions(ref) {
       height: (ref && ref.current.offsetHeight) || 0,
     });
 
-    let resizeTimer;
-
     const handleResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        setDimensions(getDimensions());
-      }, 200);
+      setDimensions(getDimensions());
     };
 
     if (ref.current) {

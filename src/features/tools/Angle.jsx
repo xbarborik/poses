@@ -1,3 +1,12 @@
+/**
+ * File: Angle.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Using Konva components renders angle shape and custom transformer to control it.
+ */
+
 import { Arc, Line as LineKonva, Text } from "react-konva";
 import { HIT_DETECTION_MULTIPLIER, LOWERED_ALPHA } from "../../utils/constants";
 import {
@@ -8,18 +17,18 @@ import {
 } from "../canvas/canvasSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import useAdjustColorAndWidth from "../stylePalette/useAdjustColorAndWidth";
 import AngleTransformer from "../transformers/AngleTransformer";
 import { calcAngle, calcLength } from "../../utils/helpers";
 import { themes } from "../../utils/themes";
 
-//TODO add source
+// formula: https://wumbo.net/formulas/angle-between-two-vectors-arc-cosine/#formula
 function calcLinesAngle(line1, line2) {
   // Create vectors
   let a = { x: line1[2] - line1[0], y: line1[3] - line1[1] };
   let b = { x: line2[2] - line2[0], y: line2[3] - line2[1] };
 
-  // Calculate dot product
+  // Calculate dot product a * b
   let dotProduct = a.x * b.x + a.y * b.y;
 
   // Calculate magnitudes
@@ -29,11 +38,10 @@ function calcLinesAngle(line1, line2) {
   // Calculate the cosine of the angle
   let angle = Math.acos(dotProduct / (magnitudeA * magnitudeB));
 
-  // Calculate the cross product to determine the sign
-  let crossProduct = a.x * b.y - a.y * b.x;
+  // Calculate the determinant to check which way the angle should go
+  let determinant = a.x * b.y - a.y * b.x;
 
-  // If cross product is negative, the angle is more than 180 degrees
-  if (crossProduct < 0) {
+  if (determinant < 0) {
     angle = 2 * Math.PI - angle;
   }
 
@@ -41,7 +49,7 @@ function calcLinesAngle(line1, line2) {
   return angle * (180 / Math.PI);
 }
 
-function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
+function Angle({ object: angleObject, isDraggable, isSelected, onSelect }) {
   const dispatch = useDispatch();
   const [primaryLinePoints, setPrimaryLinePoints] = useState([]);
   const [secondaryLinePoints, setSecondaryLinePoints] = useState([]);
@@ -81,7 +89,6 @@ function Angle({ angleObject, isDraggable, isSelected, onSelect }) {
   function calcArcLength() {
     const primaryLen = calcLength(primaryLinePoints);
     const secondaryLen = calcLength(secondaryLinePoints);
-    // console.log(Math.min(primaryLen, secondaryLen) / 2);
     return Math.min(primaryLen, secondaryLen) / 3;
   }
 

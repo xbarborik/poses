@@ -1,3 +1,12 @@
+/**
+ * File: useClickOutsideContainer.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    hook that calls a function if the target is outside
+ */
+
 import { useEffect } from "react";
 
 function useClickOutsideContainer(ref, callback, exception) {

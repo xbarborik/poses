@@ -1,32 +1,43 @@
+/**
+ * File: Tool.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Page used in router, view of canvas
+ */
+
 import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { IoArrowBackSharp } from "react-icons/io5";
+import styled from "styled-components";
+import Canvas from "../features/canvas/Canvas";
+import Focus from "../features/tools/Focus";
+import StylePalette from "../features/stylePalette/StylePalette";
+import Toolbar from "../features/toolbar/Toolbar";
+import UndoRedo from "../features/history/UndoRedo";
 import {
+  getCurrentImage,
   getIsDragging,
   getIsDrawing,
   getIsImageSet,
+  getIsModified,
   setImage,
+  setViewOnly,
 } from "../features/canvas/canvasSlice";
-import Menu from "../ui/Menu";
-import Opacity from "../ui/Opacity";
-import Focus from "../features/tools/Focus";
-import Canvas from "../features/canvas/Canvas";
-import Palette from "../features/stylePanel/Palette";
-import Toolbar from "../features/toolbar/Toolbar";
-import TopBar from "../ui/TopBar";
-import Main from "../ui/Main";
-import BottomBar from "../ui/BottomBar";
-import UndoRedo from "../features/history/UndoRedo";
-import { useNavigate, useParams } from "react-router";
-import { setShowStyling } from "../features/stylePanel/styleSlice";
-import { loadFromId } from "../utils/supabaseClient";
-import Loader from "../ui/Loader";
-import { BASE } from "../utils/constants";
-import { IoArrowBackSharp } from "react-icons/io5";
-import styled from "styled-components";
-import { useSearchParams } from "react-router-dom";
-import ViewOnlyOptions from "../ui/ViewOnlyOptions";
-import ControlButton from "../ui/ControlButton";
 import { getSelectedTool } from "../features/toolbar/toolbarSlice";
+import { loadFromId, uploadPose } from "../utils/supabaseAPI";
+import BottomBar from "../ui/BottomBar";
+import ControlButton from "../ui/ControlButton";
+import Loader from "../ui/Loader";
+import Overlay from "../features/canvas/Overlay";
+import Menu from "../features/menu/Menu";
+import ViewOnlyOptions from "../features/menu/ViewOnlyOptions";
+import { convertAbsoluteToRelative } from "../utils/helpers";
+import ConfirmationWindow from "../ui/ConfirmationWindow";
+import { themes } from "../utils/themes";
 
 const BackButton = styled(ControlButton)`
   top: 10px;
@@ -37,7 +48,13 @@ function Tool({ imageFile, setImageFile }) {
   const [isLoading, setIsLoading] = useState(false);
   const stageRef = useRef(null);
   const dispatch = useDispatch();
-  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+  const [imageSize, setImageSize] = useState({
+    width: 0,
+    height: 0,
+    offsetX: 0,
+    offsetY: 0,
+    scale: 0,
+  });
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -46,29 +63,27 @@ function Tool({ imageFile, setImageFile }) {
   const isImageSet = useSelector(getIsImageSet);
   const isDragging = useSelector(getIsDragging);
   const selectedTool = useSelector(getSelectedTool);
+  const image = useSelector(getCurrentImage);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const isCanvasModified = useSelector(getIsModified);
+
+  useEffect(() => {
+    dispatch(setViewOnly(viewOnly || false));
+  }, [viewOnly, dispatch]);
 
   useEffect(() => {
     async function load() {
       setIsLoading(true);
       const poses = await loadFromId(id);
 
-      if (poses === null) {
-        console.log("failed");
+      if (poses === null || !poses) {
+        console.log("Failed to load pose from Id");
       } else {
         const pose = poses[0];
-
-        const objectsWithRelativePoints = Object.entries(pose.objects).reduce(
-          (acc, [key, object]) => {
-            const adjustedPoints = object.points.map((point, index) =>
-              index % 2 === 0
-                ? point / pose.originalSize.width
-                : point / pose.originalSize.height
-            );
-
-            acc[key] = { ...object, points: adjustedPoints };
-            return acc;
-          },
-          {}
+        const objectsWithRelativePoints = convertAbsoluteToRelative(
+          pose.objects,
+          pose.originalSize.stage,
+          pose.originalSize.image
         );
 
         const withRelativePoints = {
@@ -76,11 +91,7 @@ function Tool({ imageFile, setImageFile }) {
           objects: objectsWithRelativePoints,
         };
 
-        console.log(withRelativePoints);
-        // console.log(pose.objects);
-        // dispatch(setImage(pose));
         dispatch(setImage(withRelativePoints));
-        dispatch(setShowStyling(true));
       }
       setIsLoading(false);
     }
@@ -88,38 +99,52 @@ function Tool({ imageFile, setImageFile }) {
     if (id) load();
   }, [id, dispatch]);
 
+  const handleUploadToCloud = async () => {
+    const stage = stageRef.current;
+    const isSuccess = uploadPose(image.id, image.objects, {
+      stage: stage.size(),
+      image: imageSize,
+    });
+
+    return isSuccess;
+  };
+
   if (viewOnly === "true")
     return (
       <>
-        <Main stageRef={stageRef}>
+        <Overlay stageRef={stageRef}>
           {!isImageSet || isLoading ? (
             <Loader />
           ) : (
             <Canvas
               stageRef={stageRef}
+              imageSize={imageSize}
               setImageSize={setImageSize}
-              viewOnly={true}
             />
           )}
-        </Main>
+        </Overlay>
         <ViewOnlyOptions stageRef={stageRef} />
       </>
     );
 
   return (
     <>
-      <Main stageRef={stageRef}>
+      <Overlay stageRef={stageRef}>
         {!isImageSet || isLoading ? (
           <Loader />
         ) : (
-          <Canvas stageRef={stageRef} setImageSize={setImageSize} />
+          <Canvas
+            stageRef={stageRef}
+            imageSize={imageSize}
+            setImageSize={setImageSize}
+          />
         )}
         <Toolbar>
           <UndoRedo />
         </Toolbar>
-      </Main>
+      </Overlay>
       <BottomBar>
-        <Palette />
+        <StylePalette />
       </BottomBar>
 
       {!isDrawing && !isDragging && (
@@ -130,18 +155,34 @@ function Tool({ imageFile, setImageFile }) {
             imageFile={imageFile}
             setImageFile={setImageFile}
           />
-          <Opacity />
+          {/* <Opacity /> */}
           <Focus show={selectedTool === "focus"} />
           <BackButton
             onClick={() => {
-              navigate(BASE);
+              if (isCanvasModified) setShowConfirmation(true);
+              else navigate("/");
             }}
           >
             <IoArrowBackSharp />
           </BackButton>
         </>
       )}
-      {/* <CompleteMenu /> */}
+      {showConfirmation && (
+        <ConfirmationWindow
+          message="Chcete uložit změny?"
+          onConfirm={() => {
+            handleUploadToCloud();
+            setShowConfirmation(false);
+            navigate("/");
+          }}
+          onCancel={() => {
+            setShowConfirmation(false);
+            navigate("/");
+          }}
+          buttonText="Uložit"
+          buttonColor={themes.primary}
+        />
+      )}
     </>
   );
 }

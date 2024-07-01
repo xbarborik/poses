@@ -1,12 +1,20 @@
+/**
+ * File: Upload.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Input for uploading images
+ */
+
 import { useDispatch } from "react-redux";
 import { setImage } from "../features/canvas/canvasSlice";
 import styled from "styled-components";
 import { useRef } from "react";
 import UploadIcon from "../assets/uploadIcon";
-import { setShowStyling } from "../features/stylePanel/styleSlice";
 import { idFromDate } from "../utils/helpers";
 import { useNavigate } from "react-router";
-import { BASE } from "../utils/constants";
+import { uploadImageAndPose } from "../utils/supabaseAPI";
 
 const ImageInput = styled.input`
   display: none;
@@ -28,7 +36,7 @@ const Icon = styled.div`
 `;
 
 const StyledUpload = styled.div`
-  height: 30vh;
+  height: 40vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -43,14 +51,13 @@ const Text = styled.h3`
 
 function Upload({ showText = true, setImageFile }) {
   const dispatch = useDispatch();
-  const inputRef = useRef();
   const navigate = useNavigate();
+  const inputRef = useRef();
 
   return (
     <StyledUpload>
       <Icon onClick={() => inputRef.current?.click()}>
-        {/* <TfiGallery /> */}
-        <UploadIcon />
+        <UploadIcon width="5rem" height="5rem" />
         {showText && <Text>Nahrát fotku</Text>}
       </Icon>
 
@@ -62,16 +69,27 @@ function Upload({ showText = true, setImageFile }) {
           const newId = idFromDate();
           const file = e.target.files[0];
 
+          const image = {
+            id: newId,
+            objects: {},
+            path: URL.createObjectURL(file),
+          };
+
           setImageFile(file);
-          dispatch(
-            setImage({
-              id: newId,
-              objects: {},
-              path: URL.createObjectURL(file),
-            })
+          dispatch(setImage(image));
+
+          uploadImageAndPose(
+            {
+              ...image,
+              originalSize: {
+                stage: { width: 1, height: 1 },
+                image: { width: 1, height: 1 },
+              },
+            },
+            file
           );
-          dispatch(setShowStyling(true));
-          navigate(`${BASE}image/${newId}`);
+
+          navigate(`image/${newId}`);
         }}
       />
     </StyledUpload>

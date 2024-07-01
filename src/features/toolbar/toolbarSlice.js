@@ -1,8 +1,16 @@
+/**
+ * File: toolBarSlice.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Part of store to manage changes in toolbar.
+ */
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   selectedTool: "freeHand",
-  clearObjects: false,
 };
 
 const toolbarSlice = createSlice({

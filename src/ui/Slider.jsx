@@ -1,8 +1,18 @@
+/**
+ * File: Slider.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    slider component built using react-slider-rc with modifications
+ */
+
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useEffect, useState } from "react";
 
-// https://deadsimplechat.com/blog/react-slider-rc-slider-step-by-step-tutorial-with-examples/
+// Slider build using library
+// Docs: https://deadsimplechat.com/blog/react-slider-rc-slider-step-by-step-tutorial-with-examples/
 const trackHeightScale = 2.5;
 
 function calcOutline(value, maxValue) {
@@ -28,7 +38,7 @@ function CustomSlider({
       opacity: 1,
       border: `${
         calcOutline(value, maxValue) * scale
-      }px solid rgba(255,255,255,0.5)`,
+      }px solid rgba(255,255,255,0.45)`,
       cursor: "pointer",
       boxShadow: "none",
       height: (value + calcOutline(value, maxValue) * 2) * scale,
@@ -48,7 +58,7 @@ function CustomSlider({
     },
 
     rail: {
-      backgroundColor: "rgba(0,0,0,0.3)",
+      backgroundColor: "rgba(255,255,255,0.3)",
       height: minValue * trackHeightScale,
     },
   };

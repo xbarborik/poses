@@ -1,19 +1,24 @@
-import { Circle, Group, Image, Line, Transformer } from "react-konva";
+/**
+ * File: CustomTransformer.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Modifies base Konva transform to have a different look than original.
+ */
+
+import { Circle, Group, Image, Transformer } from "react-konva";
 
 import { useImage } from "react-konva-utils";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getStageScale, setIsDragging } from "../canvas/canvasSlice";
 import { circleHitFunc } from "../../hit_functions/circleHitFunction";
-import {
-  ANCHOR_SHADOW_WIDTH,
-  HIT_DETECTION_MULTIPLIER,
-} from "../../utils/constants";
+import { ANCHOR_SHADOW_WIDTH } from "../../utils/constants";
 
 function CustomTransformer({
   trRef,
   centeredScaling = true,
-  onRemove,
   keepRatio = true,
   stageRef,
 }) {
@@ -63,10 +68,8 @@ function CustomTransformer({
         rotateEnabled={false}
         onDragStart={() => dispatch(setIsDragging(true))}
         onDragMove={getTransformerRect}
-        onDragEnd={() => dispatch(setIsDragging(false))}
         onTransformStart={() => dispatch(setIsDragging(true))}
         onTransform={getTransformerRect}
-        onTransformEnd={() => dispatch(setIsDragging(false))}
         anchorSize={buttonRadius * 2 * stageScale}
         anchorCornerRadius={50}
         anchorFill="rgba(0, 0, 0, 0)" // Transparency

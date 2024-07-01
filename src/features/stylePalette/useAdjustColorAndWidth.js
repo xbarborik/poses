@@ -1,17 +1,23 @@
+/**
+ * File: useAdjustColorandWidth.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Listens to changes in styles and modifies object to new styling.
+ */
+
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getStrokeWidth, getColor } from "./styleSlice";
-import { getSelectedObject, updateWithObject } from "../canvas/canvasSlice";
+import { updateWithObject } from "../canvas/canvasSlice";
 
-// Works but currently also changes color of any clicked object
-
-function useAdjustColorAndWidth(object, isSelected) {
+function useAdjustColorAndWidth(object, isSelected, stageScale = 1) {
   const dispatch = useDispatch();
   const selectedColor = useSelector(getColor);
   const selectedStrokeWidth = useSelector(getStrokeWidth);
 
   useEffect(() => {
-    // console.log("test", selectedObject);
     if (
       isSelected &&
       ((object.color !== selectedColor && selectedColor !== null) ||
@@ -22,11 +28,18 @@ function useAdjustColorAndWidth(object, isSelected) {
         updateWithObject({
           ...object,
           color: selectedColor,
-          strokeWidth: selectedStrokeWidth,
+          strokeWidth: selectedStrokeWidth / stageScale,
         })
       );
     }
-  }, [isSelected, selectedColor, selectedStrokeWidth, dispatch, object]);
+  }, [
+    isSelected,
+    selectedColor,
+    selectedStrokeWidth,
+    dispatch,
+    object,
+    stageScale,
+  ]);
 }
 
 export default useAdjustColorAndWidth;

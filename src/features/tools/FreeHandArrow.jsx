@@ -1,28 +1,33 @@
-import { Arrow, Group, Line } from "react-konva";
+/**
+ * File: FreehandArrow.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Shape done with freehand extended with arrow pointer
+ */
+
+import { Line } from "react-konva";
 import {
   ARROW_POINTER_SCALE,
   HIT_DETECTION_MULTIPLIER,
   LOWERED_ALPHA,
-  MINIMUM_OBJECT_LENGTH,
 } from "../../utils/constants";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CustomTransformer from "../transformers/CustomTransformer";
 import { getNewPoints } from "./freeHandUtils";
 import {
   getOpacityLowered,
-  removeObject,
   setIsDragging,
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import useAdjustColorAndWidth from "../stylePalette/useAdjustColorAndWidth";
 import CustomArrow from "../customShapes/CustomArrow";
 import { themes } from "../../utils/themes";
 
-function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
+function FreeHandArrow({ object: line, isDraggable, isSelected, onSelect }) {
   const shapeRef = useRef();
-  // const trRef = useRef();
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
   const isOpacityLowered = useSelector(getOpacityLowered);
@@ -32,45 +37,6 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
   useEffect(() => {
     setPoints(line.points);
   }, [line.points]);
-
-  // useEffect(() => {
-  //   if (isSelected) {
-  //     trRef.current.nodes([shapeRef.current]);
-  //     trRef.current.getLayer().batchDraw();
-  //   }
-  // }, [isSelected]);
-
-  // https://stackoverflow.com/questions/61048076/how-to-get-new-points-of-line-after-transformation-in-konvajs
-  function handleTransform(e) {
-    const node = shapeRef.current;
-
-    const scaleX = node.scaleX();
-    const scaleY = node.scaleY();
-
-    node.scaleX(1);
-    node.scaleY(1);
-
-    const scaledPoints = points.map((value, index) => {
-      return index % 2 === 0 ? value * scaleX : value * scaleY;
-    });
-
-    const newPoints = getNewPoints(e, scaledPoints);
-
-    setPoints(newPoints);
-    // shapeRef.current.points(newPoints);
-    // shapeRef.current.getLayer().batchDraw();
-
-    shapeRef.current.position({ x: 0, y: 0 });
-  }
-
-  function handleTransformEnd() {
-    const newLine = {
-      ...line,
-      points: points,
-    };
-
-    dispatch(updateWithObject(newLine));
-  }
 
   function handleDragMove(e) {
     const newPoints = getNewPoints(e, line.points);
@@ -132,9 +98,6 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         lineJoin="round"
         globalCompositeOperation={"source-over"}
         draggable={isDraggable}
-        onTransformStart={() => dispatch(updateHistory())}
-        onTransform={handleTransform}
-        onTransformEnd={handleTransformEnd}
         onDragMove={handleDragMove}
         onDragStart={() => {
           dispatch(updateHistory());
@@ -142,7 +105,6 @@ function FreeHandArrow({ line, isDraggable, isSelected, onSelect, stageRef }) {
         }}
         onDragEnd={(e) => {
           handleDragEnd(e);
-          dispatch(setIsDragging(false));
         }}
         onTap={onSelect}
         onClick={onSelect}

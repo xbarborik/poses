@@ -1,9 +1,17 @@
+/**
+ * File: Focus.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Unused component, started development but prototypes showed that this way isn't clear.
+ */
+
 import styled from "styled-components";
 import { FaCheck, FaRegEye } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
-import { getIsImageSet } from "../canvas/canvasSlice";
+import { useDispatch } from "react-redux";
 import eyebrows from "../../assets/eyebrows.png";
 import nose from "../../assets/nose.png";
 import belly from "../../assets/belly.png";
@@ -14,7 +22,6 @@ import none from "../../assets/none.png";
 import up from "../../assets/up.png";
 import left from "../../assets/left.png";
 import right from "../../assets/right.png";
-import ControlButton from "../../ui/ControlButton";
 import { selectTool } from "../toolbar/toolbarSlice";
 
 const Container = styled.div`
@@ -82,11 +89,6 @@ const PrimaryIcon = styled.span`
   justify-content: center;
 `;
 
-const FocusToggleButton = styled(ControlButton)`
-  top: 6.5rem;
-  left: 10px;
-`;
-
 const DoneButton = styled.button`
   background-color: #5897ee;
   border: none;
@@ -137,7 +139,6 @@ const gazes = {
 function Focus({ show }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState("none");
-  const disabled = useSelector(getIsImageSet) === false;
   const dispatch = useDispatch();
 
   function handleSelect(option) {
@@ -151,9 +152,6 @@ function Focus({ show }) {
 
   return (
     <>
-      {/* <FocusToggleButton onClick={handleToggle} disabled={disabled}>
-        <FaRegEye />
-      </FocusToggleButton> */}
       {selectedItem !== "none" && (
         <Watermark>
           <PrimaryIcon>

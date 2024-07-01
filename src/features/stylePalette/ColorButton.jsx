@@ -1,24 +1,30 @@
+/**
+ * File: ColorButton.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Button component for setting color in canvas
+ */
+
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { getColor, selectColor } from "./styleSlice";
 
 const StyledColorButton = styled.button`
   display: block;
-  /* flex: 1; */
   aspect-ratio: 1;
   pointer-events: auto;
   margin: 0.1rem;
-
   border-radius: 50%;
   background-color: ${(props) => props.$color};
   border: none;
-
-  width: ${(props) => (props.$isActive ? `1.7rem` : "1.6rem")};
-  height: ${(props) => (props.$isActive ? `1.7rem` : "1.6rem")};
-
-  &:hover {
-    cursor: pointer;
-  }
+  width: 1.6rem;
+  height: 1.6rem;
+  outline: ${(props) =>
+    props.$isActive ? `3px solid ${props.$color}` : "0px"};
+  outline-offset: 2px;
+  cursor: pointer;
 `;
 
 function ColorButton({ color }) {

@@ -1,16 +1,33 @@
+/**
+ * File: canvasSlice.js
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *  contains part of global state for redux store with logic belonging to canvas
+ */
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: false,
-  image: { id: null, objects: {}, pastObjects: [], futureObjects: [] },
-  currentImageIndx: 0,
-  isOpacityLowered: false,
+  image: {
+    id: null,
+    objects: {},
+    pastObjects: [],
+    futureObjects: [],
+    path: "",
+  },
 
+  isOpacityLowered: false,
   stageScale: 1,
   stagePos: { x: 0, y: 0 },
   selectedObjectId: null,
   isDrawing: false,
   isDragging: false,
+  isExporting: false,
+  viewOnly: false,
+  isModified: false,
 };
 
 const canvasSlice = createSlice({
@@ -24,7 +41,12 @@ const canvasSlice = createSlice({
       state.isLoading = true;
     },
 
+    setViewOnly(state, action) {
+      state.viewOnly = action.payload;
+    },
+
     setImage(state, action) {
+      state.isModified = false;
       state.image = { ...action.payload, pastObjects: [], futureObjects: [] };
       state.isLoading = false;
     },
@@ -35,16 +57,19 @@ const canvasSlice = createSlice({
     setStagePos(state, action) {
       state.stagePos = action.payload;
     },
-    setOrignalSize(state, action) {
-      state.image.originalSize = action.payload;
-    },
+
     updateWithObject(state, action) {
       state.image.objects[action.payload.id] = action.payload;
       state.image.futureObjects = [];
+      state.selectedObjectId = action.payload.id;
+      state.isDragging = false;
+      state.isModified = true;
     },
     updateHistory(state) {
       const objects = state.image.objects;
       state.image.pastObjects.push(objects);
+      if (state.image.pastObjects.length > 40)
+        state.image.pastObjects = state.image.pastObjects.slice(1);
     },
     removeObject(state, action) {
       const objects = state.image.objects;
@@ -57,6 +82,7 @@ const canvasSlice = createSlice({
       state.image.pastObjects.push(pastObjects);
       delete objects[action.payload];
       state.image.futureObjects = [];
+      state.isModified = true;
     },
     removeInvalidObject(state, action) {
       delete state.image.objects[action.payload];
@@ -94,11 +120,21 @@ const canvasSlice = createSlice({
     setIsDragging(state, action) {
       state.isDragging = action.payload;
     },
+    setIsExporting(state, action) {
+      state.isExporting = action.payload;
+    },
+    setFocus(state, action) {
+      state.image.focusPoint = action.payload;
+    },
+    setIsModified(state, action) {
+      state.isModified = action.payload;
+    },
   },
 });
 
 export const {
   setIsLoading,
+  setViewOnly,
   setImage,
   toggleOpacityLowered,
   setStageScale,
@@ -114,11 +150,16 @@ export const {
   selectObject,
   deselectObject,
   setIsDrawing,
+  setIsExporting,
   setIsDragging,
+  setFocus,
+  setIsModified,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
 
 export const getIsLoading = (state) => state.canvas.isLoading;
+
+export const getViewOnly = (state) => state.canvas.viewOnly;
 
 export const getOpacityLowered = (state) => state.canvas.isOpacityLowered;
 
@@ -128,17 +169,21 @@ export const getCurrentImage = (state) => state.canvas.image;
 
 export const getObjects = (state) => state.canvas.image?.objects;
 
+export const getFocus = (state) => state.canvas.image?.focusPoint;
+
 export const getIsDrawing = (state) => state.canvas.isDrawing;
 
 export const getIsDragging = (state) => state.canvas.isDragging;
+
+export const getIsExporting = (state) => state.canvas.isExporting;
 
 export const getStageScale = (state) => state.canvas.stageScale;
 
 export const getStagePos = (state) => state.canvas.stagePos;
 
-export const getOriginalSize = (state) => state.canvas.image?.originalSize;
-
 export const getSelectedObjectId = (state) => state.canvas.selectedObjectId;
+
+export const getIsModified = (state) => state.canvas.isModified;
 
 export const getSelectedObject = (state) =>
   state.canvas.image.objects[state.canvas.selectedObjectId];

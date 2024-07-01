@@ -36,10 +36,6 @@ body {
   width: 100%;
 }
 
-input,
-textarea,
-button,
-select,
-a {
+button {
   -webkit-tap-highlight-color: transparent;
 }

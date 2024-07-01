@@ -1,10 +1,19 @@
+/**
+ * File: GalleryList.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Renders a grid of Cards
+ */
+
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchAllPoses } from "../../utils/supabaseClient";
-import { BASE } from "../../utils/constants";
+import { fetchAllPoses } from "../../utils/supabaseAPI";
 import { themes } from "../../utils/themes";
 import Loader from "../../ui/Loader";
+import Card from "./Card";
 
 const StyledGalleryList = styled.div`
   display: grid;
@@ -16,30 +25,24 @@ const StyledGalleryList = styled.div`
   grid-auto-rows: 1fr;
 `;
 
-//https://css-tricks.com/a-grid-of-logos-in-squares/
-const Card = styled.div`
-  &:before {
-    content: "";
-    display: block;
-    padding-bottom: 100%;
-  }
-
-  position: relative;
+const CenteredLoader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-
-  &:hover {
-    cursor: pointer;
-  }
+  height: 40%;
+  background-color: ${themes.background};
+  border-radius: 15px;
 `;
 
-const Image = styled.img`
-  position: absolute;
-  top: 0;
-  left: 0;
-  object-fit: cover;
-  height: 100%;
+const StyledHeading = styled.h2`
+  text-align: center;
+  color: black;
   width: 100%;
-  border-radius: 5px;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  background-color: ${themes.background};
+  border-radius: 15px;
 `;
 
 function GalleryList() {
@@ -51,7 +54,12 @@ function GalleryList() {
     async function fetchPoses() {
       setIsLoading(true);
       const result = await fetchAllPoses();
-      setPoses(result);
+      if (result) {
+        setPoses(result);
+      } else {
+        setPoses([]);
+      }
+
       setIsLoading(false);
     }
 
@@ -59,23 +67,33 @@ function GalleryList() {
   }, []);
 
   function handleOpen(id) {
-    navigate(`${BASE}image/${id}`);
+    navigate(`image/${id}`);
   }
 
   return (
-    <StyledGalleryList>
+    <>
       {isLoading ? (
-        <Loader />
+        <CenteredLoader>
+          <Loader />
+        </CenteredLoader>
+      ) : poses.length === 0 ? (
+        <CenteredLoader>
+          <StyledHeading>Nemáte ještě žádné nahraté fotky</StyledHeading>
+        </CenteredLoader>
       ) : (
-        poses.map((pose) => {
-          return (
-            <Card key={pose.id} onClick={() => handleOpen(pose.id)}>
-              <Image src={pose.path + ".png"} />
-            </Card>
-          );
-        })
+        <StyledGalleryList>
+          {poses.map((pose) => {
+            return (
+              <Card
+                key={pose.id}
+                onClick={() => handleOpen(pose.id)}
+                image={pose.path + ".png"}
+              />
+            );
+          })}
+        </StyledGalleryList>
       )}
-    </StyledGalleryList>
+    </>
   );
 }
 

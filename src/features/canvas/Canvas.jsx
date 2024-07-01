@@ -1,14 +1,24 @@
+/**
+ * File: Canvas.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description: This React component manages an interactive canvas for annotating poses using React-Konva.
+ * It integrates with Redux for state management, providing tools for drawing, commenting, and
+ * manipulating pose images. It also handles UI interactions such as touch and mouse input to manipulate
+ * the canvas objects and annotations.
+ */
+
 import styled from "styled-components";
-import { Stage, Layer, FastLayer } from "react-konva";
+import { Stage, Layer } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deselectObject,
   getIsDrawing,
   getObjects,
-  getOriginalSize,
   getSelectedObjectId,
+  getViewOnly,
   redo,
-  removeInvalidObject,
   selectObject,
   setIsDrawing,
   setStagePos,
@@ -20,16 +30,14 @@ import {
 import {
   getStrokeWidth,
   selectColor,
-  setShowStyling,
   setStrokeWidth,
-} from "../stylePanel/styleSlice";
+} from "../stylePalette/styleSlice";
 import { getSelectedTool, selectTool } from "../toolbar/toolbarSlice";
 import { useEffect, useRef, useState } from "react";
 import {
   smoothLine,
   outOfBounds,
   notLongEnoughToDraw,
-  getRelativePointerPosition,
   convertRelativeToAbsolute,
 } from "../../utils/helpers";
 import FreeHand from "../tools/FreeHand";
@@ -42,7 +50,7 @@ import { updateCircle } from "../tools/circleUtils";
 import { useDimensions } from "./useDimensions";
 import useClickOutsideContainer from "../../hooks/useClickOutsideContainer";
 import Circle from "../tools/CircleFromCorner";
-import { getColor } from "../stylePanel/styleSlice";
+import { getColor } from "../stylePalette/styleSlice";
 import useCtrlAndKeyDown from "../../hooks/useCtrlAndKeyDown";
 import { useMultiTouchScale } from "./useMultiTouchZoom";
 import { useWheelAndTouchpadZoom } from "./useWheelAndTouchpadZoom";
@@ -50,7 +58,9 @@ import FreeHandArrow from "../tools/FreeHandArrow";
 import Angle from "../tools/Angle";
 import { updateAngle } from "../tools/angleUtils";
 import Comment from "../tools/Comment";
-import CommentContent from "../tools/CommentContent";
+import { themes } from "../../utils/themes";
+import CommentArea from "../commentArea/CommentArea";
+import { STARTING_CANVAS_SCALE } from "../../utils/constants";
 import FocusArrow from "../tools/FocusArrow";
 
 const StyledCanvas = styled.div`
@@ -61,37 +71,55 @@ const StyledCanvas = styled.div`
   height: 100%;
   width: 100%;
   overscroll-behavior: none;
-  background-color: #d9d9d9;
+  background-color: ${themes.canvasBackground};
   zoom: 1;
 `;
 
-function Canvas({ stageRef, setImageSize, isLoading, viewOnly }) {
-  const canvasRef = useRef(null);
+function getRelativePointerPosition(stageRef) {
+  const stage = stageRef.current;
+  return stage.getRelativePointerPosition();
+}
+
+function Canvas({ stageRef, imageSize, setImageSize, isLoading = false }) {
   const dispatch = useDispatch();
+  const canvasRef = useRef(null); // References the canvas DOM for direct manipulations and measurements
+
+  // Retrieves drawing state and object properties from Redux store
   const objects = useSelector(getObjects);
   const isDrawing = useSelector(getIsDrawing);
   const strokeWidth = useSelector(getStrokeWidth);
   const selectedColor = useSelector(getColor);
   const selectedTool = useSelector(getSelectedTool);
   const selectedObjectId = useSelector(getSelectedObjectId);
-  const originalSize = useSelector(getOriginalSize);
+  const viewOnly = useSelector(getViewOnly);
 
-  const [newObjectId, setNewObjectId] = useState("");
+  // Custom hook for handling dimensions based on the canvas reference
   const [dimensions] = useDimensions(canvasRef);
+
+  // Local states
   const [adjustedObjects, setAdjustedObjects] = useState({});
+  const [newObject, setNewObject] = useState({});
+
+  // Custom hooks for managing zoom on the canvas
+  useMultiTouchScale(stageRef, dimensions);
+  useWheelAndTouchpadZoom(stageRef, dimensions);
+
+  // Event listeners for global actions like undo/redo
+  useCtrlAndKeyDown("z", () => dispatch(undo()));
+  useCtrlAndKeyDown("y", () => dispatch(redo()));
 
   const {
     scale: scaleAfterMultitouch,
     handleMultiTouchMove,
     handleMultiTouchEnd,
     pos: posAfterMultitouch,
-  } = useMultiTouchScale(stageRef, dimensions);
+  } = useMultiTouchScale(stageRef, dimensions, 0.8);
 
   const {
     scale: scaleAfterWheel,
     handleWheel,
     pos: posAfterWheel,
-  } = useWheelAndTouchpadZoom(stageRef, dimensions);
+  } = useWheelAndTouchpadZoom(stageRef, dimensions, 0.8);
 
   const outsideClickException = "adjust";
   useClickOutsideContainer(
@@ -99,13 +127,18 @@ function Canvas({ stageRef, setImageSize, isLoading, viewOnly }) {
     () => dispatch(deselectObject()),
     outsideClickException
   );
+
   useCtrlAndKeyDown("z", () => dispatch(undo()));
   useCtrlAndKeyDown("y", () => dispatch(redo()));
 
   useEffect(() => {
-    const withAdjustedPoints = convertRelativeToAbsolute(objects, dimensions);
+    const withAdjustedPoints = convertRelativeToAbsolute(
+      objects,
+      dimensions,
+      imageSize
+    );
     setAdjustedObjects(withAdjustedPoints);
-  }, [objects, dimensions]);
+  }, [objects, dimensions, imageSize]);
 
   useEffect(() => {
     dispatch(setStagePos(posAfterWheel));
@@ -117,28 +150,47 @@ function Canvas({ stageRef, setImageSize, isLoading, viewOnly }) {
     dispatch(setStageScale(scaleAfterMultitouch));
   }, [scaleAfterMultitouch, dispatch, posAfterMultitouch]);
 
-  // Reset scale
+  // Reset scale on dimensions change
   useEffect(() => {
     const stage = stageRef.current;
     if (stage != null) {
-      dispatch(setStageScale(1));
-      stage.scale({ x: 1, y: 1 });
-      stage.position({ x: 0, y: 0 });
+      dispatch(setStageScale(STARTING_CANVAS_SCALE));
+      stage.scale({ x: STARTING_CANVAS_SCALE, y: STARTING_CANVAS_SCALE });
+      stage.position({
+        x: (dimensions.width * (1 - STARTING_CANVAS_SCALE)) / 2,
+        y: (dimensions.height * (1 - STARTING_CANVAS_SCALE)) / 2,
+      });
     }
-  }, [dispatch, stageRef]);
+  }, [dispatch, stageRef, dimensions]);
+
+  useEffect(() => {
+    if (selectedObjectId === newObject.id) {
+      setNewObject({});
+    }
+  }, [selectedObjectId, newObject.id]);
 
   function isButtonOrAnchor(e) {
     const name = e?.target?.attrs?.name;
-    return name?.includes("anchor");
+    return name?.includes("anchor") || name?.includes("adjust");
   }
 
+  // Handles initial event for drawing or selecting objects based on the current tool and object state.
   function handleStart(e) {
     e.evt.preventDefault();
 
-    const position = getRelativePointerPosition(e);
+    const position = getRelativePointerPosition(stageRef);
+
+    const clickedObjectId = e.target.id();
+
+    if (clickedObjectId === selectedObjectId) {
+      return;
+    } else if (!isButtonOrAnchor(e) && selectedObjectId !== null) {
+      dispatch(deselectObject(selectedObjectId));
+    }
 
     if (
       // Block draw with mouse wheel press
+      viewOnly ||
       e.evt.button === 1 ||
       selectedTool === "none" ||
       // Don't draw when scaling with anchor
@@ -152,77 +204,51 @@ function Canvas({ stageRef, setImageSize, isLoading, viewOnly }) {
       return;
     }
 
-    const clickedObjectId = e.target.id();
-
-    if (clickedObjectId === selectedObjectId) {
-      return;
-    } else if (selectedObjectId != null) {
-      dispatch(deselectObject(selectedObjectId));
-    }
-
     dispatch(updateHistory());
     dispatch(setIsDrawing(true));
-    dispatch(setShowStyling(false));
 
-    const id = String(new Date().valueOf());
-    setNewObjectId(id);
+    const id = `${new Date().valueOf()}`;
 
-    if (selectedTool === "comment") {
-      dispatch(selectObject(id));
-    }
+    const sharedValues = {
+      id,
+      type: selectedTool,
+      color: selectedColor,
+      points: [position.x, position.y, position.x, position.y],
+      strokeWidth: strokeWidth,
+      originalSize: dimensions,
+    };
 
     switch (selectedTool) {
       case "freeHand":
       case "freeHandArrow":
       case "line":
       case "arrow":
-        dispatch(
-          updateWithObject({
-            id,
-            color: selectedColor,
-            type: selectedTool,
-            points: [position.x, position.y, position.x, position.y],
-            strokeWidth: strokeWidth,
-          })
-        );
+      case "doubleSidedArrow":
+      case "focusArrow":
+        setNewObject({
+          ...sharedValues,
+        });
         break;
       case "angle":
-        dispatch(
-          updateWithObject({
-            id,
-            color: selectedColor,
-            type: selectedTool,
-            points: [position.x, position.y, position.x, position.y],
-            secondaryPoints: [position.x, position.y, position.x, position.y],
-            strokeWidth: strokeWidth,
-          })
-        );
+        setNewObject({
+          ...sharedValues,
+          secondaryPoints: [position.x, position.y, position.x, position.y],
+        });
         break;
       case "circle":
-        dispatch(
-          updateWithObject({
-            id,
-            color: selectedColor,
-            type: selectedTool,
-            points: [position.x, position.y, position.x, position.y],
-            strokeWidth: strokeWidth,
-            radius: 0,
-            width: 0,
-            height: 0,
-          })
-        );
+        setNewObject({
+          ...sharedValues,
+          radius: 0,
+          width: 0,
+          height: 0,
+        });
         break;
       case "comment":
         dispatch(selectTool("none"));
-        dispatch(
-          updateWithObject({
-            id,
-            type: selectedTool,
-            text: "",
-            color: selectedColor,
-            points: [position.x, position.y, position.x, position.y],
-          })
-        );
+        setNewObject({
+          ...sharedValues,
+          text: "",
+        });
         break;
     }
   }
@@ -231,7 +257,7 @@ function Canvas({ stageRef, setImageSize, isLoading, viewOnly }) {
     e.evt.preventDefault();
     if (!isDrawing || selectedTool === "none") return;
 
-    const position = getRelativePointerPosition(e);
+    const position = getRelativePointerPosition(stageRef);
     if (
       outOfBounds({
         position,
@@ -246,32 +272,34 @@ function Canvas({ stageRef, setImageSize, isLoading, viewOnly }) {
       case "freeHand":
       case "freeHandArrow":
         updateFreeHand({
-          updateWithObject: (object) => dispatch(updateWithObject(object)),
-          freeHand: objects[newObjectId],
+          updateObject: (object) => setNewObject(object),
+          freeHand: newObject,
           position,
         });
         break;
       case "line":
       case "arrow":
+      case "doubleSidedArrow":
+      case "focusArrow":
         updateLine({
-          updateWithObject: (object) => dispatch(updateWithObject(object)),
-          line: objects[newObjectId],
+          updateObject: (object) => setNewObject(object),
+          line: newObject,
           position,
           selectedColor,
         });
         break;
       case "angle":
         updateAngle({
-          updateWithObject: (object) => dispatch(updateWithObject(object)),
-          angleObject: objects[newObjectId],
+          updateObject: (object) => setNewObject(object),
+          angleObject: newObject,
           position,
           selectedColor,
         });
         break;
       case "circle":
         updateCircle({
-          updateWithObject: (object) => dispatch(updateWithObject(object)),
-          circle: objects[newObjectId],
+          updateObject: (object) => setNewObject(object),
+          circle: newObject,
           position,
           selectedColor,
         });
@@ -285,21 +313,22 @@ function Canvas({ stageRef, setImageSize, isLoading, viewOnly }) {
 
     if (!objects) return;
 
-    if (notLongEnoughToDraw(objects[newObjectId])) {
-      dispatch(removeInvalidObject(newObjectId));
+    if (notLongEnoughToDraw(newObject)) {
+      setNewObject({});
+      dispatch(undo());
       return;
     }
 
-    dispatch(selectObject(newObjectId));
-
     if (selectedTool === "freeHand" || selectedTool === "freeHandArrow") {
-      smoothLine({
-        objects,
-        updateWithObject: (object) => dispatch(updateWithObject(object)),
-        id: newObjectId,
-        step: 2,
-      });
-    }
+      dispatch(
+        updateWithObject(
+          smoothLine({
+            line: newObject,
+            step: 6,
+          })
+        )
+      );
+    } else dispatch(updateWithObject(newObject));
   }
 
   function handleSelect(object) {
@@ -312,137 +341,99 @@ function Canvas({ stageRef, setImageSize, isLoading, viewOnly }) {
 
   return (
     <StyledCanvas ref={canvasRef} id="canvas">
-      {!isLoading &&
-        objects &&
-        dimensions.width > 0 &&
-        originalSize !== null && (
-          <Stage
-            ref={stageRef}
-            width={dimensions.width}
-            height={dimensions.height}
-            onWheel={(e) => {
-              handleWheel(e);
-              dispatch(deselectObject());
-            }}
-            onMouseDown={(e) => {
-              if (e.evt.button === 0) handleStart(e);
-            }}
-            onMousemove={handleMove}
-            onMouseup={handleEnd}
-            onTouchStart={handleStart}
-            onTouchMove={(e) => {
-              if (e.evt.touches.length === 2) {
-                // dispatch(deselectObject());
-                handleMultiTouchMove(e);
-              } else handleMove(e);
-            }}
-            onTouchEnd={(e) => {
-              handleMultiTouchEnd();
-              handleEnd(e);
-            }}
-          >
-            <FastLayer>
-              <PoseImage dimensions={dimensions} setImageSize={setImageSize} />
-            </FastLayer>
-            <Layer>
-              {Object.values(adjustedObjects).map((object) => {
-                if (notLongEnoughToDraw(object, strokeWidth)) return null;
-                if (object.type === "freeHand") {
-                  return (
-                    <FreeHand
-                      key={object.id}
-                      line={object}
-                      isDraggable={selectedObjectId === object.id}
-                      isSelected={selectedObjectId === object.id}
-                      onSelect={() => handleSelect(object)}
-                      stageRef={stageRef}
-                    />
-                  );
-                } else if (object.type === "freeHandArrow") {
-                  return (
-                    <FreeHandArrow
-                      key={object.id}
-                      line={object}
-                      isDraggable={selectedObjectId === object.id}
-                      isSelected={selectedObjectId === object.id}
-                      onSelect={() => handleSelect(object)}
-                      stageRef={stageRef}
-                    />
-                  );
-                } else if (object.type === "line") {
-                  return (
-                    <Line
-                      key={object.id}
-                      line={object}
-                      isDraggable={selectedObjectId === object.id}
-                      isSelected={selectedObjectId === object.id}
-                      onSelect={() => handleSelect(object)}
-                    />
-                  );
-                } else if (object.type === "arrow") {
+      {!isLoading && objects && dimensions.width > 0 && (
+        <Stage
+          ref={stageRef}
+          width={dimensions.width}
+          height={dimensions.height}
+          onWheel={(e) => {
+            handleWheel(e);
+          }}
+          onMouseDown={(e) => {
+            if (e.evt.button === 0) handleStart(e);
+          }}
+          onMousemove={handleMove}
+          onMouseup={handleEnd}
+          onTouchStart={handleStart}
+          onTouchMove={(e) => {
+            if (e.evt.touches.length === 2) {
+              handleMultiTouchMove(e);
+            } else handleMove(e);
+          }}
+          onTouchEnd={(e) => {
+            handleMultiTouchEnd();
+            handleEnd(e);
+          }}
+        >
+          <Layer listening={false}>
+            <PoseImage dimensions={dimensions} setImageSize={setImageSize} />
+            <CommentArea
+              stageRef={stageRef}
+              startX={dimensions.width / 2 - imageSize.width / 2}
+              startY={dimensions.height / 2 + imageSize.height / 2}
+              maxWidth={imageSize.width}
+            />
+          </Layer>
+          <Layer>
+            {[...Object.values(adjustedObjects), newObject].map((object) => {
+              if (!object.points || notLongEnoughToDraw(object)) return null;
+
+              const sharedProps = {
+                object,
+                isDraggable: !viewOnly && selectedObjectId === object.id,
+                isSelected: !viewOnly && selectedObjectId === object.id,
+                onSelect: () => handleSelect(object),
+                stageRef: stageRef,
+              };
+
+              switch (object.type) {
+                case "freeHand":
+                  return <FreeHand key={object.id} {...sharedProps} />;
+                case "freeHandArrow":
+                  return <FreeHandArrow key={object.id} {...sharedProps} />;
+                case "line":
+                  return <Line key={object.id} {...sharedProps} />;
+                case "arrow":
+                  return <Arrow key={object.id} {...sharedProps} />;
+                case "doubleSidedArrow":
                   return (
                     <Arrow
                       key={object.id}
-                      arrow={object}
-                      isDraggable={selectedObjectId === object.id}
-                      isSelected={selectedObjectId === object.id}
-                      onSelect={() => handleSelect(object)}
+                      doubleSided={true}
+                      {...sharedProps}
                     />
                   );
-                } else if (object.type === "circle") {
-                  return (
-                    <Circle
-                      key={object.id}
-                      circle={object}
-                      isDraggable={selectedObjectId === object.id}
-                      isSelected={selectedObjectId === object.id}
-                      onSelect={() => handleSelect(object)}
-                      stageRef={stageRef}
-                    />
-                  );
-                } else if (object.type === "angle") {
-                  return (
-                    <Angle
-                      key={object.id}
-                      angleObject={object}
-                      isDraggable={selectedObjectId === object.id}
-                      isSelected={selectedObjectId === object.id}
-                      onSelect={() => handleSelect(object)}
-                    />
-                  );
-                } else {
+                case "circle":
+                  return <Circle key={object.id} {...sharedProps} />;
+                case "angle":
+                  return <Angle key={object.id} {...sharedProps} />;
+                case "focusArrow":
+                  return <FocusArrow key={object.id} {...sharedProps} />;
+                default:
                   return null;
-                }
-              })}
-            </Layer>
-            <Layer>
-              {Object.values(adjustedObjects).map((object) => {
-                if (object.type === "comment") {
-                  return (
-                    <>
-                      <Comment
-                        key={object.id}
-                        comment={object}
-                        isDraggable={selectedObjectId === object.id}
-                        isSelected={selectedObjectId === object.id}
-                        onSelect={() => handleSelect(object)}
-                      />
-                      {/* <CommentContent
-                        key={"content" + object.id}
-                        comment={{
-                          ...object,
-                          points: [200, dimensions.height + 200],
-                        }}
-                      /> */}
-                    </>
-                  );
-                } else {
-                  return null;
-                }
-              })}
-            </Layer>
-          </Stage>
-        )}
+              }
+            })}
+          </Layer>
+          <Layer>
+            {[...Object.values(adjustedObjects), newObject].map((object) => {
+              if (object.type === "comment") {
+                return (
+                  <Comment
+                    key={object.id}
+                    object={object}
+                    isDraggable={!viewOnly && selectedObjectId === object.id}
+                    isSelected={selectedObjectId === object.id}
+                    onSelect={() => handleSelect(object)}
+                    viewOnly={viewOnly}
+                  />
+                );
+              } else {
+                return null;
+              }
+            })}
+          </Layer>
+        </Stage>
+      )}
     </StyledCanvas>
   );
 }

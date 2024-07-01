@@ -1,18 +1,28 @@
+/**
+ * File: SpeechToText.js
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    utility functions used in diferent files
+ */
+
 import { MINIMUM_OBJECT_LENGTH } from "./constants";
 
-// Keeps every nth point in the last line
-export function smoothLine({ updateWithObject, objects, id, step }) {
-  const line = objects[id];
+// Keeps every nth point (x and y) in the  line
+export function smoothLine({ line, step, threshold = 100 }) {
   const points = line.points;
 
-  if (line.points.length <= step) return;
+  // Step must be an even number
+  if (line.points.length <= threshold || step % 2 !== 0) return line;
 
+  // Values at index i and i + 1 are x and y
   const filteredLine = {
     ...line,
     points: points.filter((_, i) => i % step === 0 || i % step === 1),
   };
 
-  updateWithObject(filteredLine);
+  return filteredLine;
 }
 
 export function outOfBounds({ position, startX = 1, endX, startY = 1, endY }) {
@@ -24,6 +34,18 @@ export function outOfBounds({ position, startX = 1, endX, startY = 1, endY }) {
   ) {
     return;
   }
+}
+
+export function calcDirections(points) {
+  const dx = points[2] - points[0];
+  const dy = points[3] - points[1];
+  const length = Math.sqrt(dx * dx + dy * dy);
+  if (length === 0) return { error: true };
+
+  const directionX = dx / length;
+  const directionY = dy / length;
+
+  return { directionX, directionY, length, error: false };
 }
 
 export function mapPoints(x, y, width, height) {
@@ -38,7 +60,7 @@ export function calcAngle(points) {
   return angleDegrees;
 }
 
-//https://gist.github.com/ashblue/3860114
+// Source: https://gist.github.com/ashblue/3860114
 export function movePointAtAngle(point, angle, distance) {
   const angleRadians = (angle * Math.PI) / 180;
   return [
@@ -64,26 +86,6 @@ export function notLongEnoughToDraw(object) {
   );
 }
 
-// https://stackoverflow.com/questions/60680088/konva-js-free-drawing-drag-zoom-cant-draw-correctly-with-pointer-after-d/60683019#60683019
-export function getRelativePointerPosition(e) {
-  const stage = e.target.getStage();
-  // the function will return pointer position relative to the passed node
-  var transform = stage.getAbsoluteTransform().copy();
-  // to detect relative position we need to invert transform
-  transform.invert();
-
-  var pos = stage.getPointerPosition();
-
-  return transform.point(pos);
-}
-
-export function getRelativePosition(point, scale) {
-  const scaledX = point.x * scale;
-  const scaledY = point.y * scale;
-
-  return { x: scaledX, y: scaledY };
-}
-
 export function getCenter(point1, point2) {
   return {
     x: (point1.x + point2.x) / 2,
@@ -91,6 +93,11 @@ export function getCenter(point1, point2) {
   };
 }
 
+/*
+  Following function is taken from konvajs docs
+  Authors: Anton Lavrenov
+  Source:  https://konvajs.org/docs/react/Canvas_Export.html
+*/
 export function downloadURI(uri, name) {
   var link = document.createElement("a");
   link.download = name;
@@ -100,42 +107,54 @@ export function downloadURI(uri, name) {
   document.body.removeChild(link);
 }
 
-export function convertRelativeToAbsolute(objects, dimensions) {
-  // console.log(dimensions);
-  return Object.entries(objects).reduce((acc, [key, object]) => {
-    const adjustedPoints = object.points.map((point, index) =>
-      index % 2 === 0
-        ? point > 0 && point < 1
-          ? point * dimensions.width
-          : point
-        : point > 0 && point < 1
-        ? point * dimensions.height
-        : point
+export function convertAbsoluteToRelative(objects, dimensions) {
+  function adjustPointsToRelative(points) {
+    return points.map((point, index) =>
+      point > 0 && point < 1
+        ? point
+        : index % 2 === 0
+        ? point / dimensions?.width
+        : point / dimensions?.height
     );
+  }
 
-    acc[key] = { ...object, points: adjustedPoints };
+  return Object.entries(objects).reduce((acc, [key, object]) => {
+    const adjustedPoints = adjustPointsToRelative(object.points);
+    const newObject = { ...object, points: adjustedPoints };
+
+    if (object.secondaryPoints) {
+      newObject.secondaryPoints = adjustPointsToRelative(
+        object.secondaryPoints
+      );
+    }
+
+    acc[key] = newObject;
     return acc;
   }, {});
 }
 
-// https://natclark.com/tutorials/javascript-lighten-darken-hex-color/
-export function darkenColor(hexColor, magnitude) {
-  hexColor = hexColor.replace(`#`, ``);
-  if (hexColor.length === 6) {
-    const decimalColor = parseInt(hexColor, 16);
-    let r = (decimalColor >> 16) + magnitude;
-    r > 255 && (r = 255);
-    r < 0 && (r = 0);
-    let g = (decimalColor & 0x0000ff) + magnitude;
-    g > 255 && (g = 255);
-    g < 0 && (g = 0);
-    let b = ((decimalColor >> 8) & 0x00ff) + magnitude;
-    b > 255 && (b = 255);
-    b < 0 && (b = 0);
-    return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
-  } else {
-    return hexColor;
+export function convertRelativeToAbsolute(objects, dimensions) {
+  function adjustPoints(points) {
+    return points.map((point, index) =>
+      point > 0 && point < 1
+        ? index % 2 === 0
+          ? point * dimensions?.width
+          : point * dimensions?.height
+        : point
+    );
   }
+
+  return Object.entries(objects).reduce((acc, [key, object]) => {
+    const adjustedPoints = adjustPoints(object.points);
+    const newObject = { ...object, points: adjustedPoints };
+
+    if (object.secondaryPoints) {
+      newObject.secondaryPoints = adjustPoints(object.secondaryPoints);
+    }
+
+    acc[key] = newObject;
+    return acc;
+  }, {});
 }
 
 export function idFromDate() {

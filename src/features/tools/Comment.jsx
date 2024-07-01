@@ -1,3 +1,12 @@
+/**
+ * File:Comment.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Hotspot circle on canvas
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { Circle as CircleKonva, Group, Text } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,19 +17,28 @@ import {
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import useAdjustColorAndWidth from "../stylePalette/useAdjustColorAndWidth";
 import { LOWERED_ALPHA } from "../../utils/constants";
+import { themes } from "../../utils/themes";
 
-function Comment({ comment, isDraggable, onSelect, isSelected }) {
+function Comment({
+  object: comment,
+  isDraggable,
+  onSelect,
+  isSelected,
+  viewOnly,
+}) {
   const dispatch = useDispatch();
   const groupRef = useRef();
   const objects = useSelector(getObjects);
   const [number, setNumber] = useState(0);
   const isOpacityLowered = useSelector(getOpacityLowered);
+  const [shadowBlur, setShadowBlur] = useState(0);
 
-  const radius = 16;
+  const radius = 2.5 * comment.strokeWidth;
+  const hightlightWidth = 0.5 * comment.strokeWidth;
 
-  useAdjustColorAndWidth(comment, isSelected);
+  useAdjustColorAndWidth(comment, isSelected, 1);
 
   useEffect(() => {
     function getNextValue() {
@@ -38,19 +56,19 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
     setNumber(getNextValue());
   }, [objects, comment.id]);
 
-  const [pulseScale, setPulseScale] = useState(1);
+  useEffect(() => {
+    if (!viewOnly) return;
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setPulseScale((oldScale) => (oldScale >= 1.1 ? 1 : oldScale + 0.02));
-  //   }, 250);
+    const interval = setInterval(() => {
+      setShadowBlur((prevBlur) => (prevBlur >= 12 ? -30 : prevBlur + 1));
+    }, 110);
 
-  //   return () => clearInterval(interval);
-  // }, []);
+    return () => clearInterval(interval);
+  }, [viewOnly]);
 
   function handleDragStart() {
-    dispatch(updateHistory());
     dispatch(setIsDragging(true));
+    dispatch(updateHistory());
   }
 
   function handleDragEnd() {
@@ -69,8 +87,6 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
     groupRef.current.moveToTop();
     // Reset group origin position
     groupRef.current.position({ x: 0, y: 0 });
-
-    dispatch(setIsDragging(false));
   }
 
   if (!comment?.points.length) return;
@@ -87,15 +103,25 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
         id={comment.id}
         x={comment.points[0]}
         y={comment.points[1]}
-        radius={radius * 1.35}
+        radius={radius * 1.4}
         stroke={comment.color}
-        strokeWidth={isSelected ? 2.8 : 0}
+        strokeWidth={isSelected ? hightlightWidth : 0}
         fill="#b5b5b5"
         onClick={onSelect}
         onTap={onSelect}
-        opacity={isSelected ? 0.8 : 0.6}
-        scaleX={isSelected ? 1 : pulseScale}
-        scaleY={isSelected ? 1 : pulseScale}
+        opacity={isSelected ? 0.8 : 0.7}
+        cursor="pointer"
+        shadowColor={comment.color}
+        shadowBlur={shadowBlur < 0 || isSelected ? 0 : shadowBlur}
+        shadowOpacity={1}
+        onMouseEnter={(e) => {
+          const container = e.target.getStage().container();
+          container.style.cursor = "pointer";
+        }}
+        onMouseLeave={(e) => {
+          const container = e.target.getStage().container();
+          container.style.cursor = "default";
+        }}
       />
       <CircleKonva
         listening={false}
@@ -103,8 +129,8 @@ function Comment({ comment, isDraggable, onSelect, isSelected }) {
         y={comment.points[1]}
         radius={radius + 2}
         stroke={comment.color}
-        strokeWidth={isSelected ? 0 : 2.8}
-        fill="#fff"
+        strokeWidth={isSelected ? 0 : hightlightWidth}
+        fill={themes.commentFill}
         onClick={onSelect}
         onTap={onSelect}
         opacity={0.8}

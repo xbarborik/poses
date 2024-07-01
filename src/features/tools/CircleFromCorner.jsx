@@ -1,3 +1,12 @@
+/**
+ * File: CircleFromCorner.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Draw circle shape and attach transformer
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { Circle as CircleKonva } from "react-konva";
 import CustomTransformer from "../transformers/CustomTransformer";
@@ -9,15 +18,17 @@ import {
   updateWithObject,
 } from "../canvas/canvasSlice";
 import { getNewPoints } from "./circleUtils";
-import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
-import {
-  HIT_DETECTION_MULTIPLIER,
-  HIT_FUNC_MULTIPLIER,
-  LOWERED_ALPHA,
-} from "../../utils/constants";
+import useAdjustColorAndWidth from "../stylePalette/useAdjustColorAndWidth";
+import { HIT_DETECTION_MULTIPLIER, LOWERED_ALPHA } from "../../utils/constants";
 import { themes } from "../../utils/themes";
 
-function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
+function Circle({
+  object: circle,
+  isDraggable,
+  isSelected,
+  onSelect,
+  stageRef,
+}) {
   const shapeRef = useRef();
   const trRef = useRef();
   const dispatch = useDispatch();
@@ -33,26 +44,19 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
   }, [circle]);
 
   useEffect(() => {
-    if (isSelected) {
+    if (trRef?.current && isSelected) {
       trRef.current.nodes([shapeRef.current]);
       trRef.current.getLayer().batchDraw();
     }
   }, [isSelected]);
 
-  function customHitFunc(context, shape) {
-    context.beginPath();
-    context.arc(0, 0, shape.attrs.radius * HIT_FUNC_MULTIPLIER, 0, 2 * Math.PI);
-    context.closePath();
-    context.fillStrokeShape(shape);
-  }
-
   function handleTransform(e) {
-    const node = shapeRef.current;
-    const scaleX = node.scaleX();
-    const scaleY = node.scaleY();
+    const shape = shapeRef.current;
+    const scaleX = shape.scaleX();
+    const scaleY = shape.scaleY();
 
-    node.scaleX(1);
-    node.scaleY(1);
+    shape.scaleX(1);
+    shape.scaleY(1);
 
     const scaledPoints = points.map((value, index) => {
       return index % 2 === 0 ? value * scaleX : value * scaleY;
@@ -60,7 +64,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
 
     const newPoints = getNewPoints(e, scaledPoints);
 
-    setRadius(node.radius() * scaleX * 2);
+    setRadius(shape.radius() * scaleX);
     setPoints(newPoints);
   }
 
@@ -96,10 +100,9 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         listening={false}
         x={(points[0] + points[2]) / 2}
         y={(points[1] + points[3]) / 2}
-        radius={radius / 2}
+        radius={radius}
         stroke={themes.shapeBorder}
         strokeWidth={circle.strokeWidth * themes.shapeBorderSize}
-        draggable={isDraggable}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
 
@@ -109,7 +112,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         ref={shapeRef}
         x={(points[0] + points[2]) / 2}
         y={(points[1] + points[3]) / 2}
-        radius={radius / 2}
+        radius={radius}
         stroke={circle.color}
         strokeWidth={circle.strokeWidth}
         draggable={isDraggable}
@@ -121,8 +124,7 @@ function Circle({ circle, isDraggable, isSelected, onSelect, stageRef }) {
         onDragEnd={handleDragEnd}
         onTap={onSelect}
         onClick={onSelect}
-        hitStrokeWidth={circle.strokeWidth * HIT_DETECTION_MULTIPLIER * 100}
-        hitFunc={customHitFunc}
+        hitStrokeWidth={circle.strokeWidth * HIT_DETECTION_MULTIPLIER}
         opacity={isOpacityLowered ? LOWERED_ALPHA : 1}
       />
       {isSelected && (

@@ -1,9 +1,18 @@
+/**
+ * File: useCtrlAndKeyDown.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    hook that calls function on specific key press after ctrl
+ */
+
 import { useEffect } from "react";
 
-function useCtrlAndKeyDown(watchedKey, callback) {
+function useCtrlAndKeyDown(key, callback) {
   useEffect(() => {
     const keyDownHandler = (event) => {
-      if (event.key === watchedKey && event.ctrlKey) {
+      if (event.key === key && event.ctrlKey) {
         event.preventDefault();
         callback();
       }
@@ -14,7 +23,7 @@ function useCtrlAndKeyDown(watchedKey, callback) {
     return () => {
       document.removeEventListener("keydown", keyDownHandler);
     };
-  }, [callback, watchedKey]);
+  }, [callback, key]);
 }
 
 export default useCtrlAndKeyDown;

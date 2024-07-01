@@ -1,3 +1,12 @@
+/**
+ * File: Line.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Line shape
+ */
+
 import { Line as LineKonva } from "react-konva";
 import LineTransformer from "../transformers/LineTransformer";
 import { HIT_DETECTION_MULTIPLIER, LOWERED_ALPHA } from "../../utils/constants";
@@ -9,11 +18,10 @@ import {
 } from "../canvas/canvasSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import useAdjustColorAndWidth from "../stylePalette/useAdjustColorAndWidth";
 import { themes } from "../../utils/themes";
 
-// https://jsbin.com/wahetunepa/edit?html,js,output
-function Line({ line, isDraggable, isSelected, onSelect }) {
+function Line({ object: line, isDraggable, isSelected, onSelect }) {
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
   const isOpacityLowered = useSelector(getOpacityLowered);
@@ -22,7 +30,7 @@ function Line({ line, isDraggable, isSelected, onSelect }) {
     setPoints(line.points);
   }, [line.points]);
 
-  useAdjustColorAndWidth(line, isSelected);
+  useAdjustColorAndWidth(line, isSelected, 1);
 
   function handleChangeEnd(newPoints) {
     dispatch(updateHistory());

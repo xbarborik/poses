@@ -1,9 +1,17 @@
+/**
+ * File: styleSlice.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Global management of styling part of states.
+ */
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   strokeWidth: 5,
-  color: "#FF0000",
-  showStyling: false,
+  color: "#F50035",
 };
 
 const styleSlice = createSlice({
@@ -16,18 +24,12 @@ const styleSlice = createSlice({
     setStrokeWidth(state, action) {
       state.strokeWidth = action.payload;
     },
-    setShowStyling(state, action) {
-      state.showStyling = action.payload;
-    },
   },
 });
 
-export const { setStrokeWidth, selectColor, setShowStyling } =
-  styleSlice.actions;
+export const { setStrokeWidth, selectColor } = styleSlice.actions;
 export default styleSlice.reducer;
 
 export const getStrokeWidth = (state) => state.style.strokeWidth;
 
 export const getColor = (state) => state.style.color;
-
-export const getShowStyling = (state) => state.style.showStyling;

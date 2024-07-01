@@ -1,3 +1,12 @@
+/**
+ * File: StrokeWidthSlider.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Slider for setting width
+ */
+
 import styled from "styled-components";
 import CustomSlider from "../../ui/Slider";
 import { useEffect, useState } from "react";

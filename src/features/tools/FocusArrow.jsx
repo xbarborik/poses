@@ -1,3 +1,12 @@
+/**
+ * File: FocusArrow.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Draw eye shape with an arrow to show eye focus on point
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -12,13 +21,13 @@ import {
   updateHistory,
   updateWithObject,
 } from "../canvas/canvasSlice";
-import useAdjustColorAndWidth from "../stylePanel/useAdjustColorAndWidth";
+import useAdjustColorAndWidth from "../stylePalette/useAdjustColorAndWidth";
 import CustomArrow from "../customShapes/CustomArrow";
 import { themes } from "../../utils/themes";
 import { Shape } from "react-konva";
 import { calcAngle, movePointAtAngle } from "../../utils/helpers";
 
-function FocusArrow({ arrow, isDraggable, isSelected, onSelect }) {
+function FocusArrow({ object: arrow, isDraggable, isSelected, onSelect }) {
   const dispatch = useDispatch();
   const [points, setPoints] = useState([]);
   const isOpacityLowered = useSelector(getOpacityLowered);

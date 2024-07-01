@@ -1,12 +1,21 @@
-export function updateCircle({ updateWithObject, circle, position }) {
+/**
+ * File: circleUtilsr.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Functions for calculating points
+ */
+
+export function updateCircle({ updateObject, circle, position }) {
   const [startX, startY] = circle.points;
   const { x: endX, y: endY } = position;
 
   let xdif = endX - startX;
   let ydif = endY - startY;
-  const radius = Math.sqrt(xdif ** 2 + ydif ** 2);
+  const radius = Math.sqrt(xdif ** 2 + ydif ** 2) / 2;
 
-  updateWithObject({
+  updateObject({
     ...circle,
     points: [startX, startY, endX, endY],
     radius: radius,

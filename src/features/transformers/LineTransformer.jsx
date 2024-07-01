@@ -1,9 +1,19 @@
+/**
+ * File: LineTransformer.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Custom transformer for adding anchors to line based shapes
+ */
+
 import { useEffect, useRef, useState } from "react";
-import { Circle, Group, Line, Rect } from "react-konva";
+import { Circle, Group } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { getStageScale, setIsDragging } from "../canvas/canvasSlice";
 import { circleHitFunc } from "../../hit_functions/circleHitFunction";
 import { ANCHOR_SHADOW_WIDTH } from "../../utils/constants";
+import { calcDirections } from "../../utils/helpers";
 
 function LineTransformer({
   children,
@@ -11,9 +21,7 @@ function LineTransformer({
   points,
   setPoints,
   isDraggable,
-  onTransformEnd,
   onDragEnd,
-  onRemove,
 }) {
   const dispatch = useDispatch();
   const groupRef = useRef();
@@ -22,16 +30,9 @@ function LineTransformer({
   const stageScale = useSelector(getStageScale);
   const [anchorOffset, setAnchorOffset] = useState({ x: 0, y: 0 });
 
-  const [groupBounds, setGroupBounds] = useState({
-    x: null,
-    y: null,
-    width: null,
-    height: null,
-  });
-
-  const anchorScale = stageScale / 0.9;
-  const anchorSize = 16 / anchorScale;
-  const anchorOffsetDistance = 40 / anchorScale; // distance from line object
+  const anchorScale = stageScale * 0.9;
+  const anchorSize = 12 / anchorScale;
+  const anchorOffsetDistance = 30 / anchorScale; // distance from line object
 
   useEffect(() => {
     groupRef.current.moveToTop();
@@ -39,20 +40,15 @@ function LineTransformer({
 
   useEffect(() => {
     function findNewAnchorPoint() {
-      const dx = points[2] - points[0];
-      const dy = points[3] - points[1];
-      const length = Math.sqrt(dx * dx + dy * dy);
-      if (length === 0) return { x: points[0], y: points[1] };
-      //console.log(length);
+      // Normalize to get vector magnitude of 1
 
-      const directionX = dx / length;
-      const directionY = dy / length;
+      const { directionX, directionY, length, error } = calcDirections(points);
+      if (error || length < anchorOffsetDistance) return;
 
       const offsetX = directionX * anchorOffsetDistance;
       const offsetY = directionY * anchorOffsetDistance;
 
       setAnchorOffset({ x: offsetX, y: offsetY });
-      // setGroupBounds(groupRef?.current?.getClientRect())
     }
 
     findNewAnchorPoint();
@@ -65,6 +61,7 @@ function LineTransformer({
       anchor2Ref.current.x() - anchorOffset.x,
       anchor2Ref.current.y() - anchorOffset.y,
     ];
+
     setPoints(newPoints);
   }
 
@@ -81,9 +78,8 @@ function LineTransformer({
 
     setPoints(newPoints);
     onDragEnd(newPoints);
-    dispatch(setIsDragging(false));
 
-    // Reset group origin position
+    // Reset group origin position (top left point)
     groupRef.current.position({ x: 0, y: 0 });
   }
 
@@ -96,17 +92,6 @@ function LineTransformer({
     >
       {children}
 
-      {groupBounds?.x && (
-        <Rect
-          x={groupBounds.x}
-          y={groupBounds.y}
-          width={groupBounds.width}
-          height={groupBounds.height}
-          stroke="blue" // Color of the border
-          strokeWidth={2} // Width of the border
-        />
-      )}
-
       {show && (
         <>
           {/* Anchors */}
@@ -117,8 +102,8 @@ function LineTransformer({
             y={points[1] - anchorOffset.y}
             radius={anchorSize}
             fill="white"
-            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
-            stroke="#b5b5b5" // border color
+            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale}
+            stroke="#b5b5b5"
             draggable
             onDragMove={handleAnchorDragMove}
             hitFunc={circleHitFunc}
@@ -139,8 +124,8 @@ function LineTransformer({
             y={points[3] + anchorOffset.y}
             radius={anchorSize}
             fill="white"
-            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
-            stroke="#b5b5b5" // border color
+            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale}
+            stroke="#b5b5b5"
             draggable
             onDragMove={handleAnchorDragMove}
             hitFunc={circleHitFunc}

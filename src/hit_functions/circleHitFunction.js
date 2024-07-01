@@ -1,3 +1,4 @@
+// Increases hit detection of circular shapes
 import { HIT_FUNC_MULTIPLIER } from "../utils/constants";
 
 export function circleHitFunc(context, shape) {

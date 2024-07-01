@@ -1,7 +1,16 @@
+/**
+ * File: store.js
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    combine redux toolkit stores into one store
+ */
+
 import { configureStore } from "@reduxjs/toolkit";
 import canvasReducer from "./features/canvas/canvasSlice";
 import toolbarReducer from "./features/toolbar/toolbarSlice";
-import styleReducer from "./features/stylePanel/styleSlice";
+import styleReducer from "./features/stylePalette/styleSlice";
 
 const store = configureStore({
   reducer: {

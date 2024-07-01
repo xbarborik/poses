@@ -1,7 +1,11 @@
 import { useState } from "react";
 
-// https://konvajs.org/docs/sandbox/Multi-touch_Scale_Stage.html
-export function useWheelAndTouchpadZoom(stageRef, dimensions) {
+/*
+  Following hook is a modified version expanded solution of code in pure JavaScript made by
+  Author: Anton Lavrenov
+  Source: https://konvajs.org/docs/sandbox/Multi-touch_Scale_Stage.html
+*/
+export function useWheelAndTouchpadZoom(stageRef, dimensions, minScale) {
   const [scale, setScale] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 });
 
@@ -23,27 +27,28 @@ export function useWheelAndTouchpadZoom(stageRef, dimensions) {
 
     const newScale = Math.max(
       direction > 0 ? oldScale * scaleBy : oldScale / scaleBy,
-      1
+      minScale
     );
 
     stage.scale({ x: newScale, y: newScale });
-
-    const dx = -e.evt.deltaX;
-    const dy = -e.evt.deltaY;
 
     const newPos = {
       x: pointer.x - mousePointTo.x * newScale,
       y: pointer.y - mousePointTo.y * newScale,
     };
 
-    //constrained
+    // Calculate boundaries
+    const boundaryX = (dimensions.width * (1 - minScale)) / 2;
+    const boundaryY = (dimensions.height * (1 - minScale)) / 2;
+
     newPos.x = Math.min(
-      Math.max(newPos.x, -dimensions.width * (newScale - 1)),
-      0
+      Math.max(newPos.x, dimensions.width * (1 - newScale) - boundaryX),
+      boundaryX
     );
+
     newPos.y = Math.min(
-      Math.max(newPos.y, -dimensions.height * (newScale - 1)),
-      0
+      Math.max(newPos.y, dimensions.height * (1 - newScale) - boundaryY),
+      boundaryY
     );
 
     stage.position(newPos);

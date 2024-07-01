@@ -1,9 +1,19 @@
+/**
+ * File: AngleTransformer.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    Custom transformer for adding anchors to arcing shapes
+ */
+
 import { useEffect, useRef, useState } from "react";
-import { Circle, Group, Line } from "react-konva";
+import { Circle, Group } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import { getStageScale, setIsDragging } from "../canvas/canvasSlice";
 import { circleHitFunc } from "../../hit_functions/circleHitFunction";
 import { ANCHOR_SHADOW_WIDTH } from "../../utils/constants";
+import { calcDirections } from "../../utils/helpers";
 
 function AngleTransformer({
   children,
@@ -13,9 +23,7 @@ function AngleTransformer({
   setPrimaryPoints,
   setSecondaryPoints,
   isDraggable,
-  onTransformEnd,
   onDragEnd,
-  onRemove,
 }) {
   const dispatch = useDispatch();
   const groupRef = useRef();
@@ -33,38 +41,26 @@ function AngleTransformer({
 
   const anchorScale = stageScale / 0.9;
   const anchorSize = 16 / anchorScale;
-  const anchorOffsetDistance = 40 / anchorScale; // distance from line object
-  const removeButtonOffsetDistance = 40;
-
-  // Use latter for simpler transformer
-  const removeButtonPoint = {
-    x: primaryPoints[0],
-    y: primaryPoints[1],
-  };
+  const anchorOffsetDistance = 40 / anchorScale; // distance from line end
 
   useEffect(() => {
+    console.log(stageScale);
     groupRef.current.moveToTop();
-  }, [show]);
+  }, [show, stageScale]);
 
   useEffect(() => {
-    function findNewAnchorPoint(points) {
-      const dx = points[2] - points[0];
-      const dy = points[3] - points[1];
-      const length = Math.sqrt(dx * dx + dy * dy);
-      if (length === 0) return { x: points[0], y: points[1] };
-      //console.log(length);
-
-      const directionX = dx / length;
-      const directionY = dy / length;
+    function findNewAnchorPoint(points, setAnchorOffset) {
+      const { directionX, directionY, length, error } = calcDirections(points);
+      if (error || length < anchorOffsetDistance) return;
 
       const offsetX = directionX * anchorOffsetDistance;
       const offsetY = directionY * anchorOffsetDistance;
 
-      return { x: offsetX, y: offsetY };
+      setAnchorOffset({ x: offsetX, y: offsetY });
     }
 
-    setPrimaryAnchorOffset(findNewAnchorPoint(primaryPoints));
-    setSecondaryAnchorOffset(findNewAnchorPoint(secondaryPoints));
+    findNewAnchorPoint(primaryPoints, setPrimaryAnchorOffset);
+    findNewAnchorPoint(secondaryPoints, setSecondaryAnchorOffset);
   }, [primaryPoints, secondaryPoints, anchorOffsetDistance]);
 
   function handlePrimaryAnchorDragMove() {
@@ -85,10 +81,6 @@ function AngleTransformer({
       anchor2Ref.current.y() - secondaryAnchorOffset.y,
     ];
     setSecondaryPoints(newPrimaryPoints);
-  }
-
-  function handleAnchorDragEnd() {
-    onTransformEnd(primaryPoints, secondaryPoints);
   }
 
   function handleGroupDragStart() {
@@ -119,12 +111,8 @@ function AngleTransformer({
     setSecondaryPoints(newSecondaryPoints);
     onDragEnd(newPrimaryPoints, newSecondaryPoints);
 
-    // Reset group origin position
+    // Reset group origin position (top left)
     groupRef.current.position({ x: 0, y: 0 });
-
-    setTimeout(() => {
-      dispatch(setIsDragging(false));
-    }, 100);
   }
 
   return (
@@ -146,8 +134,8 @@ function AngleTransformer({
             y={primaryPoints[3] + primaryAnchorOffset.y}
             radius={anchorSize}
             fill="white"
-            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
-            stroke="#b5b5b5" // border color
+            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale}
+            stroke="#b5b5b5"
             draggable
             onDragMove={handlePrimaryAnchorDragMove}
             hitFunc={circleHitFunc}
@@ -168,8 +156,8 @@ function AngleTransformer({
             y={secondaryPoints[3] + secondaryAnchorOffset.y}
             radius={anchorSize}
             fill="white"
-            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale} // border width
-            stroke="#b5b5b5" // border color
+            strokeWidth={ANCHOR_SHADOW_WIDTH / anchorScale}
+            stroke="#b5b5b5"
             draggable
             onDragMove={handleSecondaryAnchorDragMove}
             hitFunc={circleHitFunc}
@@ -182,46 +170,6 @@ function AngleTransformer({
               container.style.cursor = "default";
             }}
           />
-
-          {/* Remove Button */}
-          {/* <Group>
-            <Circle
-              name="removeButton"
-              x={removeButtonPoint.x}
-              y={removeButtonPoint.y}
-              // strokeWidth={1} // border width
-              // stroke="white" // border color
-              radius={anchorSize}
-              fill="#ee3535"
-              onClick={onRemove}
-              onTap={onRemove}
-              hitFunc={circleHitFunc}
-            />
-
-            <Line
-              points={[
-                removeButtonPoint.x - anchorSize / 2,
-                removeButtonPoint.y - anchorSize / 2,
-                removeButtonPoint.x + anchorSize / 2,
-                removeButtonPoint.y + anchorSize / 2,
-              ]}
-              stroke="white"
-              strokeWidth={3 / anchorScale}
-              listening={false}
-            />
-
-            <Line
-              points={[
-                removeButtonPoint.x - anchorSize / 2,
-                removeButtonPoint.y + anchorSize / 2,
-                removeButtonPoint.x + anchorSize / 2,
-                removeButtonPoint.y - anchorSize / 2,
-              ]}
-              stroke="white"
-              strokeWidth={3 / anchorScale}
-              listening={false}
-            />
-          </Group> */}
         </>
       )}
     </Group>

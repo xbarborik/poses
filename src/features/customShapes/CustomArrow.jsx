@@ -1,97 +1,71 @@
-import { useRef } from "react";
-import { Shape, Arrow, Group } from "react-konva";
+import { Shape, Arrow } from "react-konva";
 
-// https://stackoverflow.com/questions/61947104/can-i-draw-a-arrow-with-different-pointer-style-with-konva-such-as-trianglefill
+/*
+  Following shape is a modified version of code in pure JavaScript made by
+  Author: Anton Lavrenov
+  Source: https://stackoverflow.com/questions/61947104/can-i-draw-a-arrow-with-different-pointer-style-with-konva-such-as-trianglefill
+*/
 function CustomArrow({
   objectId,
   points,
   stroke,
   strokeWidth,
   fill,
-  lineCap,
   pointerLength,
   pointerWidth,
   hitStrokeWidth,
   onTap,
   onClick,
   pointerAtBeginning = false,
-  opacity,
   listening,
 }) {
-  const shapeRef = useRef();
+  const [startX, startY, endX, endY] = points;
+  const offsetX = Math.min(startX, endX) - pointerLength;
+  const offsetY = Math.min(startY, endY) - pointerWidth;
+  const angle = Math.atan2(endY - startY, endX - startX);
 
-  const minX = Math.min(points[0], points[2]);
-  const maxX = Math.max(points[0], points[2]);
-  const minY = Math.min(points[1], points[3]);
-  const maxY = Math.max(points[1], points[3]);
-
-  const width = maxX - minX + pointerLength * 2;
-  const height = maxY - minY + pointerWidth * 2 + 30;
-  const offsetX = minX - pointerLength;
-  const offsetY = minY - pointerWidth - 30;
-
-  const localPoints = [
-    points[0] - offsetX,
-    points[1] - offsetY,
-    points[2] - offsetX,
-    points[3] - offsetY,
-  ];
-
-  function drawArrowPointer(context, x, y, angle) {
+  function drawPointer(context, x, y, angle) {
     context.save();
-    context.beginPath();
     context.translate(x, y);
     context.rotate(angle);
     context.moveTo(0, 0);
-    context.lineTo(-pointerLength, pointerWidth / 2);
+    context.lineTo(-pointerLength, pointerWidth);
     context.moveTo(0, 0);
-    context.lineTo(-pointerLength, -pointerWidth / 2);
+    context.lineTo(-pointerLength, -pointerWidth);
     context.restore();
   }
 
-  const drawShape = (context, shape) => {
+  function drawShape(context, shape) {
     context.lineCap = "round";
     context.beginPath();
-    context.moveTo(localPoints[0], localPoints[1]);
-    context.lineTo(localPoints[2], localPoints[3]);
+    context.moveTo(startX - offsetX, startY - offsetY);
+    context.lineTo(endX - offsetX, endY - offsetY);
     context.fillStrokeShape(shape);
-
-    const PI2 = Math.PI * 2;
-    const dx = localPoints[2] - localPoints[0];
-    const dy = localPoints[3] - localPoints[1];
-    const radians = (Math.atan2(dy, dx) + PI2) % PI2;
 
     if (pointerAtBeginning) {
-      const startRadians = (Math.atan2(-dy, -dx) + PI2) % PI2;
-      drawArrowPointer(context, localPoints[0], localPoints[1], startRadians);
+      drawPointer(
+        context,
+        startX - offsetX,
+        startY - offsetY,
+        Math.atan2(startY - endY, startX - endX)
+      );
       context.fillStrokeShape(shape);
     }
-
-    drawArrowPointer(context, localPoints[2], localPoints[3], radians);
+    drawPointer(context, endX - offsetX, endY - offsetY, angle);
     context.fillStrokeShape(shape);
-  };
+  }
 
   return (
-    <Group opacity={opacity}>
+    <>
       <Shape
         x={offsetX}
         y={offsetY}
-        width={width}
-        height={height}
-        className="customShape"
-        ref={shapeRef}
-        sceneFunc={(context, shape) => drawShape(context, shape)}
-        points={points}
+        sceneFunc={drawShape}
         stroke={stroke}
         strokeWidth={strokeWidth}
         fill={fill}
-        lineCap={lineCap}
-        pointerLength={pointerLength}
-        pointerWidth={pointerWidth}
-        listening={false}
       />
       <Arrow
-        className="customShape"
         id={objectId}
         points={points}
         stroke="rgba(0,0,0,0)"
@@ -101,7 +75,7 @@ function CustomArrow({
         hitStrokeWidth={hitStrokeWidth}
         listening={listening}
       />
-    </Group>
+    </>
   );
 }
 

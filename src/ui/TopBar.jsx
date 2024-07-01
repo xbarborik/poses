@@ -1,3 +1,12 @@
+/**
+ * File: TopBar.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    layout component
+ */
+
 import styled from "styled-components";
 
 const StyledTopBar = styled.div`

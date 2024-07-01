@@ -1,25 +1,22 @@
 import { useState } from "react";
-import { getCenter } from "../../utils/helpers";
+import { calcLength, getCenter } from "../../utils/helpers";
 
-// https://konvajs.org/docs/sandbox/Multi-touch_Scale_Stage.html
-export function useMultiTouchScale(stageRef, dimensions) {
+/*
+  Following hook is  a modified version and expanded solution of code in pure JavaScript made by
+  Author: Anton Lavrenov
+  Source: https://konvajs.org/docs/sandbox/Multi-touch_Scale_Stage.html
+*/
+export function useMultiTouchScale(stageRef, dimensions, minScale = 1) {
   const [oldCenter, setOldCenter] = useState(null);
   const [lastDistance, setLastDistance] = useState(0);
   const [scale, setScale] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 });
-
-  function getDistance(p1, p2) {
-    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-  }
 
   function handleMultiTouchMove(e) {
     e.evt.preventDefault();
 
     const touch1 = e.evt.touches[0];
     const touch2 = e.evt.touches[1];
-
-    // console.log(e.evt.touches[0].clientX, e.evt.touches[0].clientY);
-    // console.log(e.evt.touches[1].clientX, e.evt.touches[1].clientY);
 
     const stage = stageRef.current;
 
@@ -40,10 +37,8 @@ export function useMultiTouchScale(stageRef, dimensions) {
         return;
       }
 
-      const distance = getDistance(point1, point2);
-
+      const distance = calcLength([point1.x, point1.y, point2.x, point2.y]);
       const oldScale = stage.scaleX();
-
       const pointTo = {
         x: (newCenter.x - stage.x()) / oldScale,
         y: (newCenter.y - stage.y()) / oldScale,
@@ -51,7 +46,7 @@ export function useMultiTouchScale(stageRef, dimensions) {
 
       const newScale = Math.max(
         oldScale * (distance / (lastDistance ? lastDistance : distance)),
-        1
+        minScale
       );
 
       stage.scale({ x: newScale, y: newScale });
@@ -64,23 +59,22 @@ export function useMultiTouchScale(stageRef, dimensions) {
         y: newCenter.y - pointTo.y * newScale + dy,
       };
 
-      //constrained
-      newPos.x = Math.min(
-        Math.max(newPos.x, -dimensions.width * (newScale - 1)),
-        0
-      );
-      newPos.y = Math.min(
-        Math.max(newPos.y, -dimensions.height * (newScale - 1)),
-        0
-      );
-      // console.log("np", newPos.x, newPos.y);
-      // console.log("oc", oldCenter.x, oldCenter.y);
-      // console.log("nc", newCenter.x, newCenter.y);
+      // Calculate boundaries
+      const boundaryX = (dimensions.width * (1 - minScale)) / 2;
+      const boundaryY = (dimensions.height * (1 - minScale)) / 2;
 
-      //console.log("Before Stage Pos", stage.position());
+      newPos.x = Math.min(
+        Math.max(newPos.x, dimensions.width * (1 - newScale) - boundaryX),
+        boundaryX
+      );
+
+      newPos.y = Math.min(
+        Math.max(newPos.y, dimensions.height * (1 - newScale) - boundaryY),
+        boundaryY
+      );
+
       stage.position(newPos);
       setPos(newPos);
-      //console.log("After Stage Pos", stage.position());
 
       setLastDistance(distance);
       setOldCenter(newCenter);

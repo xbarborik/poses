@@ -1,3 +1,12 @@
+/**
+ * File: UndoRedo.jsx
+ * Project: Commenting on Poses
+ * Author: Martin Barborík
+ * Login: xbarbo10
+ * Description:
+ *    History control component. Adds undo and redo.
+ */
+
 import styled from "styled-components";
 import { LiaUndoSolid, LiaRedoSolid } from "react-icons/lia";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,13 +26,13 @@ const HistoryControlButton = styled.button`
   font-size: 1.5rem;
   border-radius: ${(props) =>
     props.$position === "left" ? "35% 0 0 35%" : "0 35% 35% 0"};
-  width: 2.8rem;
+  width: 2.6rem;
   height: 1.8rem;
   border: none;
   pointer-events: auto;
   transition: 0.15s;
 
-  opacity: ${(props) => (props.disabled ? 0.4 : 0.6)};
+  opacity: ${(props) => (props.disabled ? 0.4 : 0.7)};
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 
   &:active {
@@ -35,8 +44,8 @@ const HistoryControlButton = styled.button`
   }
 
   @media only screen and (max-width: 768px) {
-    width: 2.5rem;
-    height: 2rem;
+    width: 2.4rem;
+    height: 1.6rem;
     font-size: 2rem;
     outline-width: 2px;
   }
